@@ -1,48 +1,95 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import GlitchText from "../components/GlitchText";
 import NeonCard from "../components/NeonCard";
 
 const steps = [
   {
-    step: "01",
-    phase: "PLAN",
+    id: "01",
+    label: "STEP 1",
+    title: "Plan your week",
+    sub: "Start with your schedule.",
     accent: "cyan",
-    title: "Map Your Week Like a Mission",
-    desc: "Log in. See your week. Assign stream dates, game choices, themes, and goals. Build your schedule in under 5 minutes.",
-    detail: "AltCtrl structures your week like a tactical ops board. Every stream slot is a mission with a purpose — not just time on a calendar.",
+    items: [
+      "When you are streaming",
+      "What game you are playing",
+      "What kind of stream it is",
+      "How often you want to go live this week",
+    ],
+    close: "Instead of deciding at the last second, you begin the week with a real plan.",
   },
   {
-    step: "02",
-    phase: "PROMOTE",
+    id: "02",
+    label: "STEP 2",
+    title: "Generate promo before every stream",
+    sub: "Before you go live, open AltCtrl and generate your promo pack.",
     accent: "pink",
-    title: "Generate Your Promo Pack",
-    desc: "Before each stream, AltCtrl generates a full promo kit — captions, hooks, and content angles — specific to what you're streaming today.",
-    detail: "No more blank caption boxes. No more guessing what to post. One click generates everything. You review, edit, and copy.",
+    items: [
+      "A hook",
+      "A caption",
+      "Hashtags",
+      "Title options",
+    ],
+    close: "Copy what you need, post it, and move on. No staring at a blank screen trying to write promo from scratch.",
   },
   {
-    step: "03",
-    phase: "GO LIVE",
+    id: "03",
+    label: "STEP 3",
+    title: "Go live with more intention",
+    sub: "When your schedule is planned and your promo is ready, going live feels less random and more repeatable.",
     accent: "cyan",
-    title: "Check Your Systems. Go Live.",
-    desc: "Open AltCtrl's pre-live HUD. Confirm your setup, goals, and promo are locked. Then hit go live with confidence.",
-    detail: "The pre-live checklist keeps you sharp. No missed steps. No wasted sessions. Just clean execution every time.",
+    items: [
+      "Better consistency",
+      "Clearer goals",
+      "Less chaos before stream",
+      "Better context for what success looks like",
+    ],
+    close: "You are not just showing up. You are showing up with a system behind you.",
   },
   {
-    step: "04",
-    phase: "LEARN",
+    id: "04",
+    label: "STEP 4",
+    title: "Log the session",
+    sub: "After your stream, log the results.",
     accent: "pink",
-    title: "Log Your Session. Track What Worked.",
-    desc: "After each stream, log your performance. AltCtrl tracks everything — viewers, engagement, what worked, what didn't.",
-    detail: "Over time, patterns emerge. AltCtrl shows you your best days, best games, best content angles — based on your actual data.",
+    items: [
+      "Game played",
+      "Average viewers",
+      "Peak viewers",
+      "Stream duration",
+      "Followers gained",
+      "Whether promo was posted",
+    ],
+    close: "It takes a minute, but it gives AltCtrl the data it needs to get smarter.",
   },
   {
-    step: "05",
-    phase: "COACH",
+    id: "05",
+    label: "STEP 5",
+    title: "Learn what is working",
+    sub: "As you log more sessions, AltCtrl helps you see the patterns behind your growth.",
+    accent: "cyan",
+    items: [
+      "Which games pull the strongest viewers",
+      "Which time slots perform best",
+      "Whether promo is making a difference",
+      "Where your consistency is slipping",
+      "What to focus on next",
+    ],
+    close: "This is where random effort becomes intentional growth.",
+  },
+  {
+    id: "06",
+    label: "STEP 6",
+    title: "Repeat next week, smarter",
+    sub: "Every week you go through the loop again:",
     accent: "yellow",
-    title: "Get Your Weekly Strategy Brief",
-    desc: "Every week, AltCtrl generates a personalized coaching brief. What to change. What to keep. What to push harder.",
-    detail: "Not generic tips. Your data, interpreted by AI, turned into a real action plan. Like having a personal coach who watched every stream.",
+    items: [
+      "With better data",
+      "Better coaching",
+      "Stronger habits",
+      "Better decisions",
+    ],
+    close: "That is the point of AltCtrl. Not just to help you stream more, but to help you improve every time you do.",
   },
 ];
 
@@ -50,43 +97,60 @@ export default function HowItWorks() {
   return (
     <div className="py-16 px-4">
       <div className="max-w-4xl mx-auto">
+
+        {/* Header */}
         <div className="text-center mb-20">
-          <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// OPERATIONAL SEQUENCE</div>
-          <GlitchText text="HOW THE OS RUNS" className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="h1" />
-          <p className="text-slate-400 mt-6 max-w-xl mx-auto">Five connected phases. One seamless loop. Built for creators who want to grow with intent, not luck.</p>
+          <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// THE SYSTEM</div>
+          <GlitchText text="A BETTER WEEK OF STREAMING" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h1" />
+          <h1 className="text-4xl sm:text-5xl font-black uppercase text-cyan-400">STARTS WITH A BETTER SYSTEM.</h1>
+          <p className="text-slate-400 mt-6 max-w-xl mx-auto leading-relaxed">
+            AltCtrl is built around one simple loop. Every feature in the product exists to help you move through that cycle faster and more consistently.
+          </p>
+          <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
+            {["PLAN", "→", "PROMOTE", "→", "GO LIVE", "→", "LEARN"].map((step, i) => (
+              <span key={i} className="text-sm font-mono font-bold uppercase"
+                style={step !== "→" ? { color: "#fff", textShadow: "0 0 10px rgba(0,245,255,0.4)" } : { color: "#1a3040" }}>
+                {step}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <div className="space-y-4">
-          {steps.map((s, i) => (
-            <div key={s.step}>
-              <NeonCard accent={s.accent}>
-                <div className="flex gap-6 items-start">
-                  <div className={`text-4xl font-black tabular-nums shrink-0 ${s.accent === "pink" ? "text-pink-500/30" : s.accent === "yellow" ? "text-yellow-500/30" : "text-cyan-500/30"}`}>
-                    {s.step}
-                  </div>
-                  <div>
-                    <div className={`text-xs font-mono uppercase tracking-widest mb-2 ${s.accent === "pink" ? "text-pink-400" : s.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
-                      // PHASE_{s.step} — {s.phase}
-                    </div>
-                    <h2 className="text-xl font-black uppercase text-white mb-2">{s.title}</h2>
-                    <p className="text-slate-300 mb-3">{s.desc}</p>
-                    <p className="text-slate-500 text-sm leading-relaxed border-l-2 border-cyan-900 pl-4">{s.detail}</p>
-                  </div>
-                </div>
-              </NeonCard>
-              {i < steps.length - 1 && (
-                <div className="flex justify-center py-2">
-                  <ArrowDown className="w-5 h-5 text-cyan-900" />
-                </div>
-              )}
-            </div>
+        {/* Steps */}
+        <div className="space-y-6">
+          {steps.map((step) => (
+            <NeonCard key={step.id} accent={step.accent}>
+              <div className={`text-xs font-mono uppercase tracking-widest mb-2 ${step.accent === "pink" ? "text-pink-400" : step.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
+                // {step.label}
+              </div>
+              <h2 className="text-2xl font-black uppercase text-white mb-3">{step.title}</h2>
+              <p className="text-slate-400 text-sm mb-4">{step.sub}</p>
+              <ul className="space-y-2 mb-4">
+                {step.items.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                    <span className={`font-mono font-bold mt-0.5 ${step.accent === "pink" ? "text-pink-400" : step.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>→</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-slate-400 text-sm border-t border-white/5 pt-4">{step.close}</p>
+            </NeonCard>
           ))}
         </div>
 
-        <div className="text-center mt-16">
-          <div className="text-xs font-mono uppercase tracking-widest text-slate-500 mb-4">// SYSTEM READY — AWAITING ACTIVATION</div>
-          <Link to="/waitlist" className="inline-flex items-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest px-8 py-4 rounded text-sm hover:bg-cyan-300 hover:shadow-[0_0_40px_rgba(0,245,255,0.5)] transition-all">
-            ACTIVATE YOUR ACCOUNT <ArrowRight className="w-4 h-4" />
+        {/* Closing CTA */}
+        <div className="mt-16 bg-[#060d1f] border border-cyan-900/40 rounded-lg p-10 text-center">
+          <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// SIGNAL LOCKED</div>
+          <GlitchText text="RUN YOUR STREAMS LIKE YOU MEAN IT." className="text-3xl sm:text-4xl font-black uppercase text-white block mb-4" tag="h2" />
+          <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed mb-10">
+            AltCtrl gives you the structure behind consistent creator growth.
+          </p>
+          <Link to="/waitlist"
+            className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
+            style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.4)"}>
+            GET EARLY ACCESS <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
