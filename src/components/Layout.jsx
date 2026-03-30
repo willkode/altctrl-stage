@@ -33,7 +33,7 @@ export default function Layout() {
 
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-40 border-b border-cyan-900/40 bg-[#02040f]/90 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[100px] flex items-center justify-between">
           <Link to="/" className="flex items-center group">
             <img
               src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/9e338f22f_altctrl-logo2.png"
@@ -82,7 +82,7 @@ export default function Layout() {
       </nav>
 
       {/* Main content */}
-      <main className="pt-16">
+      <main className="pt-[100px]">
         <Outlet />
       </main>
 
