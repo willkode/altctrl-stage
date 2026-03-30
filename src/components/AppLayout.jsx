@@ -5,6 +5,10 @@ import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import Onboarding from "../pages/app/Onboarding";
 import LoadingState from "./app/LoadingState";
+import AppToaster from "./app/AppToaster";
+import QuickActions from "./app/QuickActions";
+import StreamDrawer from "./app/drawers/StreamDrawer";
+import LogSessionDrawer from "./app/drawers/LogSessionDrawer";
 
 const navItems = [
   { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -28,6 +32,12 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pageTitle = pageTitles[location.pathname] || "ALTCTRL";
   const { profile, loading, completeOnboarding } = useCreatorBootstrap();
+  const [activeDrawer, setActiveDrawer] = useState(null);
+
+  const handleQuickAction = (event) => {
+    if (event === "add-stream") setActiveDrawer("stream");
+    else if (event === "log-session") setActiveDrawer("session");
+  };
 
   if (loading) {
     return (
@@ -155,6 +165,12 @@ export default function AppLayout() {
           );
         })}
       </nav>
+
+      {/* Global shared tools */}
+      <QuickActions onAction={handleQuickAction} />
+      <AppToaster />
+      <StreamDrawer open={activeDrawer === "stream"} onClose={() => setActiveDrawer(null)} />
+      <LogSessionDrawer open={activeDrawer === "session"} onClose={() => setActiveDrawer(null)} />
     </div>
   );
 }
