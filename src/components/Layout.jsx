@@ -34,11 +34,12 @@ export default function Layout() {
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-40 border-b border-cyan-900/40 bg-[#02040f]/90 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-cyan-400 rounded flex items-center justify-center">
-              <Zap className="w-5 h-5 text-[#02040f]" fill="currentColor" />
-            </div>
-            <span className="font-black uppercase tracking-widest text-white text-lg group-hover:text-cyan-400 transition-colors">ALT<span className="text-cyan-400">CTRL</span></span>
+          <Link to="/" className="flex items-center group">
+            <img
+              src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/9e338f22f_altctrl-logo2.png"
+              alt="AltCtrl"
+              className="h-9 w-auto transition-opacity group-hover:opacity-80"
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
