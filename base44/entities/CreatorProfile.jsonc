@@ -1,0 +1,88 @@
+{
+  "name": "CreatorProfile",
+  "type": "object",
+  "properties": {
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "tiktok_handle": {
+      "type": "string",
+      "title": "TikTok Handle"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "Avatar URL"
+    },
+    "bio": {
+      "type": "string",
+      "title": "Bio"
+    },
+    "primary_game": {
+      "type": "string",
+      "title": "Primary Game"
+    },
+    "secondary_games": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Secondary Games"
+    },
+    "stream_goal": {
+      "type": "string",
+      "title": "Stream Goal",
+      "enum": [
+        "grow_followers",
+        "increase_viewers",
+        "improve_consistency",
+        "build_community",
+        "monetize"
+      ],
+      "default": "grow_followers"
+    },
+    "weekly_stream_target": {
+      "type": "number",
+      "title": "Weekly Stream Target",
+      "default": 3
+    },
+    "preferred_stream_days": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ]
+      },
+      "title": "Preferred Stream Days"
+    },
+    "preferred_stream_time": {
+      "type": "string",
+      "title": "Preferred Stream Time (HH:MM)"
+    },
+    "timezone": {
+      "type": "string",
+      "title": "Timezone",
+      "default": "UTC"
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "title": "Onboarding Completed",
+      "default": false
+    },
+    "beta_access": {
+      "type": "boolean",
+      "title": "Beta Access",
+      "default": true
+    }
+  },
+  "required": [
+    "display_name"
+  ]
+}

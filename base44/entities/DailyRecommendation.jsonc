@@ -1,0 +1,77 @@
+{
+  "name": "DailyRecommendation",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+    },
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "focus_title": {
+      "type": "string",
+      "title": "Focus Title"
+    },
+    "focus_body": {
+      "type": "string",
+      "title": "Focus Body"
+    },
+    "action_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Action Items"
+    },
+    "recommendation_type": {
+      "type": "string",
+      "title": "Type",
+      "enum": [
+        "schedule",
+        "promo",
+        "analytics",
+        "consistency",
+        "recovery",
+        "milestone",
+        "general"
+      ],
+      "default": "general"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "dismissed": {
+      "type": "boolean",
+      "title": "Dismissed",
+      "default": false
+    },
+    "source": {
+      "type": "string",
+      "title": "Source",
+      "enum": [
+        "ai_generated",
+        "system",
+        "manual"
+      ],
+      "default": "ai_generated"
+    }
+  },
+  "required": [
+    "date",
+    "focus_title"
+  ]
+}

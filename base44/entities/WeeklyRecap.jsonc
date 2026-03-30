@@ -1,0 +1,85 @@
+{
+  "name": "WeeklyRecap",
+  "type": "object",
+  "properties": {
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "week_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Week Start Date"
+    },
+    "week_end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Week End Date"
+    },
+    "streams_planned": {
+      "type": "number",
+      "title": "Streams Planned"
+    },
+    "streams_completed": {
+      "type": "number",
+      "title": "Streams Completed"
+    },
+    "total_stream_minutes": {
+      "type": "number",
+      "title": "Total Stream Minutes"
+    },
+    "avg_viewers": {
+      "type": "number",
+      "title": "Average Viewers (week avg)"
+    },
+    "peak_viewers": {
+      "type": "number",
+      "title": "Peak Viewers (week best)"
+    },
+    "followers_gained": {
+      "type": "number",
+      "title": "Followers Gained",
+      "default": 0
+    },
+    "promo_posted_count": {
+      "type": "number",
+      "title": "Promo Posted",
+      "default": 0
+    },
+    "consistency_score": {
+      "type": "number",
+      "title": "Consistency Score (0-100)"
+    },
+    "top_game": {
+      "type": "string",
+      "title": "Best Performing Game"
+    },
+    "highlight": {
+      "type": "string",
+      "title": "Week Highlight"
+    },
+    "ai_summary": {
+      "type": "string",
+      "title": "AI Weekly Summary"
+    },
+    "goals_hit": {
+      "type": "number",
+      "title": "Goals Hit",
+      "default": 0
+    },
+    "goals_missed": {
+      "type": "number",
+      "title": "Goals Missed",
+      "default": 0
+    }
+  },
+  "required": [
+    "week_number",
+    "year",
+    "week_start_date"
+  ]
+}

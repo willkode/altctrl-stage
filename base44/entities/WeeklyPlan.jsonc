@@ -1,0 +1,74 @@
+{
+  "name": "WeeklyPlan",
+  "type": "object",
+  "properties": {
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "week_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Week Start Date (Monday)"
+    },
+    "week_end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Week End Date (Sunday)"
+    },
+    "stream_target": {
+      "type": "number",
+      "title": "Stream Target for Week",
+      "default": 3
+    },
+    "primary_game": {
+      "type": "string",
+      "title": "Primary Game This Week"
+    },
+    "secondary_games": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Secondary Games"
+    },
+    "focus_note": {
+      "type": "string",
+      "title": "Focus Note / Intention"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "active",
+        "completed",
+        "missed"
+      ],
+      "default": "draft"
+    },
+    "streams_completed": {
+      "type": "number",
+      "title": "Streams Completed",
+      "default": 0
+    },
+    "promo_posted_count": {
+      "type": "number",
+      "title": "Promo Posted Count",
+      "default": 0
+    },
+    "ai_brief": {
+      "type": "string",
+      "title": "AI Weekly Brief"
+    }
+  },
+  "required": [
+    "week_number",
+    "year",
+    "week_start_date"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "ScheduledStream",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Stream Title"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "stream_type": {
+      "type": "string",
+      "title": "Stream Type",
+      "enum": [
+        "ranked",
+        "chill",
+        "viewer_games",
+        "challenge",
+        "collab",
+        "special",
+        "other"
+      ],
+      "default": "ranked"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Scheduled Date"
+    },
+    "start_time": {
+      "type": "string",
+      "title": "Start Time (HH:MM)"
+    },
+    "target_duration_minutes": {
+      "type": "number",
+      "title": "Target Duration (minutes)",
+      "default": 60
+    },
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "planned",
+        "live",
+        "completed",
+        "skipped",
+        "cancelled"
+      ],
+      "default": "planned"
+    },
+    "recurring": {
+      "type": "boolean",
+      "title": "Recurring",
+      "default": false
+    },
+    "recurrence_days": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri",
+          "sat",
+          "sun"
+        ]
+      },
+      "title": "Recurrence Days"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "promo_generated": {
+      "type": "boolean",
+      "title": "Promo Generated",
+      "default": false
+    },
+    "live_session_id": {
+      "type": "string",
+      "title": "Linked Live Session ID"
+    }
+  },
+  "required": [
+    "game",
+    "scheduled_date"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "name": "GrowthGoal",
+  "type": "object",
+  "properties": {
+    "goal_type": {
+      "type": "string",
+      "title": "Goal Type",
+      "enum": [
+        "weekly_streams",
+        "avg_viewers",
+        "peak_viewers",
+        "followers_gained",
+        "consistency_streak",
+        "promo_rate",
+        "custom"
+      ],
+      "default": "weekly_streams"
+    },
+    "title": {
+      "type": "string",
+      "title": "Goal Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "target_value": {
+      "type": "number",
+      "title": "Target Value"
+    },
+    "current_value": {
+      "type": "number",
+      "title": "Current Value",
+      "default": 0
+    },
+    "unit": {
+      "type": "string",
+      "title": "Unit (e.g. streams, viewers, followers)"
+    },
+    "period": {
+      "type": "string",
+      "title": "Period",
+      "enum": [
+        "weekly",
+        "monthly",
+        "ongoing"
+      ],
+      "default": "weekly"
+    },
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "completed",
+        "missed",
+        "paused"
+      ],
+      "default": "active"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Completed At"
+    }
+  },
+  "required": [
+    "goal_type",
+    "target_value"
+  ]
+}

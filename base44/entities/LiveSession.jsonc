@@ -1,0 +1,103 @@
+{
+  "name": "LiveSession",
+  "type": "object",
+  "properties": {
+    "scheduled_stream_id": {
+      "type": "string",
+      "title": "Linked Scheduled Stream ID"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "stream_type": {
+      "type": "string",
+      "title": "Stream Type",
+      "enum": [
+        "ranked",
+        "chill",
+        "viewer_games",
+        "challenge",
+        "collab",
+        "special",
+        "other"
+      ],
+      "default": "ranked"
+    },
+    "stream_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Stream Date"
+    },
+    "start_time": {
+      "type": "string",
+      "title": "Start Time"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Duration (minutes)"
+    },
+    "avg_viewers": {
+      "type": "number",
+      "title": "Average Viewers"
+    },
+    "peak_viewers": {
+      "type": "number",
+      "title": "Peak Viewers"
+    },
+    "followers_gained": {
+      "type": "number",
+      "title": "Followers Gained",
+      "default": 0
+    },
+    "likes_received": {
+      "type": "number",
+      "title": "Likes Received",
+      "default": 0
+    },
+    "promo_posted": {
+      "type": "boolean",
+      "title": "Promo Posted Before Stream",
+      "default": false
+    },
+    "promo_kit_id": {
+      "type": "string",
+      "title": "Linked Promo Kit ID"
+    },
+    "went_as_planned": {
+      "type": "boolean",
+      "title": "Went As Planned",
+      "default": true
+    },
+    "energy_level": {
+      "type": "string",
+      "title": "Energy Level",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Personal Notes"
+    }
+  },
+  "required": [
+    "game",
+    "stream_date"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "name": "NotificationPrefs",
+  "type": "object",
+  "properties": {
+    "pre_stream_reminder": {
+      "type": "boolean",
+      "title": "Pre-Stream Reminder",
+      "default": true
+    },
+    "pre_stream_reminder_minutes": {
+      "type": "number",
+      "title": "Reminder Minutes Before Stream",
+      "default": 30
+    },
+    "promo_reminder": {
+      "type": "boolean",
+      "title": "Promo Reminder",
+      "default": true
+    },
+    "daily_coaching_card": {
+      "type": "boolean",
+      "title": "Daily Coaching Card",
+      "default": true
+    },
+    "weekly_plan_reminder": {
+      "type": "boolean",
+      "title": "Weekly Plan Reminder",
+      "default": true
+    },
+    "weekly_recap_notification": {
+      "type": "boolean",
+      "title": "Weekly Recap Notification",
+      "default": true
+    },
+    "goal_alerts": {
+      "type": "boolean",
+      "title": "Goal Alerts",
+      "default": true
+    },
+    "performance_alerts": {
+      "type": "boolean",
+      "title": "Performance Alerts",
+      "default": true
+    },
+    "milestone_notifications": {
+      "type": "boolean",
+      "title": "Milestone Notifications",
+      "default": true
+    },
+    "email_weekly_recap": {
+      "type": "boolean",
+      "title": "Email: Weekly Recap",
+      "default": false
+    },
+    "email_performance_alerts": {
+      "type": "boolean",
+      "title": "Email: Performance Alerts",
+      "default": false
+    },
+    "notification_email": {
+      "type": "string",
+      "title": "Notification Email"
+    }
+  },
+  "required": []
+}

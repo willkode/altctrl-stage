@@ -1,0 +1,68 @@
+{
+  "name": "PromoKit",
+  "type": "object",
+  "properties": {
+    "scheduled_stream_id": {
+      "type": "string",
+      "title": "Linked Scheduled Stream ID"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "stream_type": {
+      "type": "string",
+      "title": "Stream Type"
+    },
+    "hook": {
+      "type": "string",
+      "title": "TikTok Hook"
+    },
+    "caption": {
+      "type": "string",
+      "title": "Caption"
+    },
+    "hashtags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Hashtags"
+    },
+    "title_options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Stream Title Options"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "saved",
+        "posted",
+        "archived"
+      ],
+      "default": "draft"
+    },
+    "posted_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Posted At"
+    },
+    "generation_prompt": {
+      "type": "string",
+      "title": "Generation Prompt Used"
+    },
+    "stream_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Stream Date"
+    }
+  },
+  "required": [
+    "game"
+  ]
+}
