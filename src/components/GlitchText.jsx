@@ -14,7 +14,7 @@ export default function GlitchText({ text, className = "", tag: Tag = "span" }) 
 
   return (
     <Tag className={`relative inline-block ${className}`}>
-      <span className="relative z-10">{text}</span>
+      {text}
       {glitching && (
         <>
           <span
