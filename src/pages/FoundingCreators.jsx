@@ -29,10 +29,10 @@ export default function FoundingCreators() {
 
         {/* Price callout */}
         <div className="bg-[#060d1f] border border-pink-500/60 rounded-lg p-8 text-center mb-8 shadow-[0_0_40px_rgba(255,0,128,0.08)]">
-          <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// FOUNDING CREATOR PRICE — LOCKED</div>
-          <div className="text-8xl font-black text-white mb-2">$9<span className="text-3xl text-slate-400 font-mono">/mo</span></div>
-          <p className="text-slate-400 text-sm mb-2">After beta, standard pricing goes to <span className="text-white font-bold">$29/mo</span></p>
-          <p className="text-pink-400 text-xs font-mono uppercase tracking-widest">YOUR PRICE NEVER CHANGES. EVER.</p>
+          <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// FOUNDING CREATOR ACCESS — 100 SEATS ONLY</div>
+          <div className="text-8xl font-black text-white mb-2">FREE<span className="text-3xl text-slate-400 font-mono"> forever</span></div>
+          <p className="text-slate-400 text-sm mb-2">After beta, standard pricing is <span className="text-white font-bold">$29/mo</span></p>
+          <p className="text-pink-400 text-xs font-mono uppercase tracking-widest">LIFETIME ACCESS. NO CREDIT CARD. 100 SEATS ONLY.</p>
         </div>
 
         {/* Perks */}

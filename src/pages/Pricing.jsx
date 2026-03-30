@@ -34,14 +34,15 @@ export default function Pricing() {
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {/* Founding Creator */}
           <div className="relative bg-[#060d1f] border border-pink-500/60 rounded-lg p-8 hover:shadow-[0_0_30px_rgba(255,0,128,0.15)] transition-all">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
               <span className="bg-pink-500 text-white text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full">FOUNDING CREATOR</span>
+              <span className="bg-yellow-400 text-[#02040f] text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">100 SEATS</span>
             </div>
             <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4 mt-2">// LIMITED SLOTS</div>
             <div className="mb-6">
-              <span className="text-5xl font-black text-white">$9</span>
-              <span className="text-slate-400 text-sm font-mono">/mo</span>
-              <div className="text-xs font-mono text-slate-500 mt-1">Locked forever. No increases.</div>
+              <span className="text-5xl font-black text-white">FREE</span>
+              <span className="text-slate-400 text-sm font-mono"> lifetime</span>
+              <div className="text-xs font-mono text-pink-400 mt-1">100 seats only. No credit card.</div>
             </div>
             <div className="space-y-3 mb-8">
               {foundingFeatures.map((f, i) => (
