@@ -1,0 +1,33 @@
+{
+  "name": "WaitlistEntry",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "tiktok_handle": {
+      "type": "string",
+      "title": "TikTok Handle"
+    },
+    "avg_viewers": {
+      "type": "string",
+      "title": "Avg Viewers"
+    },
+    "source": {
+      "type": "string",
+      "title": "Source Page"
+    },
+    "founding_creator": {
+      "type": "boolean",
+      "title": "Founding Creator Interest"
+    }
+  },
+  "required": [
+    "email"
+  ]
+}
