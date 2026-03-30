@@ -6,6 +6,12 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
+import AppLayout from './components/AppLayout';
+import Dashboard from './pages/app/Dashboard';
+import Schedule from './pages/app/Schedule';
+import Promo from './pages/app/Promo';
+import Analytics from './pages/app/Analytics';
+import Coach from './pages/app/Coach';
 import Home from './pages/Home';
 import Features from './pages/Features';
 import HowItWorks from './pages/HowItWorks';
@@ -46,21 +52,14 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/app/dashboard" element={<Dashboard />} />
+        <Route path="/app/schedule" element={<Schedule />} />
+        <Route path="/app/promo" element={<Promo />} />
+        <Route path="/app/analytics" element={<Analytics />} />
+        <Route path="/app/coach" element={<Coach />} />
+      </Route>
       <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/for-creators" element={<ForCreators />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/founding-creators" element={<FoundingCreators />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/waitlist" element={<Waitlist />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
   );
