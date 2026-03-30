@@ -6,11 +6,11 @@ import SpeedLines from "../components/SpeedLines";
 import GeometricParticles from "../components/GeometricParticles";
 
 const features = [
-  { icon: Target, label: "PLAN", title: "Tactical Week Planning", desc: "Map your streams like missions. Set goals, assign themes, build consistency.", accent: "cyan" },
-  { icon: Radio, label: "PROMOTE", title: "AI Promo Generation", desc: "Auto-generate captions, hooks, and thumbnails before every stream.", accent: "pink" },
-  { icon: Zap, label: "GO LIVE", title: "Pre-Stream Command Check", desc: "System-check your setup, goals, and promo before you hit go live.", accent: "cyan" },
-  { icon: TrendingUp, label: "LEARN", title: "Performance Intelligence", desc: "Track what actually works. Real analytics, not vanity numbers.", accent: "pink" },
-  { icon: Brain, label: "COACH", title: "AI Coaching Engine", desc: "Personalized strategy based on your real performance data.", accent: "yellow" },
+  { icon: Target, label: "PLAN", title: "Tactical Week Planning", desc: "Map your streams like missions. Set goals, assign themes, build consistency.", accent: "cyan", img: "https://media.base44.com/images/public/69ca96fae50d535312ca1505/d8baad480_generated_image.png" },
+  { icon: Radio, label: "PROMOTE", title: "AI Promo Generation", desc: "Auto-generate captions, hooks, and thumbnails before every stream.", accent: "pink", img: "https://media.base44.com/images/public/69ca96fae50d535312ca1505/31f00f203_generated_image.png" },
+  { icon: Zap, label: "GO LIVE", title: "Pre-Stream Command Check", desc: "System-check your setup, goals, and promo before you hit go live.", accent: "cyan", img: "https://media.base44.com/images/public/69ca96fae50d535312ca1505/35e612bf0_generated_image.png" },
+  { icon: TrendingUp, label: "LEARN", title: "Performance Intelligence", desc: "Track what actually works. Real analytics, not vanity numbers.", accent: "pink", img: "https://media.base44.com/images/public/69ca96fae50d535312ca1505/77d1f47ba_generated_image.png" },
+  { icon: Brain, label: "COACH", title: "AI Coaching Engine", desc: "Personalized strategy based on your real performance data.", accent: "yellow", img: "https://media.base44.com/images/public/69ca96fae50d535312ca1505/2e0b7cdf3_generated_image.png" },
 ];
 
 const stats = [
@@ -184,13 +184,30 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {features.map((f, i) => (
-              <NeonCard key={i} accent={f.accent} className="group">
-                <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${f.accent === "pink" ? "text-pink-400" : f.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
-                  // MODULE_{String(i + 1).padStart(2, "0")} — {f.label}
+              <NeonCard key={i} accent={f.accent} className="group overflow-hidden !p-0">
+                {/* Card image */}
+                <div className="relative h-36 overflow-hidden">
+                  <img
+                    src={f.img}
+                    alt={f.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {/* Glitch overlay on hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                    style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 60%)", mixBlendMode: "normal" }} />
+                  <div className="absolute inset-0 pointer-events-none"
+                    style={{ background: "linear-gradient(180deg, transparent 40%, rgba(6,13,31,0.95) 100%)" }} />
+                  {/* Module label on image */}
+                  <div className={`absolute top-3 left-3 text-xs font-mono uppercase tracking-widest ${f.accent === "pink" ? "text-pink-400" : f.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
+                    // MODULE_{String(i + 1).padStart(2, "0")} — {f.label}
+                  </div>
                 </div>
-                <f.icon className={`w-6 h-6 mb-3 ${f.accent === "pink" ? "text-pink-400" : f.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`} />
-                <h3 className="text-white font-black uppercase text-lg mb-2">{f.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                {/* Card content */}
+                <div className="p-5">
+                  <f.icon className={`w-5 h-5 mb-2 ${f.accent === "pink" ? "text-pink-400" : f.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`} />
+                  <h3 className="text-white font-black uppercase text-base mb-2">{f.title}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                </div>
               </NeonCard>
             ))}
 
