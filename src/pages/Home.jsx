@@ -49,7 +49,7 @@ export default function Home() {
           style={{ background: "radial-gradient(ellipse, rgba(0,245,255,0.04) 0%, transparent 70%)" }} />
 
         {/* Content */}
-        <div className="relative z-10 text-center max-w-5xl mx-auto">
+        <div className="relative z-10 text-center max-w-5xl mx-auto px-6 py-12 rounded-xl" style={{ background: "rgba(2,4,8,0.65)", backdropFilter: "blur(8px)" }}>
           {/* Live badge */}
           <div className="inline-flex items-center gap-2 border border-cyan-500/40 bg-[#020408]/70 rounded px-4 py-2 mb-10 backdrop-blur-sm">
             <span className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px #ff0080" }} />
