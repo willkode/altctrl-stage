@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap } from "lucide-react";
 import GlitchText from "./GlitchText";
+import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
+import Onboarding from "../pages/app/Onboarding";
+import LoadingState from "./app/LoadingState";
 
 const navItems = [
   { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -21,8 +24,22 @@ const pageTitles = {
 
 export default function AppLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pageTitle = pageTitles[location.pathname] || "ALTCTRL";
+  const { profile, loading, completeOnboarding } = useCreatorBootstrap();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#02040f] flex items-center justify-center">
+        <LoadingState message="Initializing system..." />
+      </div>
+    );
+  }
+
+  if (profile && !profile.onboarding_completed) {
+    return <Onboarding onComplete={async (data) => { await completeOnboarding(data); navigate("/app/dashboard"); }} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#02040f] text-white flex flex-col">
