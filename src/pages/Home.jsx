@@ -118,6 +118,10 @@ export default function Home() {
             <p className="text-2xl font-black uppercase text-cyan-400">WHAT YOU NEED IS A BETTER SYSTEM AROUND IT.</p>
           </div>
 
+          <div className="mb-10 rounded-lg overflow-hidden border border-cyan-900/40">
+            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/03c7c7659_generated_image.png" alt="Cyberpunk gaming setup" className="w-full object-cover" style={{ maxHeight: '380px' }} />
+          </div>
+
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
               {[
@@ -159,6 +163,10 @@ export default function Home() {
             <p className="text-slate-400">They follow a repeatable system.</p>
           </div>
 
+          <div className="mb-10 rounded-lg overflow-hidden border border-pink-900/40">
+            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/66b12d939_generated_image.png" alt="Cyberpunk stream schedule" className="w-full object-cover" style={{ maxHeight: '340px' }} />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {loopSteps.map((step, i) => (
               <NeonCard key={i} accent={step.accent}>
@@ -180,6 +188,10 @@ export default function Home() {
           <div className="text-center mb-14">
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// WHAT ALTCTRL HELPS YOU DO</div>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-white">TURN RANDOM EFFORT INTO<br /><span style={{ color: "#00f5ff" }}>REPEATABLE GROWTH.</span></h2>
+          </div>
+
+          <div className="mb-10 rounded-lg overflow-hidden border border-cyan-900/40">
+            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/5636d4034_generated_image.png" alt="AI promo generator" className="w-full object-cover" style={{ maxHeight: '340px' }} />
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -232,6 +244,9 @@ export default function Home() {
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// YOUR CREATOR CONTROL CENTER</div>
           <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4">ALTCTRL IS ORGANIZED AROUND<br /><span style={{ color: "#00f5ff" }}>FIVE CORE AREAS.</span></h2>
           <p className="text-slate-400 mb-10 text-sm">Everything is designed to move you through the same growth loop every week, with less friction and more clarity.</p>
+          <div className="mb-10 rounded-lg overflow-hidden border border-cyan-900/40">
+            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/513ee106b_generated_image.png" alt="AltCtrl control center" className="w-full object-cover" style={{ maxHeight: '340px' }} />
+          </div>
           <div className="flex flex-wrap gap-3 justify-center">
             {pillars.map((p, i) => (
               <div key={i} className="bg-[#060d1f] border border-cyan-900/40 rounded-lg px-6 py-4 text-white font-black uppercase tracking-widest text-sm hover:border-cyan-500/60 hover:text-cyan-400 transition-all">
@@ -248,6 +263,10 @@ export default function Home() {
           <div className="text-center mb-14">
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// BUILT FOR SERIOUS TIKTOK LIVE GAMING CREATORS</div>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4">FOR CREATORS WHO TREAT STREAMING<br /><span style={{ color: "#00f5ff" }}>LIKE SOMETHING THEY'RE BUILDING.</span></h2>
+          </div>
+
+          <div className="mb-10 rounded-lg overflow-hidden border border-pink-900/40">
+            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/a96fc884f_generated_image.png" alt="TikTok live gaming stream" className="w-full object-cover" style={{ maxHeight: '340px' }} />
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
