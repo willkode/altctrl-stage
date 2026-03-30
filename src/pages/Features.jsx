@@ -1,122 +1,185 @@
 import { Link } from "react-router-dom";
-import { Target, Radio, Zap, TrendingUp, Brain, Calendar, ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, Calendar, Radio, Brain, TrendingUp } from "lucide-react";
 import GlitchText from "../components/GlitchText";
 import NeonCard from "../components/NeonCard";
 
-const modules = [
+const pillars = [
   {
     id: "01",
     icon: Calendar,
-    label: "PLAN",
-    title: "Weekly Mission Planning",
+    label: "PROGRAMMING",
+    title: "Build a real stream schedule. Stop going live randomly.",
     accent: "cyan",
-    desc: "Build your stream week like a tactical ops board. Assign themes, set goals, lock in your schedule. No more winging it.",
-    bullets: [
-      "7-day stream calendar with goal tracking",
-      "Theme & game assignment per session",
-      "Streak and consistency metrics",
-      "Weekly performance vs goals review",
-    ],
+    intro: "Most creators stream whenever they feel like it. AltCtrl helps you build a weekly calendar with planned stream slots, assigned games, stream formats, and target durations.",
+    canDo: {
+      heading: "What you can do",
+      items: [
+        "Create a weekly stream schedule",
+        "Assign games and stream types to each slot",
+        "Set recurring streams",
+        "Track weekly target vs completed streams",
+        "Build consistency over time",
+        "Get smarter schedule recommendations as you log more sessions",
+      ],
+    },
+    why: "Consistency is not just about discipline. It is about structure. When your week has a plan, every other part of your growth gets easier.",
   },
   {
     id: "02",
     icon: Radio,
-    label: "PROMOTE",
-    title: "AI Promo Pack Generator",
+    label: "PROMOTION",
+    title: "Get your promo pack before every stream.",
     accent: "pink",
-    desc: "Generate a full promo kit before every single stream — TikTok captions, hooks, and content ideas in seconds.",
-    bullets: [
-      "Stream-specific AI caption generation",
-      "Hook library for pre-stream content",
-      "Thumbnail concept suggestions",
-      "One-click copy & export",
-    ],
+    intro: "This is one of AltCtrl's most important features. Before each scheduled stream, generate a ready-to-use promo pack in seconds.",
+    packIncludes: {
+      heading: "Each promo pack includes",
+      items: [
+        "A TikTok hook",
+        "A caption",
+        "8 to 10 hashtags",
+        "Stream title options",
+      ],
+    },
+    canDo: {
+      heading: "What you can do",
+      items: [
+        "Generate promo for upcoming streams",
+        "Copy each element with one tap",
+        "Save promo packs to your library",
+        "Mark promo as posted",
+        "Regenerate new versions when needed",
+        "Match your promo tone to your style",
+      ],
+    },
+    why: "Promo is one of the easiest ways to increase awareness before going live, but most creators skip it because it feels like extra work. AltCtrl removes that friction.",
   },
   {
     id: "03",
-    icon: Zap,
-    label: "GO LIVE",
-    title: "Pre-Live Command Check",
-    accent: "cyan",
-    desc: "A pre-stream HUD that confirms your gear, goals, and promo are locked before you go live.",
-    bullets: [
-      "Setup checklist with quick status",
-      "Stream goal reminder display",
-      "Promo confirmation log",
-      "Energy and focus prompts",
-    ],
+    icon: Brain,
+    label: "COACHING",
+    title: "Know what to focus on today — and what to improve this week.",
+    accent: "yellow",
+    intro: "AltCtrl gives you coaching based on your real session history, your goals, and your current momentum.",
+    canDo: {
+      heading: "Coaching features",
+      items: [
+        "Daily coaching cards",
+        "Weekly game plans",
+        "Goals tracking",
+        "Weekly recaps",
+        "Streak and consistency tracking",
+        "Alerts for milestones, missed momentum, and opportunities",
+      ],
+    },
+    why: "Generic creator advice does not help when your schedule, games, and audience patterns are different from everyone else's. AltCtrl is built to coach you based on your own data.",
   },
   {
     id: "04",
     icon: TrendingUp,
-    label: "LEARN",
-    title: "Real Performance Intelligence",
-    accent: "pink",
-    desc: "Track what actually drives growth. Not just views — engagement patterns, best times, game performance, audience behavior.",
-    bullets: [
-      "Stream-by-stream performance tracking",
-      "Best time and game analysis",
-      "Audience behavior patterns",
-      "Growth velocity tracking",
-    ],
-  },
-  {
-    id: "05",
-    icon: Brain,
-    label: "COACH",
-    title: "AI Coaching Engine",
-    accent: "yellow",
-    desc: "Your personal gaming strategist. Real coaching based on your actual data — what to change, what to double down on.",
-    bullets: [
-      "Weekly personalized strategy briefs",
-      "Actionable improvement targets",
-      "Confidence and momentum scoring",
-      "Comparison vs your own best",
-    ],
+    label: "PERFORMANCE",
+    title: "See what games, times, and habits actually grow your account.",
+    accent: "cyan",
+    intro: "AltCtrl helps you turn session data into decisions.",
+    canDo: {
+      heading: "Track and review",
+      items: [
+        "Average viewers",
+        "Peak viewers",
+        "Session duration",
+        "Followers gained",
+        "Promo posted vs not posted",
+        "Game-by-game performance",
+        "Time slot performance",
+        "Full session history",
+      ],
+    },
+    why: "Growth gets easier when you stop guessing. AltCtrl helps you see patterns, spot wins, and double down on what works.",
   },
 ];
 
 export default function Features() {
   return (
     <div className="py-16 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
+
         {/* Header */}
         <div className="text-center mb-20">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// SYSTEM MODULES — FULL SPEC</div>
-          <GlitchText text="EVERY FEATURE." className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-5xl sm:text-6xl font-black uppercase text-cyan-400">BUILT FOR BATTLE.</h1>
-          <p className="text-slate-400 mt-6 max-w-xl mx-auto">AltCtrl isn't a dashboard. It's a gaming operating system. Every module connects. Every feature feeds the next.</p>
+          <GlitchText text="EVERYTHING YOU NEED TO RUN YOUR" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h1" />
+          <h1 className="text-4xl sm:text-5xl font-black uppercase text-cyan-400">TIKTOK LIVE GAMING GROWTH LOOP.</h1>
+          <p className="text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed">
+            AltCtrl is built around four core pillars: Programming, Promotion, Coaching, and Performance. Each one supports a different part of your weekly creator workflow.
+          </p>
         </div>
 
-        {/* Modules */}
-        <div className="space-y-6">
-          {modules.map((mod) => (
-            <NeonCard key={mod.id} accent={mod.accent} className="group">
-              <div className="grid md:grid-cols-2 gap-6 items-start">
-                <div>
-                  <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${mod.accent === "pink" ? "text-pink-400" : mod.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
-                    // MODULE_{mod.id} — {mod.label}
-                  </div>
-                  <mod.icon className={`w-8 h-8 mb-4 ${mod.accent === "pink" ? "text-pink-400" : mod.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`} />
-                  <h2 className="text-2xl font-black uppercase text-white mb-3">{mod.title}</h2>
-                  <p className="text-slate-400 leading-relaxed">{mod.desc}</p>
+        {/* Pillars */}
+        <div className="space-y-12">
+          {pillars.map((p) => (
+            <div key={p.id} className="bg-[#060d1f] border border-cyan-900/30 rounded-lg overflow-hidden">
+              {/* Pillar header */}
+              <div className={`px-8 py-6 border-b ${p.accent === "pink" ? "border-pink-900/30" : p.accent === "yellow" ? "border-yellow-900/30" : "border-cyan-900/30"}`}>
+                <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${p.accent === "pink" ? "text-pink-400" : p.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>
+                  // PILLAR_{p.id} — {p.label}
                 </div>
-                <div className="space-y-3">
-                  {mod.bullets.map((b, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle className={`w-4 h-4 mt-0.5 shrink-0 ${mod.accent === "pink" ? "text-pink-400" : mod.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`} />
-                      <span className="text-slate-300 text-sm">{b}</span>
-                    </div>
-                  ))}
+                <div className="flex items-start gap-4">
+                  <p.icon className={`w-8 h-8 shrink-0 mt-1 ${p.accent === "pink" ? "text-pink-400" : p.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`} />
+                  <h2 className="text-2xl sm:text-3xl font-black uppercase text-white leading-tight">{p.title}</h2>
                 </div>
               </div>
-            </NeonCard>
+
+              {/* Pillar body */}
+              <div className="px-8 py-8 grid md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <p className="text-slate-300 text-sm leading-relaxed">{p.intro}</p>
+
+                  {p.packIncludes && (
+                    <div>
+                      <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${p.accent === "pink" ? "text-pink-400" : "text-cyan-400"}`}>{p.packIncludes.heading}</div>
+                      <ul className="space-y-2">
+                        {p.packIncludes.items.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                            <span className={`font-mono font-bold mt-0.5 ${p.accent === "pink" ? "text-pink-400" : "text-cyan-400"}`}>→</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div>
+                    <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${p.accent === "pink" ? "text-pink-400" : p.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>{p.canDo.heading}</div>
+                    <ul className="space-y-2">
+                      {p.canDo.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                          <span className={`font-mono font-bold mt-0.5 ${p.accent === "pink" ? "text-pink-400" : p.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>→</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className={`rounded-lg p-6 flex flex-col justify-center ${p.accent === "pink" ? "bg-pink-950/20 border border-pink-900/30" : p.accent === "yellow" ? "bg-yellow-950/20 border border-yellow-900/30" : "bg-cyan-950/20 border border-cyan-900/30"}`}>
+                  <div className={`text-xs font-mono uppercase tracking-widest mb-3 ${p.accent === "pink" ? "text-pink-400" : p.accent === "yellow" ? "text-yellow-400" : "text-cyan-400"}`}>// WHY IT MATTERS</div>
+                  <p className="text-slate-300 text-sm leading-relaxed">{p.why}</p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <Link to="/waitlist" className="inline-flex items-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest px-8 py-4 rounded text-sm hover:bg-cyan-300 hover:shadow-[0_0_40px_rgba(0,245,255,0.5)] transition-all">
+        {/* Closing */}
+        <div className="mt-20 bg-[#060d1f] border border-cyan-900/40 rounded-lg p-10 text-center">
+          <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// ONE SYSTEM. FOUR PILLARS. ONE REPEATABLE GROWTH LOOP.</div>
+          <GlitchText text="NOT ANOTHER GENERIC CREATOR DASHBOARD." className="text-3xl sm:text-4xl font-black uppercase text-white block mb-4" tag="h2" />
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed mb-10">
+            AltCtrl is a focused system built specifically for TikTok LIVE gaming creators who want to grow with more structure, better promo, and clearer feedback every week.
+          </p>
+          <Link to="/waitlist"
+            className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
+            style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.4)"}>
             GET EARLY ACCESS <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
