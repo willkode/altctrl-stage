@@ -141,12 +141,12 @@ export default function Home() {
       </section>
 
       {/* ── STATS BAR ─────────────────────────────────────────── */}
-      <section className="relative border-y py-8 overflow-hidden" style={{ borderColor: "rgba(0,245,255,0.15)", background: "linear-gradient(90deg, rgba(255,0,128,0.05) 0%, rgba(0,245,255,0.05) 50%, rgba(255,0,128,0.05) 100%)", backgroundColor: "#050b18" }}>
+      <section className="relative border-y overflow-hidden" style={{ height: 150, borderColor: "rgba(0,245,255,0.15)", background: "linear-gradient(90deg, rgba(255,0,128,0.05) 0%, rgba(0,245,255,0.05) 50%, rgba(255,0,128,0.05) 100%)", backgroundColor: "#050b18" }}>
         {/* Horizontal accent line top */}
         <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #ff0080, #00f5ff, #ff0080, transparent)" }} />
         <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, #00f5ff, #ff0080, #00f5ff, transparent)" }} />
 
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="max-w-5xl mx-auto px-4 h-full flex items-center"><div className="w-full grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((s, i) => (
             <div key={i} className="text-center">
               <div
@@ -158,7 +158,7 @@ export default function Home() {
               <div className="text-xs font-mono uppercase tracking-widest text-slate-500 mt-1">{s.label}</div>
             </div>
           ))}
-        </div>
+        </div></div>
       </section>
 
       {/* ── FEATURES ──────────────────────────────────────────── */}
