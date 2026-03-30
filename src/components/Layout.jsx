@@ -98,10 +98,11 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-cyan-400 rounded flex items-center justify-center">
-                <Zap className="w-4 h-4 text-[#02040f]" fill="currentColor" />
-              </div>
-              <span className="font-black uppercase tracking-widest text-sm">ALT<span className="text-cyan-400">CTRL</span></span>
+              <img
+                src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/9e338f22f_altctrl-logo2.png"
+                alt="AltCtrl"
+                className="h-7 w-auto"
+              />
               <span className="text-xs font-mono text-slate-600 ml-2">// AI OS FOR TIKTOK LIVE GAMING</span>
             </div>
             <div className="flex flex-wrap gap-4 justify-center">
