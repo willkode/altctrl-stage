@@ -24,11 +24,17 @@ Deno.serve(async (req) => {
     const clientId = Deno.env.get('TIKTOK_CLIENT_ID');
     const clientSecret = Deno.env.get('TIKTOK_CLIENT_SECRET');
 
-    // Exchange code for access token
-    const tokenRes = await fetch('https://open.tiktokapis.com/v1/oauth/token/', {
+    // Exchange code for access token (v2)
+    const tokenRes = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code`,
+      body: new URLSearchParams({
+        client_key: clientId,
+        client_secret: clientSecret,
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: Deno.env.get('TIKTOK_REDIRECT_URI'),
+      }).toString(),
     });
 
     const tokenData = await tokenRes.json();
@@ -36,14 +42,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to get access token', details: tokenData }, { status: 400 });
     }
 
-    // Get user info
-    const userRes = await fetch('https://open.tiktokapis.com/v1/user/info/?fields=open_id,union_id,avatar_url,display_name,bio_description,follower_count,following_count,likes_count,video_count', {
+    // Get user info (v2)
+    const userRes = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=open_id,union_id,avatar_url,display_name,bio_description,follower_count,following_count,likes_count,video_count', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
 
     const userData = await userRes.json();
     if (!userData.data) {
-      return Response.json({ error: 'Failed to get user info' }, { status: 400 });
+      return Response.json({ error: 'Failed to get user info', details: userData }, { status: 400 });
     }
 
     const tiktokUser = userData.data;

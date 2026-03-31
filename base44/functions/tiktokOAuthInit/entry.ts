@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     // Store state in user data for verification on callback
     await base44.auth.updateMe({ tiktok_oauth_state: state });
 
-    const authUrl = `https://www.tiktok.com/v1/oauth/authorize?client_id=${clientId}&response_type=code&scope=${scope}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientId}&response_type=code&scope=${scope}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
     return Response.json({ auth_url: authUrl });
   } catch (error) {
