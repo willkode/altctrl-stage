@@ -76,10 +76,12 @@ export default function Dashboard() {
   const handleConnectTikTok = async () => {
     setConnectingTikTok(true);
     try {
-      const url = await base44.connectors.connectAppUser("69c7e25af1fbef3a6d3efd4d");
-      window.open(url, "_blank");
+      const res = await base44.functions.invoke("tiktokOAuthInit", {});
+      if (res.data.auth_url) {
+        window.open(res.data.auth_url, "_blank");
+      }
     } catch (err) {
-      console.error("Failed to get TikTok connect URL", err);
+      console.error("Failed to get TikTok auth URL", err);
     } finally {
       setConnectingTikTok(false);
     }

@@ -118,10 +118,7 @@ export default function Profile() {
   async function handleTikTokSync() {
     setSyncingTikTok(true);
     try {
-      // Trigger full sync from TikTok
-      await base44.functions.invoke("runTikTokFullSync", {});
-      
-      // Re-load profile to get updated stats
+      await base44.functions.invoke("tiktokDirectSync", {});
       await loadProfile();
       toast.saved("TikTok data synced!");
     } catch (err) {
