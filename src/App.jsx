@@ -25,6 +25,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import Waitlist from './pages/Waitlist';
 import Blog from './pages/Blog';
+import Notifications from './pages/app/Notifications';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,6 +59,7 @@ const AuthenticatedApp = () => {
         <Route path="/app/promo" element={<Promo />} />
         <Route path="/app/analytics" element={<Analytics />} />
         <Route path="/app/coach" element={<Coach />} />
+        <Route path="/app/notifications" element={<Notifications />} />
       </Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />

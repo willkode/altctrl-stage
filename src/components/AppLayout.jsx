@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
+import { base44 } from "@/api/base44Client";
 import Onboarding from "../pages/app/Onboarding";
 import LoadingState from "./app/LoadingState";
 import AppToaster from "./app/AppToaster";
@@ -24,6 +25,7 @@ const pageTitles = {
   "/app/promo": "PROMO",
   "/app/analytics": "ANALYTICS",
   "/app/coach": "COACH",
+  "/app/notifications": "NOTIFICATIONS",
 };
 
 export default function AppLayout() {
@@ -33,6 +35,15 @@ export default function AppLayout() {
   const pageTitle = pageTitles[location.pathname] || "ALTCTRL";
   const { profile, loading, completeOnboarding } = useCreatorBootstrap();
   const [activeDrawer, setActiveDrawer] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    base44.auth.me().then(user => {
+      base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false, read: false }, '-created_date', 50)
+        .then(alerts => setUnreadCount(alerts.length))
+        .catch(() => {});
+    }).catch(() => {});
+  }, [location.pathname]);
 
   const handleQuickAction = (event) => {
     if (event === "add-stream") setActiveDrawer("stream");
@@ -78,10 +89,13 @@ export default function AppLayout() {
 
         {/* Header actions */}
         <div className="flex items-center gap-3">
-          <button className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          <Link to="/app/notifications"
+            className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full" style={{ boxShadow: "0 0 4px #ff0080" }} />
-          </button>
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full" style={{ boxShadow: "0 0 4px #ff0080" }} />
+            )}
+          </Link>
           <button className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <User className="w-4 h-4" />
           </button>
