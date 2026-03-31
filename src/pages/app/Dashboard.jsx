@@ -130,6 +130,29 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* ── TikTok Sync (First Step) ── */}
+      {isNewCreator && (
+        <div className="bg-[#060d1f] border border-pink-900/30 rounded-lg p-6 mb-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// STEP 1</span>
+              </div>
+              <h2 className="text-lg font-black uppercase text-white mb-1">Connect Your TikTok Account</h2>
+              <p className="text-sm text-slate-400 font-mono">Sync your profile data and unlock AI coaching based on your real performance.</p>
+            </div>
+            <a
+              href={`${import.meta.env.VITE_BASE44_CONSOLE_URL || 'https://console.base44.com'}/connectors/69c7e25af1fbef3a6d3efd4d/connect`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded text-xs font-mono uppercase bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all shrink-0 whitespace-nowrap"
+            >
+              Connect TikTok
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* ── New Creator Checklist ── */}
       {isNewCreator && (
         <NewCreatorChecklist completedKeys={checklistKeys} />
