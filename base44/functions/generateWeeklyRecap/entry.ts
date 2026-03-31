@@ -43,12 +43,14 @@ Deno.serve(async (req) => {
     if (existing.length > 0) return Response.json({ recap: existing[0], cached: true });
   }
 
-  // Gather data
-  const [profiles, allSessions, goals, scheduledStreams] = await Promise.all([
+  // Gather data (sessions + replays + profile snapshots)
+  const [profiles, allSessions, goals, scheduledStreams, replays, profileSnapshots] = await Promise.all([
     base44.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.entities.LiveSession.filter({ created_by: user.email }, '-stream_date', 60),
     base44.entities.GrowthGoal.filter({ created_by: user.email }),
     base44.entities.ScheduledStream.filter({ created_by: user.email }, '-scheduled_date', 30),
+    base44.entities.ReplayReview.filter({ created_by: user.email }, '-reviewed_at', 10),
+    base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, '-captured_at', 5),
   ]);
 
   const profile = profiles[0] || null;
@@ -119,6 +121,24 @@ Deno.serve(async (req) => {
       ? `${viewerDelta >= 0 ? '+' : ''}${viewerDelta} vs last week (${prevAvgViewers} → ${avgViewers})`
       : avgViewers ? `avg ${avgViewers} viewers` : 'no viewer data';
 
+    // Collect debrief insights from replays
+    const weekReplays = replays.filter(r => {
+      const rDate = new Date(r.reviewed_at || r.created_date);
+      return rDate >= new Date(weekStart) && rDate <= new Date(weekEnd);
+    });
+    const debriefsummary = weekReplays.length > 0
+      ? `Replays reviewed: ${weekReplays.length}. Key lessons: ${weekReplays.map(r => r.lessons).filter(Boolean).slice(0, 2).join(' | ')}`
+      : 'No replays reviewed this week';
+
+    // TikTok profile trend for week
+    const weekProfileSnapshots = profileSnapshots.filter(p => {
+      const pDate = new Date(p.captured_at);
+      return pDate >= new Date(weekStart) && pDate <= new Date(weekEnd);
+    }).sort((a, b) => new Date(b.captured_at) - new Date(a.captured_at));
+    const followerTrend = weekProfileSnapshots.length > 0
+      ? `Followers this week: ${weekProfileSnapshots[0].follower_count}`
+      : null;
+
     const prompt = `You are AltCtrl, an AI coach for TikTok LIVE gaming creators. Generate a weekly recap summary for week ${recapWeek} (${weekStart} to ${weekEnd}).
 
 Creator: ${profile?.display_name || 'Creator'}, goal: ${profile?.stream_goal?.replace(/_/g, ' ') || 'grow followers'}
@@ -133,11 +153,17 @@ Week ${recapWeek} results:
 - Top game: ${topGame || 'mixed'}
 - Consistency score: ${consistencyScore ?? 'N/A'}%
 
+Creator debrief insights:
+${debriefsummary}
+
+TikTok profile trends:
+${followerTrend || 'No profile snapshots'}
+
 Previous week for comparison:
 - Sessions: ${prevWeekSessions.length}
 - Avg viewers: ${prevAvgViewers ?? 'no data'}
 
-Generate a data-specific recap. Do NOT be generic. Reference actual numbers.
+Generate a data-specific recap grounded in sessions, replays, and TikTok profile trends. Do NOT be generic. Reference actual numbers and creator insights.
 
 Return JSON:
 - highlight: 1 sentence biggest win of the week (reference a specific number)

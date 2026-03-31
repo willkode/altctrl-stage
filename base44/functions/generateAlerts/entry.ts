@@ -28,12 +28,14 @@ Deno.serve(async (req) => {
     const week = getISOWeek(now);
     const year = now.getFullYear();
 
-    // Load all data in parallel
-    const [profile, sessions, streams, existingAlerts] = await Promise.all([
+    // Load all data in parallel (sessions + replays + profile snapshots)
+    const [profile, sessions, streams, existingAlerts, replays, profileSnapshots] = await Promise.all([
       base44.entities.CreatorProfile.filter({ created_by: user.email }).then(r => r[0] || null),
       base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 200),
       base44.entities.ScheduledStream.filter({ created_by: user.email }, "-scheduled_date", 200),
       base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false }, "-created_date", 100),
+      base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 20),
+      base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, "-captured_at", 5),
     ]);
 
     const weeklyTarget = profile?.weekly_stream_target || 3;
@@ -133,28 +135,44 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── 4. PROMO MISSED PATTERN ─────────────────────────────────────────
+    // ─── 4. PROMO IMPACT + DEBRIEF INSIGHT ───────────────────────────────────
     if (!alreadyAlerted("promo_missed")) {
       const recentSessions = sessions
         .filter(s => new Date(s.stream_date + "T12:00:00") >= weekStart(2))
         .slice(0, 10);
 
       if (recentSessions.length >= 3) {
+        const promoSessions = recentSessions.filter(s => s.promo_posted);
         const noPromo = recentSessions.filter(s => !s.promo_posted);
+        
+        // Calculate promo effect from actual data
+        const promoAvg = promoSessions.length > 0
+          ? promoSessions.reduce((a, s) => a + (s.avg_viewers || 0), 0) / promoSessions.length
+          : 0;
+        const noPromoAvg = noPromo.length > 0
+          ? noPromo.reduce((a, s) => a + (s.avg_viewers || 0), 0) / noPromo.length
+          : 0;
+        const promoEffect = noPromoAvg > 0 ? Math.round(((promoAvg - noPromoAvg) / noPromoAvg) * 100) : 0;
+        
         const rate = noPromo.length / recentSessions.length;
         if (rate >= 0.7) {
+          // Use debrief insight if available
+          const debreifNote = replays.length > 0
+            ? ` One creator noted: "${replays[0].lessons?.substring(0, 80)}..."`
+            : '';
+          
           toCreate.push({
             alert_type: "promo_missed",
             severity: "warning",
             title: "Promo Gaps Detected",
-            body: `${noPromo.length} of your last ${recentSessions.length} streams had no promo posted. Creators who post promo consistently see up to 2× more viewers. Try generating a kit before your next stream.`,
+            body: `${noPromo.length} of your last ${recentSessions.length} streams had no promo posted. Your promo-posted sessions averaged ${Math.round(promoAvg)} viewers vs ${Math.round(noPromoAvg)} without — that's ${promoEffect > 0 ? '+' : ''}${promoEffect}% impact. Try generating a kit before your next stream.${debreifNote}`,
             week_number: week, year, source: "ai_generated",
           });
         }
       }
     }
 
-    // ─── 5. BEST TIME SLOT INSIGHT ───────────────────────────────────────
+    // ─── 5. BEST TIME SLOT INSIGHT (with day-of-week analysis) ─────────────
     if (!alreadyAlerted("best_time_insight")) {
       const withTime = sessions.filter(s => s.start_time && s.avg_viewers != null);
       if (withTime.length >= 5) {
@@ -193,7 +211,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // ─── 6. STRONG WEEK ──────────────────────────────────────────────────
+    // ─── 6. STRONG WEEK + DEBRIEF MOMENTUM ───────────────────────────────────
     if (!alreadyAlerted("strong_week")) {
       const lastWeekSessions = sessions.filter(s => {
         const d = new Date(s.stream_date + "T12:00:00");
@@ -209,13 +227,52 @@ Deno.serve(async (req) => {
         const prevAvg = prevWeekSessions.filter(s => s.avg_viewers > 0).reduce((a, s) => a + s.avg_viewers, 0) / (prevWeekSessions.filter(s => s.avg_viewers > 0).length || 1);
 
         if (lastWeekSessions.length >= weeklyTarget && lastAvg > prevAvg * 1.2 && prevWeekSessions.length > 0) {
+          // Add debrief insight if available
+          const debreifBoost = replays.length > 0
+            ? ` Your replay reviews this week captured key improvements.`
+            : '';
+          
           toCreate.push({
             alert_type: "strong_week",
             severity: "success",
             title: "Strong Week Last Week",
-            body: `You hit your stream target and averaged ${Math.round(lastAvg)} viewers — a ${Math.round(((lastAvg - prevAvg) / prevAvg) * 100)}% jump from the week before. Great execution.`,
+            body: `You hit your stream target and averaged ${Math.round(lastAvg)} viewers — a ${Math.round(((lastAvg - prevAvg) / prevAvg) * 100)}% jump from the week before. Great execution.${debreifBoost}`,
             metric_key: "avg_viewers",
             metric_value: Math.round(lastAvg),
+            week_number: week, year, source: "ai_generated",
+          });
+        }
+      }
+    }
+
+    // ─── 7. COLLAB/SOLO PERFORMANCE INSIGHT ──────────────────────────────────
+    // (Example: recommend collab if collab sessions significantly outperform)
+    if (!alreadyAlerted("best_game_insight") && sessions.length >= 5) {
+      const sessionsByType = {};
+      sessions.slice(0, 20).forEach(s => {
+        const type = s.stream_type || 'other';
+        if (!sessionsByType[type]) sessionsByType[type] = { total: 0, count: 0 };
+        if (s.avg_viewers) {
+          sessionsByType[type].total += s.avg_viewers;
+          sessionsByType[type].count++;
+        }
+      });
+      
+      const typeStats = Object.entries(sessionsByType)
+        .map(([type, d]) => ({ type, avg: Math.round(d.total / d.count), count: d.count }))
+        .sort((a, b) => b.avg - a.avg);
+      
+      if (typeStats.length >= 2) {
+        const best = typeStats[0];
+        const worst = typeStats[typeStats.length - 1];
+        if (best.count >= 2 && worst.count >= 2 && best.avg > worst.avg * 1.3) {
+          toCreate.push({
+            alert_type: "best_game_insight",
+            severity: "info",
+            title: `${best.type.replace('_', ' ')} Format Outperforms`,
+            body: `Your ${best.type.replace('_', ' ')} streams average ${best.avg} viewers vs ${worst.avg} for ${worst.type.replace('_', ' ')}. Consider scheduling more ${best.type.replace('_', ' ')} sessions this week.`,
+            metric_key: "stream_type",
+            metric_value: best.avg,
             week_number: week, year, source: "ai_generated",
           });
         }
