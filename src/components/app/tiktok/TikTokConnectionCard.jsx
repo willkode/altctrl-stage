@@ -35,17 +35,25 @@ export default function TikTokConnectionCard() {
     });
   }, []);
 
-  // Rule 3: open OAuth popup, poll for close, then re-fetch
+  // Open custom TikTok OAuth flow, poll for popup close, then re-fetch
   const handleConnect = async () => {
-    const url = await base44.connectors.connectAppUser(CONNECTOR_ID);
-    const popup = window.open(url, "_blank");
-    const timer = setInterval(() => {
-      if (!popup || popup.closed) {
-        clearInterval(timer);
-        // After OAuth, do an immediate profile sync
-        fetchStatus().then(() => handleSync());
+    try {
+      const res = await base44.functions.invoke("tiktokOAuthInit", {});
+      if (!res.data.auth_url) {
+        setError("Failed to get TikTok auth URL");
+        return;
       }
-    }, 500);
+      const popup = window.open(res.data.auth_url, "_blank");
+      const timer = setInterval(() => {
+        if (!popup || popup.closed) {
+          clearInterval(timer);
+          // After OAuth, do an immediate status + sync
+          fetchStatus().then(() => handleSync());
+        }
+      }, 500);
+    } catch (e) {
+      setError(e.message);
+    }
   };
 
   const handleSync = async () => {
