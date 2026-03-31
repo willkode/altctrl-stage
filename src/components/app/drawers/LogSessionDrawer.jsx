@@ -32,7 +32,7 @@ function getISOWeek(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-2.5 text-sm outline-none transition-all font-mono";
+const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3.5 text-sm outline-none transition-all font-mono";
 const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5";
 
 export default function LogSessionDrawer({ open, onClose, session = null, onSaved }) {
@@ -203,10 +203,10 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
         {/* Stream Type */}
         <div>
           <label className={lbl}>Stream Type</label>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
             {STREAM_TYPES.map(t => (
               <button key={t} onClick={() => set("stream_type", t)}
-                className={`py-2 rounded text-[10px] font-mono uppercase transition-all ${
+                className={`py-2.5 rounded text-[10px] font-mono uppercase transition-all ${
                   form.stream_type === t
                     ? "bg-yellow-400/10 border border-yellow-400/30 text-yellow-400"
                     : "bg-[#02040f] border border-cyan-900/30 text-slate-600 hover:text-slate-300"
@@ -220,18 +220,18 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
         {/* Promo + Went as planned toggles */}
         <div className="grid grid-cols-2 gap-2">
           <button onClick={() => set("promo_posted", !form.promo_posted)}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded border text-xs font-mono uppercase transition-all ${
+            className={`flex items-center justify-center gap-2 py-3.5 rounded border text-xs font-mono uppercase transition-all ${
               form.promo_posted
                 ? "bg-pink-500/10 border-pink-500/30 text-pink-400"
                 : "bg-[#02040f] border-cyan-900/30 text-slate-600"
             }`}>
-            <span className={`w-4 h-4 rounded border flex items-center justify-center ${form.promo_posted ? "bg-pink-500 border-pink-500" : "border-cyan-900/60"}`}>
+            <span className={`w-4 h-4 rounded border flex items-center justify-center ${ form.promo_posted ? "bg-pink-500 border-pink-500" : "border-cyan-900/60"}`}>
               {form.promo_posted && <Check className="w-2.5 h-2.5 text-white" />}
             </span>
             Promo Posted
           </button>
           <button onClick={() => set("went_as_planned", !form.went_as_planned)}
-            className={`flex items-center justify-center gap-2 py-2.5 rounded border text-xs font-mono uppercase transition-all ${
+            className={`flex items-center justify-center gap-2 py-3.5 rounded border text-xs font-mono uppercase transition-all ${
               form.went_as_planned
                 ? "bg-green-500/10 border-green-500/30 text-green-400"
                 : "bg-[#02040f] border-cyan-900/30 text-slate-600"
@@ -286,7 +286,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 pt-1">
+        <div className="flex gap-2 pt-2">
           {isEdit && (
             <button onClick={handleDelete} disabled={deleting}
               className={`flex items-center gap-1.5 px-4 py-3 rounded text-xs font-mono uppercase tracking-widest transition-all disabled:opacity-40 ${
@@ -299,7 +299,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
             </button>
           )}
           <button onClick={handleSave} disabled={saving || !form.game?.trim() || !form.stream_date}
-            className={`flex-1 flex items-center justify-center gap-2 font-black uppercase tracking-widest py-3.5 rounded text-xs transition-all disabled:opacity-40 ${
+            className={`flex-1 flex items-center justify-center gap-2 font-black uppercase tracking-widest py-4 rounded text-sm transition-all disabled:opacity-40 ${
               saved
                 ? "bg-green-400 text-[#02040f]"
                 : "bg-yellow-400 text-[#02040f] hover:bg-yellow-300"

@@ -57,7 +57,50 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="sm:hidden divide-y divide-white/[0.03]">
+            {paginated.map(s => (
+              <div key={s.id} className="px-4 py-3.5">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-sm font-black uppercase text-white truncate">{s.game}</span>
+                  {s.energy_level && <AppBadge label={s.energy_level} accent={ENERGY_COLOR[s.energy_level] || "slate"} />}
+                </div>
+                <div className="text-[11px] font-mono text-slate-600 mb-2">{s.stream_date} · {s.stream_type?.replace("_", " ")}</div>
+                <div className="flex items-center gap-4">
+                  {s.avg_viewers != null && (
+                    <div>
+                      <div className="text-base font-black text-cyan-400">{s.avg_viewers}</div>
+                      <div className="text-[9px] font-mono uppercase text-slate-700">avg</div>
+                    </div>
+                  )}
+                  {s.peak_viewers != null && (
+                    <div>
+                      <div className="text-base font-black text-pink-400">{s.peak_viewers}</div>
+                      <div className="text-[9px] font-mono uppercase text-slate-700">peak</div>
+                    </div>
+                  )}
+                  {s.duration_minutes ? (
+                    <div>
+                      <div className="text-base font-black text-slate-400">{s.duration_minutes}m</div>
+                      <div className="text-[9px] font-mono uppercase text-slate-700">duration</div>
+                    </div>
+                  ) : null}
+                  {s.followers_gained > 0 && (
+                    <div>
+                      <div className="text-base font-black text-yellow-400">+{s.followers_gained}</div>
+                      <div className="text-[9px] font-mono uppercase text-slate-700">follows</div>
+                    </div>
+                  )}
+                  <span className={`ml-auto text-xs font-mono ${s.promo_posted ? "text-green-400" : "text-slate-800"}`}>
+                    {s.promo_posted ? "promo ✓" : "no promo"}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full min-w-[640px]">
               <thead className="border-b border-white/5">
                 <tr className="bg-[#02040f]/50">

@@ -11,7 +11,7 @@ function CopyBtn({ text, label }) {
   };
   return (
     <button onClick={handle}
-      className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1.5 rounded border transition-all ${
+      className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-3 py-2 rounded border transition-all ${
         copied
           ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-400"
           : "bg-transparent border-cyan-900/30 text-slate-600 hover:border-cyan-500/30 hover:text-cyan-400"
@@ -58,21 +58,12 @@ export default function PromoPackDisplay({ kit, onMarkPosted, onRegenerate, post
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-60" />
 
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-white/5 flex-wrap">
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
           <Zap className="w-4 h-4 text-pink-400" />
           <span className="text-sm font-black uppercase text-white">{kit.game}</span>
           {kit.stream_type && <AppBadge label={kit.stream_type} accent="pink" />}
           {kit.status === "posted" && <AppBadge label="Posted" accent="green" dot />}
-        </div>
-        <div className="flex items-center gap-2">
-          <CopyAllBtn kit={kit} />
-          {onRegenerate && (
-            <button onClick={onRegenerate}
-              className="text-xs font-mono uppercase tracking-widest px-3 py-2 rounded border border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600 transition-all">
-              Regenerate
-            </button>
-          )}
         </div>
       </div>
 
@@ -134,15 +125,25 @@ export default function PromoPackDisplay({ kit, onMarkPosted, onRegenerate, post
           </div>
         )}
 
-        {/* Mark posted */}
+      </div>
+
+      {/* Sticky mobile action bar */}
+      <div className="sticky bottom-0 border-t border-white/5 bg-[#060d1f] px-5 py-4 flex gap-2">
+        <CopyAllBtn kit={kit} />
+        {onRegenerate && (
+          <button onClick={onRegenerate}
+            className="flex-1 text-xs font-mono uppercase tracking-widest px-3 py-3 rounded border border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600 transition-all">
+            Regenerate
+          </button>
+        )}
         {kit.status !== "posted" && onMarkPosted && (
           <button onClick={onMarkPosted} disabled={posting}
-            className="w-full bg-pink-500 text-white font-black uppercase tracking-widest py-3.5 rounded-lg text-xs hover:bg-pink-400 hover:shadow-[0_0_20px_rgba(255,0,128,0.3)] transition-all disabled:opacity-40">
-            {posting ? "Saving…" : "✓ Mark as Posted"}
+            className="flex-1 bg-pink-500 text-white font-black uppercase tracking-widest py-3 rounded-lg text-xs hover:bg-pink-400 transition-all disabled:opacity-40">
+            {posting ? "Saving…" : "✓ Posted"}
           </button>
         )}
         {kit.status === "posted" && (
-          <div className="text-center text-xs font-mono text-slate-600 py-2">// Posted {kit.posted_at?.split("T")[0]}</div>
+          <div className="flex-1 text-center text-xs font-mono text-slate-600 py-3">// Posted {kit.posted_at?.split("T")[0]}</div>
         )}
       </div>
     </div>

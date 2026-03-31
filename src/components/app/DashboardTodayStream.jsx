@@ -73,18 +73,18 @@ export default function DashboardTodayStream({ stream, onGeneratePromo, onLogSes
       <div className="flex gap-2 flex-wrap">
         {!stream.promo_generated && (
           <button onClick={onGeneratePromo}
-            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all">
+            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-3 rounded bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all">
             <Radio className="w-3.5 h-3.5" /> Generate Promo
           </button>
         )}
         {stream.status !== "completed" && (
           <button onClick={onLogSession}
-            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all">
+            className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-3 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all">
             Log Session
           </button>
         )}
         <Link to="/app/schedule"
-          className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded border border-cyan-900/40 text-slate-500 hover:text-slate-300 transition-all">
+          className="flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-3 rounded border border-cyan-900/40 text-slate-500 hover:text-slate-300 transition-all">
           View Schedule
         </Link>
       </div>

@@ -36,10 +36,10 @@ export default function PerformanceChart({ sessions }) {
     <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5">
       <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400">// 30-DAY PERFORMANCE</div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 flex-wrap">
           {METRICS.map(m => (
             <button key={m.key} onClick={() => setActiveMetric(m.key)}
-              className={`text-[10px] font-mono uppercase px-2.5 py-1 rounded border transition-all ${
+              className={`text-[10px] font-mono uppercase px-3 py-2 rounded border transition-all ${
                 activeMetric === m.key
                   ? "border-cyan-500/40 text-white bg-cyan-500/10"
                   : "border-cyan-900/30 text-slate-600 hover:text-slate-400"
@@ -58,8 +58,8 @@ export default function PerformanceChart({ sessions }) {
           />
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={200}>
+          <AreaChart data={data} margin={{ top: 5, right: 5, left: -28, bottom: 0 }}>
             <defs>
               <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={metric.color} stopOpacity={0.25} />
@@ -67,8 +67,8 @@ export default function PerformanceChart({ sessions }) {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-            <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 10, fontFamily: "monospace" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fill: "#475569", fontSize: 10, fontFamily: "monospace" }} axisLine={false} tickLine={false} />
+            <XAxis dataKey="date" tick={{ fill: "#475569", fontSize: 9, fontFamily: "monospace" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+            <YAxis tick={{ fill: "#475569", fontSize: 9, fontFamily: "monospace" }} axisLine={false} tickLine={false} width={28} />
             <Tooltip content={<CustomTooltip />} />
             <Area
               type="monotone"
