@@ -60,7 +60,7 @@ export default function Home() {
               text="STOP GUESSING."
               className="block text-white"
               tag="span"
-              style={{ fontSize: "clamp(4rem, 14vw, 10rem)" }} />
+              style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }} />
             
             <span className="block mt-1" style={{ fontSize: "clamp(3rem, 10vw, 7rem)", color: "#00f5ff", textShadow: "0 0 30px rgba(0,245,255,0.6), 0 0 60px rgba(0,245,255,0.3)" }}>
               START GROWING.
