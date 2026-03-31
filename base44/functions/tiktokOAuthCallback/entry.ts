@@ -53,9 +53,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to get user info', details: userData }, { status: 400 });
     }
 
-    const tiktokUser = userData.data;
+    const tiktokUser = userData.data?.user || userData.data;
 
-    // Store tokens and data
+    // Store tokens on user
     await base44.auth.updateMe({
       tiktok_oauth_state: null,
       tiktok_open_id: tiktokUser.open_id,
@@ -65,16 +65,51 @@ Deno.serve(async (req) => {
       tiktok_token_expires_at: new Date(Date.now() + tokenData.expires_in * 1000).toISOString(),
     });
 
-    // Update creator profile
+    // Update or create CreatorProfile
     const profiles = await base44.entities.CreatorProfile.filter({ created_by: user.email });
+    const profileData = {
+      tiktok_handle: tiktokUser.display_name || tiktokUser.username || '',
+      tiktok_connected: true,
+      tiktok_connection_status: 'connected',
+      tiktok_open_id: tiktokUser.open_id,
+      tiktok_union_id: tiktokUser.union_id,
+      tiktok_profile_last_synced_at: new Date().toISOString(),
+    };
+    if (tiktokUser.avatar_url) profileData.avatar_url = tiktokUser.avatar_url;
+    if (tiktokUser.follower_count != null) {
+      profileData.follower_count = tiktokUser.follower_count;
+      profileData.follower_count_source = 'tiktok';
+    }
+
     if (profiles.length > 0) {
-      await base44.entities.CreatorProfile.update(profiles[0].id, {
-        tiktok_handle: tiktokUser.display_name,
-        avatar_url: tiktokUser.avatar_url,
-        follower_count: tiktokUser.follower_count,
-        tiktok_connected: true,
-        tiktok_connection_status: 'connected',
+      await base44.entities.CreatorProfile.update(profiles[0].id, profileData);
+    } else {
+      await base44.entities.CreatorProfile.create({
+        display_name: tiktokUser.display_name || 'TikTok Creator',
+        ...profileData,
       });
+    }
+
+    // Update or create ConnectedAccount record
+    const accounts = await base44.asServiceRole.entities.ConnectedAccount.filter({ created_by: user.email, provider: 'tiktok' });
+    const accountData = {
+      provider: 'tiktok',
+      provider_user_id: tiktokUser.open_id,
+      open_id: tiktokUser.open_id,
+      union_id: tiktokUser.union_id || '',
+      username: tiktokUser.display_name || '',
+      display_name: tiktokUser.display_name || '',
+      avatar_url: tiktokUser.avatar_url || '',
+      connection_status: 'connected',
+      scopes_granted: ['user.info.basic', 'user.info.profile', 'video.list'],
+      access_token_expires_at: new Date(Date.now() + tokenData.expires_in * 1000).toISOString(),
+      last_sync_at: new Date().toISOString(),
+      last_sync_status: 'success',
+    };
+    if (accounts.length > 0) {
+      await base44.asServiceRole.entities.ConnectedAccount.update(accounts[0].id, accountData);
+    } else {
+      await base44.asServiceRole.entities.ConnectedAccount.create(accountData);
     }
 
     return Response.json({ success: true, user: tiktokUser });
