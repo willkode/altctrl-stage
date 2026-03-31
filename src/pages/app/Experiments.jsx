@@ -2,79 +2,34 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Plus, Zap, Check, ChevronRight, FlaskConical } from "lucide-react";
+import ExperimentForm from "../../components/app/experiments/ExperimentForm";
+import ExperimentResults from "../../components/app/experiments/ExperimentResults";
+import { Zap, Trash2, CheckCircle2, Clock, XCircle } from "lucide-react";
 
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5";
+const STATUS_COLORS = {
+  active: "bg-blue-500/10 border-blue-500/30 text-blue-400",
+  completed: "bg-green-500/10 border-green-500/30 text-green-400",
+  cancelled: "bg-slate-500/10 border-slate-500/30 text-slate-500",
+};
 
-const VARIABLES = ["game","stream_type","stream_title","promo_posted","start_time","duration","collab","energy_level","custom"];
-const METRICS = ["avg_viewers","peak_viewers","followers_gained","comments","gifters","diamonds","duration","custom"];
-const RESULTS = { pending: { label: "Pending", style: "text-slate-500 bg-slate-500/10 border-slate-500/20" }, a_wins: { label: "A Wins", style: "text-green-400 bg-green-500/10 border-green-500/20" }, b_wins: { label: "B Wins", style: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20" }, inconclusive: { label: "Inconclusive", style: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20" } };
-const STATUS_STYLE = { active: "text-cyan-400 border-cyan-500/30 bg-cyan-500/5", completed: "text-green-400 border-green-500/30 bg-green-500/5", cancelled: "text-slate-500 border-slate-700 bg-slate-800/5" };
-
-const emptyForm = () => ({
-  title: "", variable_tested: "game", custom_variable: "", variant_a: "", variant_b: "",
-  success_metric: "avg_viewers", custom_metric: "", hypothesis: "",
-  start_date: new Date().toISOString().split("T")[0], end_date: "",
-  result: "pending", result_notes: "", status: "active",
-});
-
-function ExperimentCard({ exp, sessions, onSelect }) {
-  const r = RESULTS[exp.result] || RESULTS.pending;
-  // Compute results from linked sessions
-  const idsA = (exp.sessions_a_ids || "").split(",").map(s => s.trim()).filter(Boolean);
-  const idsB = (exp.sessions_b_ids || "").split(",").map(s => s.trim()).filter(Boolean);
-  const metric = exp.success_metric === "custom" ? null : exp.success_metric;
-  const avg = (ids) => {
-    if (!metric || ids.length === 0) return null;
-    const vals = ids.map(id => { const s = sessions.find(x => x.id === id); return s ? Number(s[metric]) : null; }).filter(v => v !== null && !isNaN(v));
-    return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-  };
-  const avgA = avg(idsA);
-  const avgB = avg(idsB);
-
-  return (
-    <button onClick={onSelect} className="w-full text-left bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 hover:border-cyan-500/30 transition-all group">
-      <div className="flex items-start justify-between gap-2 mb-3">
-        <div>
-          <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1">Testing: {exp.variable_tested.replace("_", " ")}</div>
-          <div className="text-sm font-black text-white">{exp.title}</div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className={`text-[9px] font-mono uppercase px-2 py-1 rounded border ${STATUS_STYLE[exp.status] || STATUS_STYLE.active}`}>{exp.status}</span>
-          <span className={`text-[9px] font-mono uppercase px-2 py-1 rounded border ${r.style}`}>{r.label}</span>
-          <ChevronRight className="w-4 h-4 text-slate-700 group-hover:text-slate-400 transition-colors" />
-        </div>
-      </div>
-      <div className="flex gap-4 text-xs font-mono text-slate-600">
-        <span>A: <span className="text-slate-400">{exp.variant_a || "—"}</span></span>
-        <span>vs</span>
-        <span>B: <span className="text-slate-400">{exp.variant_b || "—"}</span></span>
-      </div>
-      {(avgA !== null || avgB !== null) && (
-        <div className="mt-3 flex gap-4 text-xs font-mono">
-          {avgA !== null && <span>A avg: <span className="text-cyan-400 font-bold">{avgA.toFixed(1)}</span> {metric?.replace("_", " ")}</span>}
-          {avgB !== null && <span>B avg: <span className="text-pink-400 font-bold">{avgB.toFixed(1)}</span> {metric?.replace("_", " ")}</span>}
-        </div>
-      )}
-      {exp.start_date && <div className="mt-2 text-[10px] font-mono text-slate-700">{exp.start_date}{exp.end_date ? ` → ${exp.end_date}` : ""}</div>}
-    </button>
-  );
-}
+const STATUS_ICONS = {
+  active: Clock,
+  completed: CheckCircle2,
+  cancelled: XCircle,
+};
 
 export default function Experiments() {
   const [loading, setLoading] = useState(true);
   const [experiments, setExperiments] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm());
-  const [editId, setEditId] = useState(null);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [selectedExp, setSelectedExp] = useState(null);
+  const [editingSession, setEditingSession] = useState(null);
+  const [sessionInput, setSessionInput] = useState("");
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { loadData(); }, []);
 
-  async function load() {
+  async function loadData() {
     setLoading(true);
     const user = await base44.auth.me();
     const [exps, sess] = await Promise.all([
@@ -86,34 +41,29 @@ export default function Experiments() {
     setLoading(false);
   }
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  function openEdit(exp) {
-    setEditId(exp.id);
-    setForm({ title: exp.title || "", variable_tested: exp.variable_tested || "game", custom_variable: exp.custom_variable || "",
-      variant_a: exp.variant_a || "", variant_b: exp.variant_b || "", success_metric: exp.success_metric || "avg_viewers",
-      custom_metric: exp.custom_metric || "", hypothesis: exp.hypothesis || "",
-      start_date: exp.start_date || "", end_date: exp.end_date || "",
-      sessions_a_ids: exp.sessions_a_ids || "", sessions_b_ids: exp.sessions_b_ids || "",
-      result: exp.result || "pending", result_notes: exp.result_notes || "", status: exp.status || "active",
-    });
-    setShowForm(true);
+  async function handleCreateExperiment(form) {
+    const data = {
+      ...form,
+      status: "active",
+      result: "pending",
+    };
+    await base44.entities.Experiment.create(data);
+    setShowForm(false);
+    await loadData();
   }
 
-  function openNew() {
-    setEditId(null);
-    setForm(emptyForm());
-    setShowForm(true);
+  async function handleLinkSessions(expId, variant, ids) {
+    const exp = experiments.find(e => e.id === expId);
+    if (!exp) return;
+    const field = variant === "a" ? "sessions_a_ids" : "sessions_b_ids";
+    await base44.entities.Experiment.update(expId, { [field]: ids.join(", ") });
+    await loadData();
   }
 
-  async function handleSave() {
-    if (!form.title) return;
-    setSaving(true);
-    if (editId) await base44.entities.Experiment.update(editId, form);
-    else await base44.entities.Experiment.create(form);
-    setSaved(true); setSaving(false);
-    await load();
-    setTimeout(() => { setSaved(false); setShowForm(false); setEditId(null); }, 800);
+  async function handleDelete(id) {
+    if (!confirm("Delete this experiment?")) return;
+    await base44.entities.Experiment.delete(id);
+    await loadData();
   }
 
   if (loading) return <PageContainer><LoadingState message="Loading experiments..." /></PageContainer>;
@@ -123,126 +73,177 @@ export default function Experiments() {
 
   return (
     <PageContainer>
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-1">// EXPERIMENTS</div>
-          <h1 className="text-2xl font-black uppercase text-white">Experiments</h1>
-          <p className="text-sm text-slate-500 mt-0.5 font-mono">Structured creator testing.</p>
-        </div>
-        <button onClick={openNew}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all shrink-0">
-          <Plus className="w-3.5 h-3.5" /> New
+      <div className="mb-6">
+        <div className="text-xs font-mono uppercase tracking-widest text-yellow-400 mb-1">// EXPERIMENTS</div>
+        <h1 className="text-2xl font-black uppercase text-white">Experiments</h1>
+        <p className="text-sm text-slate-500 mt-0.5 font-mono">Run A/B tests instead of guessing.</p>
+      </div>
+
+      <div className="mb-6">
+        <button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2 font-black uppercase tracking-widest px-6 py-3 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all text-sm"
+        >
+          <Zap className="w-4 h-4" /> New Experiment
         </button>
       </div>
 
-      {showForm && (
-        <div className="bg-[#060d1f] border border-cyan-500/30 rounded-xl p-5 mb-6 space-y-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-1">{editId ? "// Edit Experiment" : "// New Experiment"}</div>
-          <div>
-            <label className={lbl}>Experiment Title *</label>
-            <input value={form.title} onChange={e => set("title", e.target.value)} placeholder="e.g. Fortnite vs Warzone peak viewers" className={inp} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={lbl}>Variable Being Tested</label>
-              <select value={form.variable_tested} onChange={e => set("variable_tested", e.target.value)} className={inp + " appearance-none"}>
-                {VARIABLES.map(v => <option key={v} value={v}>{v.replace("_", " ")}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className={lbl}>Success Metric</label>
-              <select value={form.success_metric} onChange={e => set("success_metric", e.target.value)} className={inp + " appearance-none"}>
-                {METRICS.map(m => <option key={m} value={m}>{m.replace("_", " ")}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={lbl}>Variant A</label>
-              <input value={form.variant_a} onChange={e => set("variant_a", e.target.value)} placeholder="e.g. Fortnite" className={inp} />
-            </div>
-            <div>
-              <label className={lbl}>Variant B</label>
-              <input value={form.variant_b} onChange={e => set("variant_b", e.target.value)} placeholder="e.g. Warzone" className={inp} />
-            </div>
-          </div>
-          <div>
-            <label className={lbl}>Hypothesis</label>
-            <input value={form.hypothesis} onChange={e => set("hypothesis", e.target.value)} placeholder="I believe Fortnite gets higher peak viewers because..." className={inp} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={lbl}>Start Date</label>
-              <input type="date" value={form.start_date} onChange={e => set("start_date", e.target.value)} className={inp} />
-            </div>
-            <div>
-              <label className={lbl}>End Date</label>
-              <input type="date" value={form.end_date} onChange={e => set("end_date", e.target.value)} className={inp} />
-            </div>
-          </div>
-          {editId && (
-            <>
-              <div>
-                <label className={lbl}>Session IDs — Variant A <span className="normal-case text-slate-700">(comma-separated)</span></label>
-                <input value={form.sessions_a_ids || ""} onChange={e => set("sessions_a_ids", e.target.value)} placeholder="session-id-1, session-id-2" className={inp} />
-              </div>
-              <div>
-                <label className={lbl}>Session IDs — Variant B <span className="normal-case text-slate-700">(comma-separated)</span></label>
-                <input value={form.sessions_b_ids || ""} onChange={e => set("sessions_b_ids", e.target.value)} placeholder="session-id-3, session-id-4" className={inp} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={lbl}>Result</label>
-                  <select value={form.result} onChange={e => set("result", e.target.value)} className={inp + " appearance-none"}>
-                    {Object.entries(RESULTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className={lbl}>Status</label>
-                  <select value={form.status} onChange={e => set("status", e.target.value)} className={inp + " appearance-none"}>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className={lbl}>Result Notes</label>
-                <textarea value={form.result_notes} onChange={e => set("result_notes", e.target.value)} rows={2} placeholder="What actually happened?" className={inp + " resize-none"} />
-              </div>
-            </>
-          )}
-          <div className="flex gap-3">
-            <button onClick={() => { setShowForm(false); setEditId(null); }} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 font-mono uppercase text-xs tracking-widest hover:text-slate-300 transition-all">Cancel</button>
-            <button onClick={handleSave} disabled={saving || !form.title}
-              className={`flex-[2] flex items-center justify-center gap-2 font-black uppercase tracking-widest py-4 rounded text-sm transition-all disabled:opacity-40 ${saved ? "bg-green-400 text-[#02040f]" : "bg-cyan-400 text-[#02040f] hover:bg-cyan-300"}`}>
-              {saved ? <><Check className="w-4 h-4" /> Saved!</> : saving ? "Saving…" : <><Zap className="w-4 h-4" /> Save</>}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {experiments.length === 0 && !showForm && (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-10 text-center">
-          <FlaskConical className="w-8 h-8 text-cyan-900 mx-auto mb-3" />
-          <p className="text-slate-500 font-mono text-sm mb-2">No experiments yet.</p>
-          <p className="text-xs font-mono text-slate-700 mb-4">Define one variable, one metric. Run it. See what the data says.</p>
-          <button onClick={openNew} className="text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300">+ Start your first experiment</button>
-        </div>
-      )}
-
+      {/* Active experiments */}
       {active.length > 0 && (
-        <div className="mb-5">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-3">// Active</div>
-          <div className="space-y-3">{active.map(e => <ExperimentCard key={e.id} exp={e} sessions={sessions} onSelect={() => openEdit(e)} />)}</div>
+        <div className="mb-8 space-y-4">
+          <div className="text-xs font-mono uppercase tracking-widest text-blue-400">// Active Experiments ({active.length})</div>
+          {active.map(exp => (
+            <div key={exp.id} className="bg-[#060d1f] border border-blue-900/30 rounded-lg p-5 space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-black uppercase text-white">{exp.title}</h3>
+                  <p className="text-xs font-mono text-slate-600 mt-1">
+                    Testing: {exp.custom_variable || exp.variable_tested.replace("_", " ")}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleDelete(exp.id)}
+                  className="text-slate-600 hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-[#02040f] border border-cyan-900/20 rounded p-3">
+                  <div className="text-[9px] font-mono uppercase text-slate-600 mb-2">Variant A</div>
+                  <div className="text-white font-black mb-2">{exp.variant_a}</div>
+                  <SessionSelector
+                    sessionIds={exp.sessions_a_ids || ""}
+                    availableSessions={sessions}
+                    onSave={ids => handleLinkSessions(exp.id, "a", ids)}
+                  />
+                </div>
+                <div className="bg-[#02040f] border border-pink-900/20 rounded p-3">
+                  <div className="text-[9px] font-mono uppercase text-slate-600 mb-2">Variant B</div>
+                  <div className="text-white font-black mb-2">{exp.variant_b}</div>
+                  <SessionSelector
+                    sessionIds={exp.sessions_b_ids || ""}
+                    availableSessions={sessions}
+                    onSave={ids => handleLinkSessions(exp.id, "b", ids)}
+                  />
+                </div>
+              </div>
+
+              {exp.hypothesis && (
+                <div className="border-t border-blue-900/20 pt-3">
+                  <div className="text-[10px] font-mono uppercase text-slate-600 mb-1">Hypothesis</div>
+                  <p className="text-sm text-slate-300">{exp.hypothesis}</p>
+                </div>
+              )}
+
+              <div className="text-[9px] font-mono text-slate-600">
+                {exp.start_date} → {exp.end_date || "ongoing"}
+              </div>
+            </div>
+          ))}
         </div>
       )}
+
+      {/* Completed experiments */}
       {completed.length > 0 && (
-        <div>
-          <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-3">// Completed</div>
-          <div className="space-y-3">{completed.map(e => <ExperimentCard key={e.id} exp={e} sessions={sessions} onSelect={() => openEdit(e)} />)}</div>
+        <div className="space-y-4">
+          <div className="text-xs font-mono uppercase tracking-widest text-green-400">// Completed Experiments ({completed.length})</div>
+          {completed.map(exp => (
+            <div key={exp.id} className="bg-[#060d1f] border border-green-900/30 rounded-lg p-5 space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-black uppercase text-white">{exp.title}</h3>
+                  <p className="text-xs font-mono text-slate-600 mt-1">
+                    {exp.custom_variable || exp.variable_tested.replace("_", " ")} vs {exp.success_metric.replace("_", " ")}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleDelete(exp.id)}
+                  className="text-slate-600 hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div>
+                <ExperimentResults experiment={exp} />
+              </div>
+
+              {exp.result_notes && (
+                <div className="border-t border-green-900/20 pt-3">
+                  <div className="text-[10px] font-mono uppercase text-slate-600 mb-1">Notes</div>
+                  <p className="text-sm text-slate-300">{exp.result_notes}</p>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
+
+      {experiments.length === 0 && (
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center">
+          <Zap className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+          <div className="text-sm font-black uppercase text-slate-500 mb-2">No experiments yet</div>
+          <p className="text-xs font-mono text-slate-600 mb-4">Start testing instead of guessing.</p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-5 py-2.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all text-xs"
+          >
+            <Zap className="w-3.5 h-3.5" /> Create First Experiment
+          </button>
+        </div>
+      )}
+
+      {showForm && <ExperimentForm onSave={handleCreateExperiment} onCancel={() => setShowForm(false)} />}
     </PageContainer>
+  );
+}
+
+function SessionSelector({ sessionIds, availableSessions, onSave }) {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(new Set(sessionIds.split(",").map(x => x.trim()).filter(Boolean)));
+
+  const linkedCount = selected.size;
+  const toggle = (id) => {
+    const newSet = new Set(selected);
+    newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+    setSelected(newSet);
+  };
+
+  return (
+    <div className="space-y-2">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full py-2 px-2 rounded text-[9px] font-mono uppercase bg-[#02040f] border border-cyan-900/20 hover:border-cyan-500/30 text-cyan-400 transition-all"
+      >
+        {linkedCount} session{linkedCount !== 1 ? "s" : ""} linked
+      </button>
+
+      {open && (
+        <div className="absolute z-40 bg-[#02040f] border border-cyan-900/40 rounded p-2 w-64 max-h-48 overflow-y-auto space-y-1">
+          {availableSessions.map(s => (
+            <label key={s.id} className="flex items-center gap-2 p-2 rounded hover:bg-white/5 cursor-pointer text-[9px]">
+              <input
+                type="checkbox"
+                checked={selected.has(s.id)}
+                onChange={() => toggle(s.id)}
+                className="w-3 h-3 accent-cyan-400"
+              />
+              <span className="text-slate-300">{s.stream_date} · {s.game}</span>
+            </label>
+          ))}
+          <button
+            onClick={() => {
+              onSave(Array.from(selected));
+              setOpen(false);
+            }}
+            className="w-full py-2 mt-2 rounded text-[9px] font-mono uppercase bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all"
+          >
+            Save
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
