@@ -60,6 +60,20 @@ const AuthenticatedApp = () => {
         <Route path="/app/coach" element={<Coach />} />
       </Route>
       <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
+        <Route path="/for-creators" element={<ForCreators />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/founding-creators" element={<FoundingCreators />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/waitlist" element={<Waitlist />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
   );
