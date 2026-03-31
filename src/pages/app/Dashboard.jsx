@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [alerts, setAlerts] = useState([]);
   const [weekPlan, setWeekPlan] = useState(null);
   const [drawer, setDrawer] = useState(null);
+  const [connectingTikTok, setConnectingTikTok] = useState(false);
 
   useEffect(() => { loadAll(); }, []);
 
@@ -71,6 +72,18 @@ export default function Dashboard() {
     setWeekPlan(plans[0] || null);
     setLoading(false);
   }
+
+  const handleConnectTikTok = async () => {
+    setConnectingTikTok(true);
+    try {
+      const url = await base44.connectors.connectAppUser("69c7e25af1fbef3a6d3efd4d");
+      window.open(url, "_blank");
+    } catch (err) {
+      console.error("Failed to get TikTok connect URL", err);
+    } finally {
+      setConnectingTikTok(false);
+    }
+  };
 
   const dismissAlert = async (id) => {
     await base44.entities.PerformanceAlert.update(id, { dismissed: true });
@@ -141,14 +154,13 @@ export default function Dashboard() {
               <h2 className="text-lg font-black uppercase text-white mb-1">Connect Your TikTok Account</h2>
               <p className="text-sm text-slate-400 font-mono">Sync your profile data and unlock AI coaching based on your real performance.</p>
             </div>
-            <a
-              href={`${import.meta.env.VITE_BASE44_CONSOLE_URL || 'https://console.base44.com'}/connectors/69c7e25af1fbef3a6d3efd4d/connect`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded text-xs font-mono uppercase bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all shrink-0 whitespace-nowrap"
+            <button
+              onClick={handleConnectTikTok}
+              disabled={connectingTikTok}
+              className="px-6 py-3 rounded text-xs font-mono uppercase bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all shrink-0 whitespace-nowrap disabled:opacity-50"
             >
-              Connect TikTok
-            </a>
+              {connectingTikTok ? "Opening..." : "Connect TikTok"}
+            </button>
           </div>
         </div>
       )}
