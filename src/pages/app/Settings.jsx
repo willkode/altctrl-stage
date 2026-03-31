@@ -5,7 +5,7 @@ import LoadingState from "../../components/app/LoadingState";
 import { Check, Zap, AlertTriangle, Download } from "lucide-react";
 import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
-import ExtensionTokenManager from "../../components/app/tiktok/ExtensionTokenManager";
+import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";
 import { useAppToast } from "../../hooks/useAppToast";
 
 const PROMO_TONES = ["hype","chill","competitive","funny","serious","community"];
@@ -310,9 +310,9 @@ export default function Settings() {
           <TikTokConnectionCard />
         </Section>
 
-        {/* Extension Token Management */}
-        <Section title="// Chrome Extension Tokens" accent="yellow">
-          <ExtensionTokenManager />
+        {/* Extension Settings Panel */}
+        <Section title="// Chrome Extension" accent="yellow">
+          <ExtensionSettingsPanel />
         </Section>
 
         {/* Import Sync Debugging */}
