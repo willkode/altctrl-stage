@@ -61,9 +61,12 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
+      // Allow TikTok callback page to load without auth — it will redirect to login itself
+      const isTikTokCallback = window.location.pathname === '/tiktok-callback';
+      if (!isTikTokCallback) {
+        navigateToLogin();
+        return null;
+      }
     }
   }
 
