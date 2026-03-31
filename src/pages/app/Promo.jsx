@@ -17,6 +17,7 @@ export default function Promo() {
   const [loading, setLoading] = useState(true);
   const [upcomingStreams, setUpcomingStreams] = useState([]);
   const [packs, setPacks] = useState([]);
+  const [profile, setProfile] = useState(null);
   const [generating, setGenerating] = useState(null); // stream id being generated
   const [generatedKit, setGeneratedKit] = useState(null);
   const [viewKit, setViewKit] = useState(null);
@@ -31,9 +32,10 @@ export default function Promo() {
   async function loadData() {
     setLoading(true);
     const user = await base44.auth.me();
-    const [streams, kitsList] = await Promise.all([
+    const [streams, kitsList, profiles] = await Promise.all([
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      base44.entities.PromoKit.filter({ created_by: user.email }, "-created_date", 50),
+      base44.entities.PromoKit.filter({ created_by: user.email }, "-created_date", 100),
+      base44.entities.CreatorProfile.filter({ created_by: user.email }),
     ]);
     const upcoming = streams
       .filter(s => s.scheduled_date >= TODAY && s.status !== "cancelled")
@@ -41,6 +43,7 @@ export default function Promo() {
       .slice(0, 10);
     setUpcomingStreams(upcoming);
     setPacks(kitsList);
+    setProfile(profiles[0] || null);
     setLoading(false);
   }
 
@@ -48,23 +51,40 @@ export default function Promo() {
     setGenerating(stream.id);
     setGeneratedKit(null);
     setGenError(null);
+
+    const tone = profile?.promo_tone || "hype";
+    const niche = profile?.creator_niche || "variety";
+    const style = profile?.content_style || "entertainment";
+    const creatorName = profile?.display_name || "";
+    const promoNotes = profile?.promo_notes || "";
+    const versionNum = packs.filter(k => k.scheduled_stream_id === stream.id).length + 1;
+
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a TikTok LIVE gaming creator assistant. Generate a high-energy promo pack for a TikTok LIVE stream.
+      prompt: `You are a TikTok LIVE gaming creator assistant. Generate a high-energy, platform-native promo pack for a TikTok LIVE stream.
+
+Creator profile:
+- Name: ${creatorName || "the creator"}
+- Niche: ${niche.replace("_", " ")}
+- Promo tone: ${tone}
+- Content style: ${style.replace("_", " ")}
+${promoNotes ? `- Custom instructions: ${promoNotes}` : ""}
 
 Stream details:
 - Game: ${stream.game}
-- Type: ${stream.stream_type || "gaming stream"}
+- Type: ${stream.stream_type?.replace("_", " ") || "gaming stream"}
 - Date: ${stream.scheduled_date}
 - Time: ${stream.start_time || "evening"}
-- Title hint: ${stream.title || ""}
+${stream.title ? `- Working title: ${stream.title}` : ""}
+
+This is version ${versionNum} — make it feel fresh, not a copy of a previous attempt.
 
 Generate:
-1. A punchy TikTok hook (1-2 sentences, high energy, creates FOMO)
-2. A caption (2-4 sentences, engaging, builds hype)
-3. 8-10 relevant hashtags (no # prefix, mix of niche + broad)
-4. 2 stream title options (short, punchy, uppercase style)
+1. hook — 1-2 punchy sentences that create FOMO and stop the scroll. Match the creator's tone (${tone}).
+2. caption — 2-4 sentences of engaging hype, platform-native, builds community anticipation.
+3. hashtags — 8-10 tags: mix niche gaming tags + TikTok LIVE growth tags. No # prefix.
+4. title_options — exactly 2 stream title options. Short, punchy, uppercase-friendly.
 
-Make it feel authentic and creator-voice, not corporate. Gaming energy.`,
+Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -74,7 +94,7 @@ Make it feel authentic and creator-voice, not corporate. Gaming energy.`,
           title_options: { type: "array", items: { type: "string" } },
         },
       },
-    }).catch(e => { setGenError("Generation failed. Check your connection and try again."); setGenerating(null); return null; });
+    }).catch(() => { setGenError("Generation failed — check your connection and try again."); setGenerating(null); return null; });
 
     if (!result) return;
 
@@ -88,7 +108,7 @@ Make it feel authentic and creator-voice, not corporate. Gaming energy.`,
       hashtags: result.hashtags,
       title_options: result.title_options,
       status: "saved",
-      generation_prompt: stream.game,
+      generation_prompt: `tone:${tone} niche:${niche} style:${style} v${versionNum}`,
     });
 
     setGeneratedKit(kit);
@@ -246,15 +266,46 @@ Make it feel authentic and creator-voice, not corporate. Gaming energy.`,
             }
           />
         ) : (
-          <div className="space-y-2">
-            {filteredPacks.map(kit => (
-              <PromoPackCard
-                key={kit.id}
-                kit={kit}
-                onView={setViewKit}
-                onTogglePosted={markPosted}
-              />
-            ))}
+          <div className="space-y-4">
+            {/* Group by stream, show version history */}
+            {(() => {
+              const grouped = [];
+              const seen = new Set();
+              filteredPacks.forEach(kit => {
+                const key = kit.scheduled_stream_id || kit.id;
+                if (!seen.has(key)) {
+                  seen.add(key);
+                  const versions = filteredPacks.filter(k =>
+                    (k.scheduled_stream_id || k.id) === key
+                  );
+                  grouped.push({ key, versions });
+                }
+              });
+              return grouped.map(({ key, versions }) => (
+                <div key={key}>
+                  {versions.length > 1 && (
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5 flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 bg-pink-500/10 border border-pink-900/30 rounded text-pink-400/70">{versions.length} versions</span>
+                      <span>{versions[0].game}</span>
+                    </div>
+                  )}
+                  <div className={`space-y-1.5 ${versions.length > 1 ? "pl-3 border-l border-pink-900/20" : ""}`}>
+                    {versions.map((kit, i) => (
+                      <div key={kit.id} className="relative">
+                        {versions.length > 1 && (
+                          <span className="absolute -left-5 top-3.5 text-[9px] font-mono text-slate-700">v{versions.length - i}</span>
+                        )}
+                        <PromoPackCard
+                          kit={kit}
+                          onView={setViewKit}
+                          onTogglePosted={markPosted}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
         )}
       </div>

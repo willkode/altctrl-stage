@@ -22,6 +22,9 @@ export default function Onboarding({ onComplete }) {
     weekly_stream_target: 3,
     preferred_stream_days: [],
     preferred_stream_time: "19:00",
+    promo_tone: "hype",
+    creator_niche: "variety",
+    content_style: "entertainment",
   });
   const [saving, setSaving] = useState(false);
 
@@ -105,10 +108,10 @@ export default function Onboarding({ onComplete }) {
             </div>
           )}
 
-          {/* Step 2: Goal + Target */}
+          {/* Step 2: Goal + Target + Promo */}
           {step === 2 && (
             <div className="space-y-5">
-              <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// STEP 2 — YOUR GOAL</div>
+              <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// STEP 2 — YOUR GOAL & STYLE</div>
               <div>
                 <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-2">Primary Stream Goal</label>
                 <div className="grid grid-cols-2 gap-2">
@@ -121,6 +124,32 @@ export default function Onboarding({ onComplete }) {
                       }`}>
                       {g.label}
                     </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-2">Promo Tone</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[["hype","🔥 Hype"],["chill","😎 Chill"],["competitive","⚡ Competitive"],["funny","😂 Funny"],["serious","🎯 Serious"],["community","🤝 Community"]].map(([v, l]) => (
+                    <button key={v} onClick={() => setForm(f => ({ ...f, promo_tone: v }))}
+                      className={`text-xs font-mono px-2 py-2 rounded border transition-all ${
+                        form.promo_tone === v
+                          ? "bg-pink-500/10 border-pink-500/40 text-pink-400"
+                          : "bg-[#02040f] border-cyan-900/30 text-slate-500 hover:text-slate-300"
+                      }`}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-2">Creator Niche</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[["fps","FPS"],["battle_royale","Battle Royale"],["rpg","RPG"],["sports","Sports"],["mobile","Mobile"],["variety","Variety"],["horror","Horror"],["retro","Retro"],["other","Other"]].map(([v, l]) => (
+                    <button key={v} onClick={() => setForm(f => ({ ...f, creator_niche: v }))}
+                      className={`text-xs font-mono px-2 py-2 rounded border transition-all ${
+                        form.creator_niche === v
+                          ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-400"
+                          : "bg-[#02040f] border-cyan-900/30 text-slate-500 hover:text-slate-300"
+                      }`}>{l}</button>
                   ))}
                 </div>
               </div>

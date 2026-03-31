@@ -71,6 +71,51 @@
       "title": "Timezone",
       "default": "UTC"
     },
+    "promo_tone": {
+      "type": "string",
+      "title": "Promo Tone",
+      "enum": [
+        "hype",
+        "chill",
+        "competitive",
+        "funny",
+        "serious",
+        "community"
+      ],
+      "default": "hype"
+    },
+    "creator_niche": {
+      "type": "string",
+      "title": "Creator Niche",
+      "enum": [
+        "fps",
+        "battle_royale",
+        "rpg",
+        "sports",
+        "mobile",
+        "variety",
+        "horror",
+        "retro",
+        "other"
+      ],
+      "default": "variety"
+    },
+    "content_style": {
+      "type": "string",
+      "title": "Content Style",
+      "enum": [
+        "solo_grind",
+        "community_focused",
+        "educational",
+        "entertainment",
+        "competitive"
+      ],
+      "default": "entertainment"
+    },
+    "promo_notes": {
+      "type": "string",
+      "title": "Promo Notes / Custom Instructions"
+    },
     "onboarding_completed": {
       "type": "boolean",
       "title": "Onboarding Completed",
