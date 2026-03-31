@@ -14,6 +14,7 @@ import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import GoalDrawer from "../../components/app/drawers/GoalDrawer";
 import AppBadge from "../../components/app/AppBadge";
 import { Flame, Zap, TrendingUp, Calendar, Clock } from "lucide-react";
+import NewCreatorChecklist from "../../components/app/NewCreatorChecklist";
 
 function getISOWeek(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -95,10 +96,20 @@ export default function Dashboard() {
     ? Math.round(recentSessions.reduce((s, r) => s + (r.avg_viewers || 0), 0) / recentSessions.filter(s => s.avg_viewers).length) || null
     : null;
 
+  // Determine checklist completion keys
+  const checklistKeys = [];
+  if (profile?.display_name) checklistKeys.push("profile");
+  if (weekStreams.length > 0 || recentSessions.length > 0) checklistKeys.push("stream");
+  if (recentSessions.some(s => s.promo_posted)) checklistKeys.push("promo");
+  if (recentSessions.length > 0) checklistKeys.push("session");
+  if (recentSessions.length >= 3) checklistKeys.push("coach");
+
+  const isNewCreator = recentSessions.length === 0 && weekStreams.length === 0;
+
   return (
     <PageContainer>
       {/* ── Welcome Banner ── */}
-      <div className="relative mb-8 bg-[#060d1f] border border-cyan-900/40 rounded-lg px-5 py-5 overflow-hidden">
+      <div className="relative mb-6 bg-[#060d1f] border border-cyan-900/40 rounded-lg px-5 py-5 overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-40" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-20" />
         <div className="flex items-start justify-between gap-4">
@@ -117,6 +128,11 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* ── New Creator Checklist ── */}
+      {isNewCreator && (
+        <NewCreatorChecklist completedKeys={checklistKeys} />
+      )}
 
       {/* ── Today's Stream ── */}
       <div className="mb-4">

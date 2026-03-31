@@ -8,6 +8,7 @@ import GoalsTracker from "../../components/app/coach/GoalsTracker";
 import WeeklyRecapPreview from "../../components/app/coach/WeeklyRecapPreview";
 import AlertsFeed from "../../components/app/coach/AlertsFeed";
 import { Calendar } from "lucide-react";
+import DataProgressBanner from "../../components/app/DataProgressBanner";
 
 function getISOWeek(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -73,6 +74,19 @@ export default function Coach() {
         <LoadingState message="Loading coaching insights..." />
       ) : (
         <div className="space-y-6">
+          {sessions.length < 3 && (
+            <DataProgressBanner
+              current={sessions.length}
+              required={3}
+              featureName="AI Coaching"
+              hint={sessions.length === 0
+                ? "Log your first stream session after going live. The AI coach needs your real data to give you useful recommendations — not generic advice."
+                : `You've logged ${sessions.length} session${sessions.length > 1 ? 's' : ''}. ${3 - sessions.length} more and your daily coaching cards will reference your actual viewer numbers, best games, and peak time slots.`
+              }
+              actionLabel="Log a session"
+              actionLink="/app/analytics"
+            />
+          )}
           <DailyCoachingCard recommendation={recommendation} sessions={sessions} profile={profile} onRefresh={loadData} />
           <div className="grid md:grid-cols-2 gap-6">
             <WeeklyGamePlan plan={weeklyPlan} streams={streams.filter(s => {

@@ -178,12 +178,27 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// UPCOMING STREAMS</div>
 
         {upcomingStreams.length === 0 ? (
-          <div className="bg-[#060d1f] border border-pink-900/20 rounded-lg p-6 text-center">
-            <Radio className="w-5 h-5 text-slate-700 mx-auto mb-2" />
-            <p className="text-xs font-mono text-slate-500 mb-3">No upcoming streams scheduled.</p>
+          <div className="bg-gradient-to-br from-pink-500/5 to-pink-400/3 border border-pink-900/30 rounded-xl p-6">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// NO STREAMS SCHEDULED</div>
+            <p className="text-sm font-black uppercase text-white mb-1">Schedule a stream first</p>
+            <p className="text-xs font-mono text-slate-500 mb-4 leading-relaxed">
+              Promo packs are tied to scheduled streams. Add a stream to your calendar and you'll be able to generate a kit instantly — hook, caption, hashtags, and title options.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-2 mb-5">
+              {[
+                { icon: "01", label: "Go to Schedule", sub: "Add a stream with game, date, and time." },
+                { icon: "02", label: "Come back here", sub: "Your stream will appear above — hit Generate." },
+              ].map(s => (
+                <div key={s.icon} className="bg-[#02040f] border border-pink-900/20 rounded-lg p-3">
+                  <div className="text-[10px] font-mono text-pink-400/50 mb-1">{s.icon}</div>
+                  <div className="text-sm font-bold text-white mb-0.5">{s.label}</div>
+                  <div className="text-xs font-mono text-slate-600">{s.sub}</div>
+                </div>
+              ))}
+            </div>
             <Link to="/app/schedule"
-              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all">
-              <Calendar className="w-3.5 h-3.5" /> Schedule a Stream
+              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30 hover:bg-pink-500/20 transition-all">
+              <Calendar className="w-3.5 h-3.5" /> Schedule a Stream →
             </Link>
           </div>
         ) : (
@@ -305,13 +320,19 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         )}
 
         {groupedPacks.length === 0 ? (
-          <EmptyState
-            title={packs.length === 0 ? "No packs yet" : "No results"}
-            message={packs.length === 0
-              ? "Generate your first promo pack from an upcoming stream above."
-              : "Try a different search or filter."
-            }
-          />
+          packs.length === 0 ? (
+            <div className="bg-[#060d1f] border border-pink-900/20 rounded-xl p-8 text-center">
+              <Radio className="w-8 h-8 text-slate-800 mx-auto mb-3" />
+              <p className="text-sm font-black uppercase text-slate-300 mb-1">Your promo library is empty</p>
+              <p className="text-xs font-mono text-slate-600 leading-relaxed max-w-xs mx-auto">
+                Generate your first pack from an upcoming stream above. Each kit includes a hook, caption, hashtags, and stream title options — ready to post in seconds.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-[#060d1f] border border-cyan-900/20 rounded-xl p-6 text-center">
+              <p className="text-xs font-mono text-slate-600">No packs match this filter. Try clearing the search or switching to "all".</p>
+            </div>
+          )
         ) : (
           <div className="space-y-4">
             {groupedPacks.map(({ key, versions, latest }) => (

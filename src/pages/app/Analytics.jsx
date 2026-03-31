@@ -10,6 +10,7 @@ import TimeHeatmap from "../../components/app/analytics/TimeHeatmap";
 import PromoImpact from "../../components/app/analytics/PromoImpact";
 import SessionHistory from "../../components/app/analytics/SessionHistory";
 import { Plus, X } from "lucide-react";
+import DataProgressBanner from "../../components/app/DataProgressBanner";
 
 export default function Analytics() {
   const [loading, setLoading] = useState(true);
@@ -141,6 +142,19 @@ export default function Analytics() {
           >
             <Plus className="w-3.5 h-3.5" /> Log Your First Session
           </button>
+        </div>
+      ) : sessions.length < 3 ? (
+        <div>
+          <DataProgressBanner
+            current={sessions.length}
+            required={3}
+            featureName="Full Analytics"
+            hint={`You've logged ${sessions.length} session${sessions.length > 1 ? 's' : ''}. Log ${3 - sessions.length} more to unlock charts, game breakdowns, and promo impact analysis.`}
+            actionLabel="Log a session"
+            actionLink="/app/analytics"
+          />
+          {/* Show session history even with minimal data */}
+          <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center">
