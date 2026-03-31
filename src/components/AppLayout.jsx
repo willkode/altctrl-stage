@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -27,6 +27,7 @@ const pageTitles = {
   "/app/coach": "COACH",
   "/app/notifications": "NOTIFICATIONS",
   "/app/profile": "PROFILE",
+  "/app/settings": "SETTINGS",
 };
 
 export default function AppLayout() {
@@ -100,6 +101,10 @@ export default function AppLayout() {
           <Link to="/app/profile"
             className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <User className="w-4 h-4" />
+          </Link>
+          <Link to="/app/settings"
+            className="hidden md:flex w-9 h-9 items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+            <Settings2Icon className="w-4 h-4" />
           </Link>
         </div>
       </header>
