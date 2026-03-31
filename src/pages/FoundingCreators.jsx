@@ -37,12 +37,16 @@ export default function FoundingCreators() {
 
         {/* Hero */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 border border-pink-500/40 bg-pink-500/5 rounded px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
-            <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// BETA RECRUITMENT — ACTIVE</span>
+          <div className="flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 border border-pink-500/40 bg-pink-500/5 rounded px-4 py-2 mb-8">
+              <span className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
+              <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// BETA RECRUITMENT — ACTIVE</span>
+            </div>
+            <h1>
+              <GlitchText text="JOIN THE FIRST WAVE OF" className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="span" />
+              <GlitchText text="ALTCTRL CREATORS." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mt-2" tag="span" />
+            </h1>
           </div>
-          <GlitchText text="JOIN THE FIRST WAVE OF" className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="h1" />
-          <GlitchText text="ALTCTRL CREATORS." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mt-2" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-2xl mx-auto text-sm leading-relaxed">
             Become a founding creator and help shape the system built for TikTok LIVE gaming growth. Get early access to AltCtrl's core features, help guide what comes next, and start building better habits before the public launch.
           </p>
