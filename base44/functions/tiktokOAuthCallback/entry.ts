@@ -2,9 +2,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 Deno.serve(async (req) => {
   try {
-    const url = new URL(req.url);
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
+    // Accept code/state from POST body (sent by frontend callback page)
+    const body = await req.json();
+    const code = body.code;
+    const state = body.state;
 
     if (!code || !state) {
       return Response.json({ error: 'Missing code or state' }, { status: 400 });

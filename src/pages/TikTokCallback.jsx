@@ -26,7 +26,7 @@ export default function TikTokCallback() {
         }
 
         // Call backend function to exchange code for token and store connection
-        const response = await base44.functions.invoke("handleTikTokCallback", {
+        const response = await base44.functions.invoke("tiktokOAuthCallback", {
           code,
           state,
         });
