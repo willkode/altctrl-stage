@@ -4,17 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
 
 const GOAL_TYPES = [
-  { value: "weekly_streams", label: "Weekly Streams" },
-  { value: "avg_viewers", label: "Avg Viewers" },
-  { value: "peak_viewers", label: "Peak Viewers" },
-  { value: "followers_gained", label: "Followers Gained" },
-  { value: "consistency_streak", label: "Consistency Streak" },
-  { value: "promo_rate", label: "Promo Rate" },
-  { value: "custom", label: "Custom" },
+  { value: "stream_frequency", label: "Stream Frequency", description: "How many streams per week", unit: "streams" },
+  { value: "average_viewers", label: "Average Viewers", description: "Avg viewers per stream", unit: "viewers" },
+  { value: "follower_milestone", label: "Follower Milestone", description: "Total followers gained", unit: "followers" },
+  { value: "streak", label: "Consistency Streak", description: "Consecutive weeks streaming", unit: "weeks" },
 ];
 
 const empty = () => ({
-  goal_type: "weekly_streams",
+  goal_type: "stream_frequency",
   title: "",
   description: "",
   target_value: 3,
@@ -36,7 +33,7 @@ export default function GoalDrawer({ open, onClose, goal = null, onSaved }) {
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
-    if (!form.target_value) return;
+    if (!form.target_value || !form.title?.trim()) return;
     setSaving(true);
     const now = new Date();
     const week_number = getISOWeek(now);
@@ -50,41 +47,58 @@ export default function GoalDrawer({ open, onClose, goal = null, onSaved }) {
     setSaving(false);
     onSaved?.();
     onClose();
-  };
+  }
+
+  const handleArchive = async () => {
+    await base44.entities.GrowthGoal.update(goal.id, { status: "paused" });
+    onSaved?.();
+    onClose();
+  }
+
+  const handleComplete = async () => {
+    await base44.entities.GrowthGoal.update(goal.id, { status: "completed", completed_at: new Date().toISOString() });
+    onSaved?.();
+    onClose();
+  }
+
+  const selectedType = GOAL_TYPES.find(t => t.value === form.goal_type);
 
   return (
     <AppModal open={open} onClose={onClose} title={goal?.id ? "Edit Goal" : "New Goal"} accent="yellow">
       <div className="space-y-4">
+        {selectedType?.description && (
+          <p className="text-xs text-slate-500 italic">{selectedType.description}</p>
+        )}
         <div>
-          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Goal Type</label>
+          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Goal Type *</label>
           <div className="grid grid-cols-2 gap-1.5">
             {GOAL_TYPES.map(g => (
-              <button key={g.value} onClick={() => set("goal_type", g.value)}
-                className={`py-2 px-2 rounded text-xs font-mono uppercase text-left transition-all ${form.goal_type === g.value ? "bg-yellow-400/10 border border-yellow-400/30 text-yellow-400" : "bg-[#02040f] border border-cyan-900/30 text-slate-600 hover:text-slate-300"}`}>
+              <button key={g.value} onClick={() => { set("goal_type", g.value); set("unit", g.unit); }}
+                className={`py-3 px-2 rounded text-xs font-mono uppercase text-left transition-all ${form.goal_type === g.value ? "bg-yellow-400/10 border border-yellow-400/30 text-yellow-400" : "bg-[#02040f] border border-cyan-900/30 text-slate-600 hover:text-slate-300"}`}>
                 {g.label}
               </button>
             ))}
           </div>
         </div>
         <div>
-          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Title</label>
+          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Goal Title *</label>
           <input value={form.title} onChange={e => set("title", e.target.value)}
-            placeholder="e.g. Stream 4x this week" className={inputCls} />
+            placeholder={`e.g. ${selectedType?.description || "Stream 4x this week"}`} className={inputCls} />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Target *</label>
+            <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Target Value *</label>
             <input type="number" value={form.target_value} onChange={e => set("target_value", +e.target.value)}
               min={1} className={inputCls} />
           </div>
           <div>
             <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Unit</label>
             <input value={form.unit} onChange={e => set("unit", e.target.value)}
-              placeholder="streams, viewers..." className={inputCls} />
+              className={inputCls} disabled />
           </div>
         </div>
         <div>
-          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Period</label>
+          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Time Period</label>
           <div className="flex gap-2">
             {["weekly", "monthly", "ongoing"].map(p => (
               <button key={p} onClick={() => set("period", p)}
@@ -95,14 +109,28 @@ export default function GoalDrawer({ open, onClose, goal = null, onSaved }) {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Description</label>
+          <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Notes (optional)</label>
           <textarea value={form.description} onChange={e => set("description", e.target.value)}
-            rows={2} placeholder="Optional context..." className={inputCls + " resize-none"} />
+            rows={2} placeholder="Why this goal? What's the context?" className={inputCls + " resize-none"} />
         </div>
-        <button onClick={handleSave} disabled={saving || !form.target_value}
-          className="w-full bg-yellow-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-yellow-300 transition-all disabled:opacity-40">
-          {saving ? "Saving..." : goal?.id ? "Update Goal" : "Create Goal"}
-        </button>
+        <div className="flex gap-2">
+          {goal?.id && (
+            <button onClick={handleArchive}
+              className="flex-1 border border-slate-600 text-slate-500 font-mono uppercase tracking-widest py-2.5 rounded text-xs hover:text-slate-400 hover:border-slate-500 transition-all">
+              Archive
+            </button>
+          )}
+          <button onClick={handleSave} disabled={saving || !form.target_value || !form.title?.trim()}
+            className="flex-1 bg-yellow-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-yellow-300 transition-all disabled:opacity-40">
+            {saving ? "Saving..." : goal?.id ? "Update" : "Create Goal"}
+          </button>
+        </div>
+        {goal?.id && goal.status === "active" && (
+          <button onClick={handleComplete}
+            className="w-full border border-green-500/30 text-green-400 font-mono uppercase tracking-widest py-2 rounded text-xs hover:bg-green-500/5 transition-all">
+            Mark Complete
+          </button>
+        )}
       </div>
     </AppModal>
   );
