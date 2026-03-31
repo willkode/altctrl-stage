@@ -63,13 +63,13 @@ export default function Coach() {
             <WeeklyGamePlan plan={weeklyPlan} streams={streams.filter(s => {
               const d = new Date(s.scheduled_date);
               const start = new Date();
-              start.setDate(start.getDate() - start.getDay() + 1);
+              start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
               start.setHours(0, 0, 0, 0);
               return d >= start;
-            })} sessions={sessions} profile={profile} />
+            })} sessions={sessions} profile={profile} onRefresh={loadData} />
             <GoalsTracker goals={goals} sessions={sessions} onRefresh={loadData} />
           </div>
-          <WeeklyRecapPreview recap={weeklyRecap} previousRecap={null} />
+          <WeeklyRecapPreview recap={weeklyRecap} previousRecap={null} onRefresh={loadData} />
           <AlertsFeed alerts={alerts} onRefresh={loadData} />
         </div>
       )}

@@ -1,15 +1,31 @@
-import { TrendingUp, TrendingDown, Minus, BarChart3 } from "lucide-react";
+import { useState } from "react";
+import { TrendingUp, TrendingDown, Minus, BarChart3, RefreshCw, Zap } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import AppBadge from "../AppBadge";
 
-export default function WeeklyRecapPreview({ recap, previousRecap }) {
+export default function WeeklyRecapPreview({ recap, previousRecap, onRefresh }) {
+  const [generating, setGenerating] = useState(false);
+
+  async function generate(force = false) {
+    setGenerating(true);
+    await base44.functions.invoke('generateWeeklyRecap', { force });
+    setGenerating(false);
+    onRefresh?.();
+  }
+
   if (!recap) {
     return (
       <div className="bg-[#060d1f] border border-pink-900/20 rounded-xl p-5">
         <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// WEEKLY RECAP</div>
         <div className="text-center py-6">
           <BarChart3 className="w-8 h-8 text-slate-700 mx-auto mb-3" />
-          <p className="text-sm font-black uppercase text-slate-400 mb-1">No recap yet</p>
-          <p className="text-xs font-mono text-slate-600">Complete a week with logged sessions to see your recap.</p>
+          <p className="text-sm font-black uppercase text-slate-400 mb-2">No recap yet</p>
+          <p className="text-xs font-mono text-slate-600 mb-4">Generate last week's recap based on your logged sessions.</p>
+          <button onClick={() => generate(false)} disabled={generating}
+            className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30 hover:bg-pink-500/20 transition-all disabled:opacity-50 mx-auto">
+            {generating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+            {generating ? 'Generating...' : 'Generate Last Week Recap'}
+          </button>
         </div>
       </div>
     );
@@ -34,7 +50,13 @@ export default function WeeklyRecapPreview({ recap, previousRecap }) {
     <div className="bg-[#060d1f] border border-pink-900/20 rounded-xl p-5">
       <div className="flex items-center justify-between gap-2 mb-4">
         <div className="text-xs font-mono uppercase tracking-widest text-pink-400">// WEEKLY RECAP</div>
-        <span className="text-[10px] font-mono text-slate-600">{formatWeekRange()}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-mono text-slate-600">{formatWeekRange()}</span>
+          <button onClick={() => generate(true)} disabled={generating} title="Regenerate recap"
+            className="w-7 h-7 flex items-center justify-center rounded border border-pink-500/20 text-pink-400/50 hover:text-pink-400 hover:border-pink-500/40 transition-all disabled:opacity-30">
+            <RefreshCw className={`w-3 h-3 ${generating ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {recap.highlight && (
