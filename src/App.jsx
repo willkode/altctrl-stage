@@ -58,16 +58,21 @@ const AuthenticatedApp = () => {
 
   // Handle authentication errors
   if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Allow TikTok callback page to load without auth — it will redirect to login itself
-      const isTikTokCallback = window.location.pathname === '/tiktok-callback';
-      if (!isTikTokCallback) {
-        navigateToLogin();
-        return null;
-      }
+  if (authError.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
+  } else if (authError.type === 'auth_required') {
+    // Allow TikTok callback page to load without auth — it will handle login redirect itself
+    if (window.location.pathname === '/tiktok-callback') {
+      return (
+        <Routes>
+          <Route path="/tiktok-callback" element={<TikTokCallback />} />
+          <Route path="*" element={null} />
+        </Routes>
+      );
     }
+    navigateToLogin();
+    return null;
+  }
   }
 
   // Redirect authenticated users to dashboard

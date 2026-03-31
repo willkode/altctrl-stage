@@ -12,6 +12,7 @@ import PromoImpact from "../../components/app/analytics/PromoImpact";
 import SessionHistory from "../../components/app/analytics/SessionHistory";
 import { Plus, X } from "lucide-react";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
+import TikTokAccountStats from "../../components/app/analytics/TikTokAccountStats";
 
 export default function Analytics() {
   const [loading, setLoading] = useState(true);
@@ -146,10 +147,13 @@ export default function Analytics() {
         </div>
       )}
 
+      {/* TikTok Account Stats — always shown if connected */}
+      <TikTokAccountStats />
+
       {loading ? (
         <LoadingState message="Loading performance data..." />
       ) : sessions.length === 0 ? (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center">
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center mt-6">
           <div className="text-sm font-black uppercase text-slate-400 mb-2">No sessions logged yet</div>
           <p className="text-xs font-mono text-slate-600 mb-6">Start tracking your streams to unlock analytics insights.</p>
           <button
