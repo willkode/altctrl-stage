@@ -42,6 +42,7 @@ import AdminReview from './pages/app/admin/ManualReviewQueue';
 import AdminSessions from './pages/app/admin/SessionInspection';
 import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
+import TikTokCallback from './pages/TikTokCallback';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -97,6 +98,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/tiktok-callback" element={<TikTokCallback />} />
         <Route path="/features" element={<Features />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/for-creators" element={<ForCreators />} />
