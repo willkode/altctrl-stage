@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import AppLayout from './components/AppLayout';
+import AppAuthGate from './components/app/AppAuthGate';
 import Dashboard from './pages/app/Dashboard';
 import Schedule from './pages/app/Schedule';
 import Promo from './pages/app/Promo';
@@ -55,15 +56,17 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route element={<AppLayout />}>
-        <Route path="/app/dashboard" element={<Dashboard />} />
-        <Route path="/app/schedule" element={<Schedule />} />
-        <Route path="/app/promo" element={<Promo />} />
-        <Route path="/app/analytics" element={<Analytics />} />
-        <Route path="/app/coach" element={<Coach />} />
-        <Route path="/app/notifications" element={<Notifications />} />
-        <Route path="/app/profile" element={<Profile />} />
-        <Route path="/app/settings" element={<Settings />} />
+      <Route element={<AppAuthGate />}>
+        <Route element={<AppLayout />}>
+          <Route path="/app/dashboard" element={<Dashboard />} />
+          <Route path="/app/schedule" element={<Schedule />} />
+          <Route path="/app/promo" element={<Promo />} />
+          <Route path="/app/analytics" element={<Analytics />} />
+          <Route path="/app/coach" element={<Coach />} />
+          <Route path="/app/notifications" element={<Notifications />} />
+          <Route path="/app/profile" element={<Profile />} />
+          <Route path="/app/settings" element={<Settings />} />
+        </Route>
       </Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
