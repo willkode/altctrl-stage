@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Camera, Check, Zap, LogOut } from "lucide-react";
+import { Camera, Check, Zap, LogOut, RefreshCw } from "lucide-react";
 import { useAppToast } from "../../hooks/useAppToast";
 
 const NICHES = ["fps","battle_royale","rpg","sports","mobile","variety","horror","retro","other"];
@@ -59,6 +59,7 @@ export default function Profile() {
   const fileRef = useRef(null);
   const toast = useAppToast();
 
+  const [syncingTikTok, setSyncingTikTok] = useState(false);
   const [form, setForm] = useState({
     display_name: "", tiktok_handle: "", avatar_url: "", bio: "",
     creator_niche: "variety", content_style: "entertainment",
@@ -112,6 +113,22 @@ export default function Profile() {
 
   function removeLanguage(lang) {
     set("languages", form.languages.filter(l => l !== lang));
+  }
+
+  async function handleTikTokSync() {
+    setSyncingTikTok(true);
+    try {
+      // Trigger full sync from TikTok
+      await base44.functions.invoke("runTikTokFullSync", {});
+      
+      // Re-load profile to get updated stats
+      await loadProfile();
+      toast.saved("TikTok data synced!");
+    } catch (err) {
+      toast.error("Sync failed. Try connecting TikTok again.");
+    } finally {
+      setSyncingTikTok(false);
+    }
   }
 
   async function handleSave() {
@@ -249,18 +266,27 @@ export default function Profile() {
 
         {/* Baseline Stats */}
         <Section title="// Baseline Stats">
-          <p className="text-xs font-mono text-slate-600 -mt-1">Used by the AI coach to calibrate recommendations.</p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className={lbl}>Average Viewers</label>
-              <input type="number" min={0} value={form.avg_viewers} onChange={e => set("avg_viewers", e.target.value)}
-                placeholder="e.g. 42" className={inp} />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <p className="text-xs font-mono text-slate-600 mb-4">Used by the AI coach to calibrate recommendations. Syncs from TikTok on first connection.</p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={lbl}>Average Viewers</label>
+                  <input type="number" min={0} value={form.avg_viewers} onChange={e => set("avg_viewers", e.target.value)}
+                    placeholder="e.g. 42" className={inp} />
+                </div>
+                <div>
+                  <label className={lbl}>Follower Count</label>
+                  <input type="number" min={0} value={form.follower_count} onChange={e => set("follower_count", e.target.value)}
+                    placeholder="e.g. 1500" className={inp} />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className={lbl}>Follower Count</label>
-              <input type="number" min={0} value={form.follower_count} onChange={e => set("follower_count", e.target.value)}
-                placeholder="e.g. 1500" className={inp} />
-            </div>
+            <button onClick={handleTikTokSync} disabled={syncingTikTok}
+              className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2.5 rounded border border-pink-900/40 text-pink-400 hover:border-pink-500/40 hover:text-pink-300 transition-all shrink-0 disabled:opacity-50">
+              <RefreshCw className={`w-3.5 h-3.5 ${syncingTikTok ? "animate-spin" : ""}`} />
+              {syncingTikTok ? "Syncing…" : "Sync TikTok"}
+            </button>
           </div>
         </Section>
 
