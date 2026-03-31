@@ -135,6 +135,17 @@ export default function FoundingCreators() {
         {/* Form */}
         <div className="bg-[#060d1f] border border-cyan-900/40 rounded-lg p-8">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-2">// APPLY FOR BETA ACCESS</div>
+          {/* Seat counter bar */}
+          <div className="mb-6 bg-black/40 border border-pink-500/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// FOUNDING CREATOR SEATS</span>
+              <span className="text-sm font-black text-white">88 <span className="text-slate-500 font-mono text-xs">/ 100 left</span></span>
+            </div>
+            <div className="w-full bg-white/10 rounded-full h-2.5 mb-2 overflow-hidden">
+              <div className="h-2.5 rounded-full transition-all" style={{ width: "12%", background: "linear-gradient(90deg, #ff0080, #ff4da6)", boxShadow: "0 0 10px rgba(255,0,128,0.7)" }} />
+            </div>
+            <p className="text-[10px] font-mono text-slate-600">12 of 100 seats claimed · When they're gone, standard pricing applies · No credit card required</p>
+          </div>
           <GlitchText text="CLAIM YOUR FOUNDING CREATOR SPOT" className="text-2xl font-black uppercase text-white block mb-6" tag="h2" />
           <WaitlistForm source="founding-creators" founding={true} />
         </div>

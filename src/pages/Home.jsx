@@ -311,8 +311,19 @@ export default function Home() {
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <GlitchText text="YOUR STREAM DESERVES MORE" className="text-4xl sm:text-5xl font-black uppercase text-white block mb-2" tag="h2" />
-          <h2 className="text-4xl sm:text-5xl font-black uppercase text-pink-400 mb-6">THAN GUESSWORK.</h2>
-          <p className="text-slate-300 max-w-xl mx-auto mb-10">Join the early creators building with AltCtrl.</p>
+          <GlitchText text="THAN GUESSWORK." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
+          <p className="text-slate-300 max-w-xl mx-auto mb-8">Join the early creators building with AltCtrl.</p>
+          {/* Seat counter */}
+          <div className="max-w-sm mx-auto mb-10 bg-black/30 border border-pink-500/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// FOUNDING CREATOR SEATS</span>
+              <span className="text-xs font-mono text-white font-bold">88 / 100 LEFT</span>
+            </div>
+            <div className="w-full bg-white/10 rounded-full h-2 mb-2">
+              <div className="h-2 rounded-full" style={{ width: "12%", background: "linear-gradient(90deg, #ff0080, #ff4da6)", boxShadow: "0 0 8px rgba(255,0,128,0.6)" }} />
+            </div>
+            <p className="text-[10px] font-mono text-slate-500 text-center">12 seats claimed · 88 remaining · No credit card required</p>
+          </div>
           <Link to="/waitlist"
           className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
           style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
