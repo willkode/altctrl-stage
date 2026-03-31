@@ -2,38 +2,19 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Zap, Check, Plus, Trash2 } from "lucide-react";
+import TimestampedNotes from "../../components/app/replay/TimestampedNotes";
+import { Zap, Check, Video } from "lucide-react";
 
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5";
+const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-2.5 text-sm outline-none transition-all font-mono";
+const textarea = inp + " resize-none";
+const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-1.5";
 
-const STAR_RATINGS = [1, 2, 3, 4, 5];
-
-function TimestampNote({ note, index, onChange, onDelete }) {
-  return (
-    <div className="flex gap-2 items-start">
-      <input type="text" value={note.ts} onChange={e => onChange({ ...note, ts: e.target.value })}
-        placeholder="1:23" className="w-16 bg-[#02040f] border border-cyan-900/40 text-cyan-400 rounded px-2 py-2 text-xs font-mono outline-none" />
-      <input type="text" value={note.note} onChange={e => onChange({ ...note, note: e.target.value })}
-        placeholder="What happened here?" className="flex-1 bg-[#02040f] border border-cyan-900/40 text-white rounded px-3 py-2 text-sm font-mono outline-none placeholder-slate-700" />
-      <button onClick={onDelete} className="text-slate-700 hover:text-red-500 transition-colors mt-2">
-        <Trash2 className="w-3.5 h-3.5" />
-      </button>
-    </div>
-  );
-}
-
-export default function ReplayReviewPage() {
+export default function ReplayReview() {
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState([]);
-  const [selectedSessionId, setSelectedSessionId] = useState("");
+  const [selectedId, setSelectedId] = useState("");
   const [review, setReview] = useState(null);
-  const [reviewId, setReviewId] = useState(null);
-  const [form, setForm] = useState({
-    strongest_opening: "", strongest_engagement: "", dead_zones: "",
-    clip_worthy: "", lessons: "", overall_rating: 3, reviewed: false,
-  });
-  const [tsNotes, setTsNotes] = useState([]);
+  const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -44,160 +25,268 @@ export default function ReplayReviewPage() {
     const user = await base44.auth.me();
     const all = await base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 30);
     setSessions(all);
-    if (all.length > 0) await loadReview(all[0], user.email);
     setLoading(false);
   }
 
-  async function loadReview(session, email) {
-    setSelectedSessionId(session.id);
-    const existing = await base44.entities.ReplayReview.filter({ created_by: email, live_session_id: session.id }, "-created_date", 1);
-    if (existing[0]) {
-      const r = existing[0];
-      setReviewId(r.id);
+  async function selectSession(id) {
+    setSelectedId(id);
+    const sess = sessions.find(s => s.id === id);
+    if (!sess) return;
+
+    const reviews = await base44.entities.ReplayReview.filter({ live_session_id: id });
+    if (reviews[0]) {
+      setReview(reviews[0]);
       setForm({
-        strongest_opening: r.strongest_opening || "", strongest_engagement: r.strongest_engagement || "",
-        dead_zones: r.dead_zones || "", clip_worthy: r.clip_worthy || "",
-        lessons: r.lessons || "", overall_rating: r.overall_rating || 3, reviewed: !!r.reviewed,
+        replay_url: reviews[0].replay_url || "",
+        strongest_opening: reviews[0].strongest_opening || "",
+        strongest_engagement: reviews[0].strongest_engagement || "",
+        dead_zones: reviews[0].dead_zones || "",
+        clip_worthy: reviews[0].clip_worthy || "",
+        timestamp_notes: reviews[0].timestamp_notes || "[]",
+        lessons: reviews[0].lessons || "",
+        overall_rating: reviews[0].overall_rating || 5,
+        reviewed: reviews[0].reviewed || false,
       });
-      try { setTsNotes(JSON.parse(r.timestamp_notes || "[]")); } catch { setTsNotes([]); }
     } else {
-      setReviewId(null);
-      setForm({ strongest_opening: "", strongest_engagement: "", dead_zones: "", clip_worthy: "", lessons: "", overall_rating: 3, reviewed: false });
-      setTsNotes([]);
+      setReview(null);
+      setForm({
+        replay_url: "",
+        strongest_opening: "",
+        strongest_engagement: "",
+        dead_zones: "",
+        clip_worthy: "",
+        timestamp_notes: "[]",
+        lessons: "",
+        overall_rating: 5,
+        reviewed: false,
+      });
     }
   }
 
-  async function handleSessionChange(id) {
-    const session = sessions.find(s => s.id === id);
-    const user = await base44.auth.me();
-    await loadReview(session, user.email);
-  }
-
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const addTs = () => setTsNotes(n => [...n, { ts: "", note: "" }]);
-  const updateTs = (i, v) => setTsNotes(n => n.map((x, idx) => idx === i ? v : x));
-  const deleteTs = (i) => setTsNotes(n => n.filter((_, idx) => idx !== i));
-
   async function handleSave() {
+    if (!selectedId) return;
     setSaving(true);
-    const session = sessions.find(s => s.id === selectedSessionId);
     const data = {
-      ...form, live_session_id: selectedSessionId,
-      session_date: session?.stream_date || "", game: session?.game || "",
+      ...form,
+      live_session_id: selectedId,
       reviewed_at: new Date().toISOString(),
-      timestamp_notes: JSON.stringify(tsNotes),
     };
-    if (reviewId) await base44.entities.ReplayReview.update(reviewId, data);
-    else { const c = await base44.entities.ReplayReview.create(data); setReviewId(c.id); }
-    // Mark parent session as replay_reviewed
-    if (selectedSessionId) await base44.entities.LiveSession.update(selectedSessionId, { replay_reviewed: true });
-    setSaved(true); setSaving(false);
+
+    if (review?.id) {
+      await base44.entities.ReplayReview.update(review.id, data);
+    } else {
+      await base44.entities.ReplayReview.create(data);
+    }
+
+    setSaved(true);
+    setSaving(false);
+    await selectSession(selectedId);
     setTimeout(() => setSaved(false), 2000);
   }
 
   if (loading) return <PageContainer><LoadingState message="Loading sessions..." /></PageContainer>;
 
-  const selected = sessions.find(s => s.id === selectedSessionId);
+  const currentSession = sessions.find(s => s.id === selectedId);
 
   return (
     <PageContainer>
       <div className="mb-6">
         <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-1">// REPLAY_REVIEW</div>
         <h1 className="text-2xl font-black uppercase text-white">Replay Review</h1>
-        <p className="text-sm text-slate-500 mt-0.5 font-mono">Watch the replay. Learn from it.</p>
+        <p className="text-sm text-slate-500 mt-0.5 font-mono">Analyze your stream replay and capture learnings.</p>
       </div>
 
-      {sessions.length === 0 ? (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-10 text-center">
-          <p className="text-slate-500 font-mono text-sm">No sessions logged yet. Debrief first.</p>
+      {/* Session selector */}
+      <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-4 mb-4">
+        <label className={lbl}>Select Session to Review</label>
+        <select value={selectedId} onChange={e => selectSession(e.target.value)} className={inp + " appearance-none"}>
+          <option value="">— Choose a session —</option>
+          {sessions.map(s => (
+            <option key={s.id} value={s.id}>
+              {s.stream_date} · {s.game} {s.replay_reviewed ? "✓" : ""}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {!selectedId ? (
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-12 text-center">
+          <Video className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+          <div className="text-sm font-black uppercase text-slate-500 mb-2">No session selected</div>
+          <p className="text-xs font-mono text-slate-600">Pick a stream to start reviewing its replay.</p>
+        </div>
+      ) : !currentSession ? (
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-12 text-center">
+          <div className="text-sm font-black uppercase text-slate-500">Session not found</div>
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Session picker */}
-          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-4">
-            <label className={lbl}>Session</label>
-            <select value={selectedSessionId} onChange={e => handleSessionChange(e.target.value)} className={inp + " appearance-none"}>
-              {sessions.map(s => (
-                <option key={s.id} value={s.id}>
-                  {s.stream_date} · {s.game}{s.replay_reviewed ? " ✓" : ""}
-                </option>
-              ))}
-            </select>
-            {selected && (
-              <div className="mt-2 flex items-center gap-3 text-[10px] font-mono text-slate-600">
-                {selected.replay_reviewed ? <span className="text-green-500">✓ Replay reviewed</span> : <span className="text-yellow-500/70">⚑ Not yet reviewed</span>}
-                {selected.avg_viewers && <span>Avg {selected.avg_viewers} viewers</span>}
-                {selected.duration_minutes && <span>{selected.duration_minutes}m</span>}
+          {/* Session info */}
+          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+              <div>
+                <div className="text-[10px] font-mono uppercase text-slate-600">Date</div>
+                <div className="text-white font-black mt-1">{currentSession.stream_date}</div>
               </div>
+              <div>
+                <div className="text-[10px] font-mono uppercase text-slate-600">Game</div>
+                <div className="text-white font-black mt-1">{currentSession.game}</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-mono uppercase text-slate-600">Type</div>
+                <div className="text-cyan-400 font-black mt-1">{currentSession.stream_type}</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-mono uppercase text-slate-600">Status</div>
+                <div className={`font-black mt-1 ${form.reviewed ? "text-green-400" : "text-slate-500"}`}>
+                  {form.reviewed ? "Reviewed ✓" : "Pending"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Replay URL */}
+          <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-5 space-y-3">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400">// Replay URL</div>
+            <input
+              type="url"
+              value={form.replay_url}
+              onChange={e => setForm(f => ({ ...f, replay_url: e.target.value }))}
+              placeholder="https://www.tiktok.com/@username/live/..."
+              className={inp}
+            />
+            {form.replay_url && (
+              <a href={form.replay_url} target="_blank" rel="noopener noreferrer"
+                className="text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors">
+                → Open replay in new tab
+              </a>
             )}
           </div>
 
-          {/* Star rating */}
-          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-4">
-            <label className={lbl}>Overall Session Rating</label>
-            <div className="flex gap-2 mt-1">
-              {STAR_RATINGS.map(r => (
-                <button key={r} onClick={() => set("overall_rating", r)}
-                  className={`flex-1 py-2.5 rounded border text-sm font-black transition-all ${
-                    form.overall_rating >= r
-                      ? "bg-yellow-400/10 border-yellow-400/40 text-yellow-400"
-                      : "bg-[#02040f] border-cyan-900/30 text-slate-700 hover:text-slate-500"
-                  }`}>
-                  {r}
+          {/* Key moments */}
+          <div className="bg-[#060d1f] border border-yellow-900/30 rounded-xl p-5 space-y-4">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400">// Key Moments</div>
+
+            <div>
+              <label className={lbl}>Strongest Opening</label>
+              <textarea
+                value={form.strongest_opening}
+                onChange={e => setForm(f => ({ ...f, strongest_opening: e.target.value }))}
+                placeholder="What was the best part of your opening? Hook? Hype? How long?"
+                rows={2}
+                className={textarea}
+              />
+            </div>
+
+            <div>
+              <label className={lbl}>Strongest Engagement Moment</label>
+              <textarea
+                value={form.strongest_engagement}
+                onChange={e => setForm(f => ({ ...f, strongest_engagement: e.target.value }))}
+                placeholder="When did chat go crazy? Big play? Funny moment? Interaction?"
+                rows={2}
+                className={textarea}
+              />
+            </div>
+
+            <div>
+              <label className={lbl}>Dead Zones / Slow Periods</label>
+              <textarea
+                value={form.dead_zones}
+                onChange={e => setForm(f => ({ ...f, dead_zones: e.target.value }))}
+                placeholder="Where was chat quiet? Where did engagement dip? When and why?"
+                rows={2}
+                className={textarea}
+              />
+            </div>
+
+            <div>
+              <label className={lbl}>Clip-Worthy Moments</label>
+              <textarea
+                value={form.clip_worthy}
+                onChange={e => setForm(f => ({ ...f, clip_worthy: e.target.value }))}
+                placeholder="Timestamps of moments worth clipping. Why? Emotional? Shocking? Funny?"
+                rows={2}
+                className={textarea}
+              />
+            </div>
+          </div>
+
+          {/* Timestamped notes */}
+          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// Timestamped Notes</div>
+            <p className="text-xs font-mono text-slate-600">Capture specific moments as you review. MM:SS format.</p>
+            <TimestampedNotes
+              notes={form.timestamp_notes}
+              onChange={notes => setForm(f => ({ ...f, timestamp_notes: notes }))}
+            />
+          </div>
+
+          {/* Lessons */}
+          <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-5 space-y-3">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400">// Lessons for Next Time</div>
+            <textarea
+              value={form.lessons}
+              onChange={e => setForm(f => ({ ...f, lessons: e.target.value }))}
+              placeholder="What will you do differently next stream? What worked? What didn't? New ideas to test?"
+              rows={3}
+              className={textarea}
+            />
+          </div>
+
+          {/* Overall rating */}
+          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
+            <label className={lbl}>Overall Stream Rating</label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map(n => (
+                <button
+                  key={n}
+                  onClick={() => setForm(f => ({ ...f, overall_rating: n }))}
+                  className={`flex-1 py-3 rounded border text-lg font-black transition-all ${
+                    form.overall_rating === n
+                      ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-400"
+                      : "bg-[#02040f] border-cyan-900/30 text-slate-500 hover:text-slate-300"
+                  }`}
+                >
+                  {n}
                 </button>
               ))}
             </div>
+            <p className="text-xs font-mono text-slate-600">1 = needs work, 5 = excellent</p>
           </div>
 
-          {/* Replay notes */}
-          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-4">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-1">// Replay Analysis</div>
-            {[
-              { field: "strongest_opening", label: "Strongest Opening Moment", placeholder: "What landed in the first 2 min?" },
-              { field: "strongest_engagement", label: "Strongest Engagement Moment", placeholder: "When was chat the most alive?" },
-              { field: "dead_zones", label: "Dead Zones / Slow Periods", placeholder: "Where did the room go quiet?" },
-              { field: "clip_worthy", label: "Clip-Worthy Moments", placeholder: "What would you cut for content?" },
-              { field: "lessons", label: "Lessons for Next Time", placeholder: "What's the actual takeaway?" },
-            ].map(({ field, label, placeholder }) => (
-              <div key={field}>
-                <label className={lbl}>{label}</label>
-                <textarea value={form[field]} onChange={e => set(field, e.target.value)}
-                  rows={2} placeholder={placeholder} className={inp + " resize-none"} />
-              </div>
-            ))}
+          {/* Reviewed checkbox */}
+          <div className="bg-[#060d1f] border border-green-900/30 rounded-xl p-5">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.reviewed}
+                onChange={e => setForm(f => ({ ...f, reviewed: e.target.checked }))}
+                className="w-5 h-5 rounded border border-green-900/40 bg-[#02040f] accent-green-400 cursor-pointer"
+              />
+              <span className="text-sm font-mono uppercase text-white">Mark replay as reviewed</span>
+            </label>
           </div>
-
-          {/* Timestamp notes */}
-          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// Timestamp Notes</div>
-              <button onClick={addTs} className="flex items-center gap-1 text-[10px] font-mono uppercase text-cyan-400 hover:text-cyan-300 transition-colors">
-                <Plus className="w-3 h-3" /> Add
-              </button>
-            </div>
-            <div className="space-y-2">
-              {tsNotes.length === 0 && <p className="text-xs font-mono text-slate-700">No timestamps yet. Add one above.</p>}
-              {tsNotes.map((n, i) => <TimestampNote key={i} note={n} index={i} onChange={v => updateTs(i, v)} onDelete={() => deleteTs(i)} />)}
-            </div>
-          </div>
-
-          {/* Mark reviewed */}
-          <button onClick={() => set("reviewed", !form.reviewed)}
-            className={`flex items-center gap-3 w-full px-4 py-4 rounded border text-sm transition-all ${
-              form.reviewed ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-[#02040f] border-cyan-900/30 text-slate-500"
-            }`}>
-            <span className={`w-5 h-5 rounded border flex items-center justify-center ${form.reviewed ? "bg-green-500 border-green-500" : "border-cyan-900/50"}`}>
-              {form.reviewed && <Check className="w-3 h-3 text-white" />}
-            </span>
-            <span className="font-mono text-xs uppercase tracking-widest">Mark Replay as Reviewed</span>
-          </button>
 
           {/* Save */}
-          <button onClick={handleSave} disabled={saving || !selectedSessionId}
+          <button
+            onClick={handleSave}
+            disabled={saving || !form.reviewed}
             className={`w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest py-4 rounded text-sm transition-all disabled:opacity-40 ${
               saved ? "bg-green-400 text-[#02040f]" : "bg-cyan-400 text-[#02040f] hover:bg-cyan-300"
-            }`}>
-            {saved ? <><Check className="w-4 h-4" /> Saved!</> : saving ? "Saving…" : <><Zap className="w-4 h-4" /> Save Review</>}
+            }`}
+          >
+            {saved ? (
+              <>
+                <Check className="w-4 h-4" /> Review Saved!
+              </>
+            ) : saving ? (
+              "Saving…"
+            ) : (
+              <>
+                <Zap className="w-4 h-4" /> Save Replay Review
+              </>
+            )}
           </button>
         </div>
       )}

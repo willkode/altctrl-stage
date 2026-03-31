@@ -219,6 +219,7 @@ export default function Dashboard() {
                     </div>
                   )}
                   <AppBadge label={s.promo_posted ? "promo" : "no promo"} accent={s.promo_posted ? "cyan" : "slate"} />
+                  {s.replay_reviewed ? <AppBadge label="reviewed" accent="green" /> : null}
                   <SourceBadge source={s.source} size="sm" />
                 </div>
               </div>
