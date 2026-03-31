@@ -1,0 +1,121 @@
+{
+  "name": "ImportSyncLog",
+  "type": "object",
+  "properties": {
+    "sync_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Sync Timestamp"
+    },
+    "source": {
+      "type": "string",
+      "title": "Source",
+      "enum": [
+        "extension",
+        "extension_bulk"
+      ],
+      "default": "extension"
+    },
+    "status": {
+      "type": "string",
+      "title": "Overall Status",
+      "enum": [
+        "success",
+        "partial_success",
+        "failed"
+      ],
+      "default": "success"
+    },
+    "sessions_submitted": {
+      "type": "number",
+      "title": "Sessions Submitted",
+      "default": 0
+    },
+    "sessions_created": {
+      "type": "number",
+      "title": "Sessions Created",
+      "default": 0
+    },
+    "sessions_updated": {
+      "type": "number",
+      "title": "Sessions Updated",
+      "default": 0
+    },
+    "sessions_skipped": {
+      "type": "number",
+      "title": "Sessions Skipped (Duplicates)",
+      "default": 0
+    },
+    "sessions_manual_review": {
+      "type": "number",
+      "title": "Sessions Flagged for Manual Review",
+      "default": 0
+    },
+    "sessions_failed": {
+      "type": "number",
+      "title": "Sessions Failed",
+      "default": 0
+    },
+    "error_code": {
+      "type": "string",
+      "title": "Error Code",
+      "enum": [
+        "MISSING_FIELD",
+        "AUTH_FAILED",
+        "INVALID_TOKEN",
+        "TOKEN_EXPIRED",
+        "TOKEN_REVOKED",
+        "INVALID_PAYLOAD",
+        "MALFORMED_ROW",
+        "VALIDATION_ERROR",
+        "INTERNAL_ERROR",
+        null
+      ]
+    },
+    "error_message": {
+      "type": "string",
+      "title": "Error Message"
+    },
+    "failed_indices": {
+      "type": "string",
+      "title": "Failed Row Indices (comma-separated)"
+    },
+    "failure_reasons": {
+      "type": "string",
+      "title": "Failure Reason Summary (JSON)"
+    },
+    "profile_updated": {
+      "type": "boolean",
+      "title": "Creator Profile Stats Updated",
+      "default": false
+    },
+    "notes": {
+      "type": "string",
+      "title": "Additional Notes"
+    },
+    "token_issue": {
+      "type": "string",
+      "title": "Token Issue Type",
+      "enum": [
+        "invalid",
+        "expired",
+        "revoked",
+        "malformed",
+        null
+      ]
+    },
+    "retry_needed": {
+      "type": "boolean",
+      "title": "Retry Recommended",
+      "default": false
+    },
+    "session_ids_created": {
+      "type": "string",
+      "title": "Session IDs Created (comma-separated)"
+    }
+  },
+  "required": [
+    "sync_timestamp",
+    "source"
+  ]
+}

@@ -4,6 +4,7 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Check, Zap, AlertTriangle, Download } from "lucide-react";
 import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
+import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import { useAppToast } from "../../hooks/useAppToast";
 
 const PROMO_TONES = ["hype","chill","competitive","funny","serious","community"];
@@ -306,6 +307,11 @@ export default function Settings() {
         {/* TikTok Connection */}
         <Section title="// TikTok Connection" accent="pink">
           <TikTokConnectionCard />
+        </Section>
+
+        {/* Import Sync Debugging */}
+        <Section title="// Import Sync History & Debugging" accent="cyan">
+          <SyncDebugPanel />
         </Section>
 
         {/* Data Export */}
