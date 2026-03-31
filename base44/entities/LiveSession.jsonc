@@ -151,8 +151,8 @@
       "title": "Data Source",
       "enum": [
         "manual",
-        "tiktok_import",
-        "derived"
+        "extension_import",
+        "hybrid"
       ],
       "default": "manual"
     },
@@ -178,6 +178,44 @@
     "raw_import_reference": {
       "type": "string",
       "title": "Raw Import Reference (e.g. TikTok video ID)"
+    },
+    "external_session_key": {
+      "type": "string",
+      "title": "External Session Key (stable dedupe identifier)"
+    },
+    "import_session_id": {
+      "type": "string",
+      "title": "Import Session Reference ID"
+    },
+    "raw_import_payload": {
+      "type": "string",
+      "title": "Raw Imported Payload (JSON)"
+    },
+    "import_created_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "First Imported At"
+    },
+    "import_updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Imported At"
+    },
+    "was_auto_imported": {
+      "type": "boolean",
+      "title": "Was Auto-Imported via Extension",
+      "default": false
+    },
+    "manual_review_status": {
+      "type": "string",
+      "title": "Manual Review Status",
+      "enum": [
+        "none",
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "none"
     }
   },
   "required": [
