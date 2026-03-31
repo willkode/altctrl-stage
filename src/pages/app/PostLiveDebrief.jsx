@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Zap, Check, Info } from "lucide-react";
+import ImportedMetricsDisplay from "../../components/app/debrief/ImportedMetricsDisplay";
+import CreatorDebrief from "../../components/app/debrief/CreatorDebrief";
+import SessionTags from "../../components/app/debrief/SessionTags";
+import { Zap, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3 text-sm outline-none transition-all font-mono";
@@ -16,35 +19,14 @@ function getISOWeek(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-function SourceBadge({ source }) {
-  if (!source || source === "manual") return null;
-  return (
-    <span className="ml-2 text-[9px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-500">TikTok</span>
-  );
-}
-
-function MetricField({ label, field, form, setForm, source, placeholder = "0", note }) {
-  return (
-    <div>
-      <label className={lbl + " flex items-center gap-1"}>
-        {label} <SourceBadge source={source?.[field]} />
-      </label>
-      <input type="number" inputMode="numeric" min={0}
-        value={form[field] === null || form[field] === undefined ? "" : form[field]}
-        onChange={e => setForm(f => ({ ...f, [field]: e.target.value === "" ? null : Number(e.target.value) }))}
-        placeholder={placeholder} className={inp} />
-      {note && <p className="text-[10px] font-mono text-slate-700 mt-1">{note}</p>}
-    </div>
-  );
-}
-
 const empty = () => ({
   game: "", stream_type: "ranked", stream_date: new Date().toISOString().split("T")[0],
   start_time: "", end_time: "", duration_minutes: null, avg_viewers: null, peak_viewers: null,
   followers_gained: null, comments: null, shares: null, gifters: null, diamonds: null,
   fan_club_joins: null, promo_posted: false, went_as_planned: true, would_repeat: true,
   energy_level: "medium", best_moment: "", weakest_moment: "", spike_reason: "", drop_off_reason: "",
-  notes: "", source: "manual", source_confidence: "high",
+  notes: "", monetization_notes: "", test_next_time: "", session_tags: [],
+  source: "manual", source_confidence: "high",
 });
 
 export default function PostLiveDebrief() {
@@ -85,7 +67,8 @@ export default function PostLiveDebrief() {
       energy_level: s.energy_level || "medium", best_moment: s.best_moment || "",
       weakest_moment: s.weakest_moment || "", spike_reason: s.spike_reason || "",
       drop_off_reason: s.drop_off_reason || "", notes: s.notes || "",
-      source: s.source || "manual", source_confidence: s.source_confidence || "high",
+      monetization_notes: s.monetization_notes || "", test_next_time: s.test_next_time || "",
+      session_tags: s.session_tags || [], source: s.source || "manual", source_confidence: s.source_confidence || "high",
     });
   }
 
@@ -107,15 +90,13 @@ export default function PostLiveDebrief() {
   if (loading) return <PageContainer><LoadingState message="Loading sessions..." /></PageContainer>;
 
   const isNew = selectedId === "__new__";
-  const ENERGY = ["low", "medium", "high"];
-  const ENERGY_STYLE = { low: "bg-slate-500/10 border-slate-500/30 text-slate-400", medium: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400", high: "bg-yellow-400/10 border-yellow-400/30 text-yellow-400" };
 
   return (
     <PageContainer>
       <div className="mb-6">
         <div className="text-xs font-mono uppercase tracking-widest text-yellow-400 mb-1">// POST_LIVE_DEBRIEF</div>
         <h1 className="text-2xl font-black uppercase text-white">Post-Live Debrief</h1>
-        <p className="text-sm text-slate-500 mt-0.5 font-mono">Log everything from your stream.</p>
+        <p className="text-sm text-slate-500 mt-0.5 font-mono">Interpret your stream. Imported metrics stay read-only.</p>
       </div>
 
       {/* Session selector */}
@@ -128,6 +109,9 @@ export default function PostLiveDebrief() {
       </div>
 
       <div className="space-y-4">
+        {/* Imported metrics (if available) */}
+        {form.source !== "manual" && <ImportedMetricsDisplay session={form} />}
+
         {/* Core info */}
         <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-4">
           <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 mb-1">// Stream Info</div>
@@ -156,32 +140,6 @@ export default function PostLiveDebrief() {
           </div>
         </div>
 
-        {/* Viewer metrics */}
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// Viewer Metrics</span>
-            <span className="text-[9px] font-mono text-slate-700 bg-[#02040f] border border-cyan-900/20 px-2 py-0.5 rounded">Manual entry — not available via TikTok API</span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <MetricField label="Avg Viewers" field="avg_viewers" form={form} setForm={setForm} />
-            <MetricField label="Peak Viewers" field="peak_viewers" form={form} setForm={setForm} />
-            <MetricField label="Duration (min)" field="duration_minutes" form={form} setForm={setForm} />
-          </div>
-        </div>
-
-        {/* Audience & monetization */}
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400 mb-2">// Audience & Monetization</div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <MetricField label="Followers Gained" field="followers_gained" form={form} setForm={setForm} />
-            <MetricField label="Comments" field="comments" form={form} setForm={setForm} />
-            <MetricField label="Shares" field="shares" form={form} setForm={setForm} />
-            <MetricField label="Gifters" field="gifters" form={form} setForm={setForm} />
-            <MetricField label="Diamonds" field="diamonds" form={form} setForm={setForm} note="Total diamond value received" />
-            <MetricField label="Fan Club Joins" field="fan_club_joins" form={form} setForm={setForm} />
-          </div>
-        </div>
-
         {/* Session flags */}
         <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
           <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-2">// Session Flags</div>
@@ -204,33 +162,55 @@ export default function PostLiveDebrief() {
           <div>
             <label className={lbl}>Energy Level</label>
             <div className="flex gap-2">
-              {ENERGY.map(e => (
-                <button key={e} onClick={() => setForm(f => ({ ...f, energy_level: e }))}
-                  className={`flex-1 py-2.5 rounded border text-xs font-mono uppercase transition-all ${form.energy_level === e ? ENERGY_STYLE[e] : "bg-[#02040f] border-cyan-900/30 text-slate-600"}`}>
-                  {e}
-                </button>
-              ))}
+              {["low", "medium", "high"].map(e => {
+                const ENERGY_STYLE = { low: "bg-slate-500/10 border-slate-500/30 text-slate-400", medium: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400", high: "bg-yellow-400/10 border-yellow-400/30 text-yellow-400" };
+                return (
+                  <button key={e} onClick={() => setForm(f => ({ ...f, energy_level: e }))}
+                    className={`flex-1 py-2.5 rounded border text-xs font-mono uppercase transition-all ${form.energy_level === e ? ENERGY_STYLE[e] : "bg-[#02040f] border-cyan-900/30 text-slate-600"}`}>
+                    {e}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* After-action review */}
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 mb-2">// After-Action Review</div>
-          {[
-            { field: "best_moment", label: "Best Moment", placeholder: "What hit hardest?" },
-            { field: "weakest_moment", label: "Weakest Moment", placeholder: "Where did you lose the room?" },
-            { field: "spike_reason", label: "Spike Reason", placeholder: "Why did viewers jump?" },
-            { field: "drop_off_reason", label: "Drop-Off Reason", placeholder: "What caused the dip?" },
-            { field: "notes", label: "Notes", placeholder: "Anything else..." },
-          ].map(({ field, label, placeholder }) => (
-            <div key={field}>
-              <label className={lbl}>{label}</label>
-              <textarea value={form[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-                rows={2} placeholder={placeholder} className={inp + " resize-none"} />
+        {/* Creator debrief */}
+        <CreatorDebrief session={form} onChange={setForm} />
+
+        {/* Session tags */}
+        <SessionTags session={form} onChange={setForm} />
+
+        {/* Manual metrics for new/manual streams */}
+        {form.source === "manual" && (
+          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// Viewer Metrics</span>
+              <span className="text-[9px] font-mono text-slate-700 bg-[#02040f] border border-cyan-900/20 px-2 py-0.5 rounded">Manual entry only</span>
             </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {[
+                { field: "avg_viewers", label: "Avg Viewers" },
+                { field: "peak_viewers", label: "Peak Viewers" },
+                { field: "duration_minutes", label: "Duration (min)" },
+                { field: "followers_gained", label: "Followers Gained" },
+                { field: "comments", label: "Comments" },
+                { field: "shares", label: "Shares" },
+                { field: "gifters", label: "Gifters" },
+                { field: "diamonds", label: "Diamonds" },
+                { field: "fan_club_joins", label: "Fan Club Joins" },
+              ].map(({ field, label }) => (
+                <div key={field}>
+                  <label className={lbl}>{label}</label>
+                  <input type="number" inputMode="numeric" min={0}
+                    value={form[field] === null || form[field] === undefined ? "" : form[field]}
+                    onChange={e => setForm(f => ({ ...f, [field]: e.target.value === "" ? null : Number(e.target.value) }))}
+                    placeholder="0" className={inp} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Save */}
         <button onClick={handleSave} disabled={saving || !form.game || !form.stream_date}
