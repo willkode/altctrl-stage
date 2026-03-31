@@ -39,6 +39,7 @@ export default function Schedule() {
   const [streams, setStreams] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [streak, setStreak] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editStream, setEditStream] = useState(null);
 
@@ -62,9 +63,25 @@ export default function Schedule() {
     const endStr = weekDates[6].toISOString().split("T")[0];
     const weekStreams = allStreams.filter(s => s.scheduled_date >= startStr && s.scheduled_date <= endStr);
 
+    // Calculate streak: consecutive weeks (ending this week) with ≥1 session logged
+    const sessionWeeks = new Set(allSessions.map(s => {
+      const d = new Date(s.stream_date);
+      return `${d.getFullYear()}-${getISOWeek(d)}`;
+    }));
+    let streakCount = 0;
+    const now = new Date();
+    for (let i = 0; i <= 52; i++) {
+      const check = new Date(now);
+      check.setDate(now.getDate() - i * 7);
+      const key = `${check.getFullYear()}-${getISOWeek(check)}`;
+      if (sessionWeeks.has(key)) streakCount++;
+      else if (i > 0) break; // allow current week to be 0 without breaking
+    }
+
     setStreams(weekStreams);
     setSessions(allSessions);
     setProfile(profiles[0] || null);
+    setStreak(streakCount);
     setLoading(false);
   }
 
@@ -187,7 +204,7 @@ export default function Schedule() {
           {/* ── Bottom panels ── */}
           <div className="grid md:grid-cols-3 gap-4">
             {/* Weekly consistency */}
-            <WeeklyConsistency streams={streams} target={weekTarget} sessions={sessions} />
+            <WeeklyConsistency streams={streams} target={weekTarget} sessions={sessions} streak={streak} />
 
             {/* Preferred days */}
             <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-5">
