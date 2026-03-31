@@ -1,0 +1,64 @@
+{
+  "name": "SyncJobRun",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "title": "Provider",
+      "enum": [
+        "tiktok"
+      ],
+      "default": "tiktok"
+    },
+    "sync_type": {
+      "type": "string",
+      "title": "Sync Type",
+      "enum": [
+        "profile",
+        "videos",
+        "full"
+      ],
+      "default": "full"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Started At"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Finished At"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "running",
+        "success",
+        "partial",
+        "failed"
+      ],
+      "default": "running"
+    },
+    "records_created": {
+      "type": "number",
+      "title": "Records Created",
+      "default": 0
+    },
+    "records_updated": {
+      "type": "number",
+      "title": "Records Updated",
+      "default": 0
+    },
+    "error_log": {
+      "type": "string",
+      "title": "Error Log"
+    }
+  },
+  "required": [
+    "provider",
+    "sync_type",
+    "started_at"
+  ]
+}

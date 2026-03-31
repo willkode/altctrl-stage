@@ -1,6 +1,9 @@
 import { useState } from "react";
 import GlitchText from "../../components/GlitchText";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Zap, ExternalLink, CheckCircle } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+
+const CONNECTOR_ID = "69c7e25af1fbef3a6d3efd4d";
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const DAY_LABELS = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
@@ -27,6 +30,22 @@ export default function Onboarding({ onComplete }) {
     content_style: "entertainment",
   });
   const [saving, setSaving] = useState(false);
+  const [tiktokConnected, setTiktokConnected] = useState(false);
+  const [connectingTikTok, setConnectingTikTok] = useState(false);
+
+  const connectTikTok = async () => {
+    setConnectingTikTok(true);
+    const url = await base44.connectors.connectAppUser(CONNECTOR_ID);
+    const popup = window.open(url, "_blank");
+    const timer = setInterval(() => {
+      if (!popup || popup.closed) {
+        clearInterval(timer);
+        setConnectingTikTok(false);
+        // Trigger a profile sync after OAuth
+        base44.functions.invoke("syncTikTokProfile", {}).then(() => setTiktokConnected(true)).catch(() => setTiktokConnected(true));
+      }
+    }, 500);
+  };
 
   const toggleDay = (d) => {
     setForm(f => ({
@@ -56,12 +75,12 @@ export default function Onboarding({ onComplete }) {
             <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">// INITIALIZING CREATOR PROFILE</span>
           </div>
           <GlitchText text="WELCOME TO ALTCTRL" className="text-3xl font-black uppercase text-white block mb-1" tag="h1" />
-          <p className="text-slate-500 text-sm font-mono">Step {step} of 3 — Let's get you set up.</p>
+          <p className="text-slate-500 text-sm font-mono">Step {step} of 4 — Let's get you set up.</p>
         </div>
 
         {/* Progress */}
         <div className="flex gap-1.5 mb-8">
-          {[1, 2, 3].map(s => (
+          {[1, 2, 3, 4].map(s => (
             <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-300 ${s <= step ? "bg-cyan-400" : "bg-cyan-900/30"}`}
               style={s <= step ? { boxShadow: "0 0 6px rgba(0,245,255,0.4)" } : {}} />
           ))}
@@ -210,12 +229,53 @@ export default function Onboarding({ onComplete }) {
                 <button onClick={() => setStep(2)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
                   Back
                 </button>
+                <button onClick={() => setStep(4)} className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all">
+                  Next <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Connect TikTok (optional) */}
+          {step === 4 && (
+            <div className="space-y-5">
+              <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// STEP 4 — CONNECT TIKTOK (OPTIONAL)</div>
+              <div className="bg-[#02040f] border border-pink-900/30 rounded-lg p-4 space-y-3">
+                <p className="text-xs font-mono text-slate-400 leading-relaxed">
+                  Connecting TikTok imports your <span className="text-cyan-400">profile stats</span>, <span className="text-cyan-400">follower count</span>, and <span className="text-cyan-400">video library</span> automatically.
+                </p>
+                <div className="space-y-1.5 text-[10px] font-mono text-slate-600">
+                  <div>✓ Display name &amp; avatar</div>
+                  <div>✓ Follower / following / likes counts</div>
+                  <div>✓ Your public video list</div>
+                  <div className="text-slate-700">✕ LIVE session stats (avg viewers, gifts, diamonds) — manual only</div>
+                </div>
+              </div>
+
+              {tiktokConnected ? (
+                <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-lg px-4 py-3">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-sm font-mono text-green-400">TikTok connected!</span>
+                </div>
+              ) : (
+                <button onClick={connectTikTok} disabled={connectingTikTok}
+                  className="w-full flex items-center justify-center gap-2 bg-pink-500/10 border border-pink-500/40 text-pink-400 font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-pink-500/20 transition-all disabled:opacity-50">
+                  <ExternalLink className="w-4 h-4" />
+                  {connectingTikTok ? "Connecting…" : "Connect TikTok"}
+                </button>
+              )}
+
+              <div className="flex gap-3">
+                <button onClick={() => setStep(3)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
+                  Back
+                </button>
                 <button onClick={handleFinish} disabled={saving}
                   className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all disabled:opacity-50">
                   <Zap className="w-4 h-4" />
                   {saving ? "Initializing..." : "Launch AltCtrl"}
                 </button>
               </div>
+              <p className="text-center text-[10px] font-mono text-slate-700">// You can connect TikTok anytime from Settings.</p>
             </div>
           )}
         </div>

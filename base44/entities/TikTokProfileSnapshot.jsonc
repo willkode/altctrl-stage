@@ -1,0 +1,47 @@
+{
+  "name": "TikTokProfileSnapshot",
+  "type": "object",
+  "properties": {
+    "connected_account_id": {
+      "type": "string",
+      "title": "Connected Account ID"
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Captured At"
+    },
+    "follower_count": {
+      "type": "number",
+      "title": "Follower Count"
+    },
+    "following_count": {
+      "type": "number",
+      "title": "Following Count"
+    },
+    "likes_count": {
+      "type": "number",
+      "title": "Likes Count"
+    },
+    "video_count": {
+      "type": "number",
+      "title": "Video Count"
+    },
+    "bio_description": {
+      "type": "string",
+      "title": "Bio Description"
+    },
+    "profile_web_link": {
+      "type": "string",
+      "title": "Profile Web Link"
+    },
+    "is_verified": {
+      "type": "boolean",
+      "title": "Is Verified"
+    }
+  },
+  "required": [
+    "connected_account_id",
+    "captured_at"
+  ]
+}

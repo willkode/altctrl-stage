@@ -144,6 +144,59 @@
       "type": "boolean",
       "title": "Beta Access",
       "default": true
+    },
+    "tiktok_connected": {
+      "type": "boolean",
+      "title": "TikTok Connected",
+      "default": false
+    },
+    "tiktok_connection_status": {
+      "type": "string",
+      "title": "TikTok Connection Status",
+      "enum": [
+        "connected",
+        "disconnected",
+        "error",
+        "never"
+      ],
+      "default": "never"
+    },
+    "tiktok_open_id": {
+      "type": "string",
+      "title": "TikTok open_id"
+    },
+    "tiktok_union_id": {
+      "type": "string",
+      "title": "TikTok union_id"
+    },
+    "tiktok_profile_last_synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "TikTok Profile Last Synced At"
+    },
+    "follower_count_source": {
+      "type": "string",
+      "title": "Follower Count Source",
+      "enum": [
+        "manual",
+        "tiktok"
+      ],
+      "default": "manual"
+    },
+    "last_tiktok_video_sync_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last TikTok Video Sync At"
+    },
+    "imported_display_name": {
+      "type": "boolean",
+      "title": "Display Name Imported from TikTok",
+      "default": false
+    },
+    "imported_avatar": {
+      "type": "boolean",
+      "title": "Avatar Imported from TikTok",
+      "default": false
     }
   },
   "required": [

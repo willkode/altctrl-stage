@@ -94,6 +94,39 @@
     "notes": {
       "type": "string",
       "title": "Personal Notes"
+    },
+    "source": {
+      "type": "string",
+      "title": "Data Source",
+      "enum": [
+        "manual",
+        "tiktok_import",
+        "derived"
+      ],
+      "default": "manual"
+    },
+    "source_confidence": {
+      "type": "string",
+      "title": "Source Confidence",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "high"
+    },
+    "source_notes": {
+      "type": "string",
+      "title": "Source Notes"
+    },
+    "imported_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Imported At"
+    },
+    "raw_import_reference": {
+      "type": "string",
+      "title": "Raw Import Reference (e.g. TikTok video ID)"
     }
   },
   "required": [

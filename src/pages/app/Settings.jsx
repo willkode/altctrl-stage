@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Check, Zap, ExternalLink, AlertTriangle, Download } from "lucide-react";
+import { Check, Zap, AlertTriangle, Download } from "lucide-react";
+import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
 import { useAppToast } from "../../hooks/useAppToast";
 
 const PROMO_TONES = ["hype","chill","competitive","funny","serious","community"];
@@ -90,10 +91,7 @@ export default function Settings() {
   const [dirty, setDirty] = useState(false);
   const [profileId, setProfileId] = useState(null);
   const [notifId, setNotifId] = useState(null);
-  const [tiktokConnected, setTiktokConnected] = useState(false);
   const toast = useAppToast();
-
-  const CONNECTOR_ID = "69c7e25af1fbef3a6d3efd4d";
 
   // Promo + streaming prefs (CreatorProfile)
   const [promo, setPromo] = useState({
@@ -147,11 +145,6 @@ export default function Settings() {
       setNotifId(notifs[0].id);
       setNotif({ ...notif, ...notifs[0] });
     }
-    // Check TikTok connection
-    try {
-      await base44.connectors.connectAppUser(CONNECTOR_ID);
-      // If no error thrown it means we can attempt — check via try/catch on a fetch
-    } catch {}
     setLoading(false);
   }
 
@@ -208,14 +201,6 @@ export default function Settings() {
     const sessions = await base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 500);
     await Promise.all(sessions.map(s => base44.entities.LiveSession.delete(s.id)));
     toast.deleted("All sessions deleted");
-  }
-
-  async function connectTikTok() {
-    const url = await base44.connectors.connectAppUser(CONNECTOR_ID);
-    const popup = window.open(url, "_blank");
-    const timer = setInterval(() => {
-      if (!popup || popup.closed) { clearInterval(timer); setTiktokConnected(true); }
-    }, 500);
   }
 
   if (loading) return <PageContainer><LoadingState message="Loading settings..." /></PageContainer>;
@@ -320,20 +305,7 @@ export default function Settings() {
 
         {/* TikTok Connection */}
         <Section title="// TikTok Connection" accent="pink">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-white font-mono">TikTok Account</p>
-              <p className="text-xs text-slate-600 font-mono mt-0.5">Connect your TikTok to enable future live data sync features.</p>
-            </div>
-            {tiktokConnected ? (
-              <span className="text-[11px] font-mono uppercase px-3 py-1.5 rounded bg-green-500/10 border border-green-500/30 text-green-400">Connected</span>
-            ) : (
-              <button onClick={connectTikTok}
-                className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2 rounded bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all shrink-0">
-                <ExternalLink className="w-3.5 h-3.5" /> Connect
-              </button>
-            )}
-          </div>
+          <TikTokConnectionCard />
         </Section>
 
         {/* Data Export */}

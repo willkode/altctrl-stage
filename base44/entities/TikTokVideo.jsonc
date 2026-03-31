@@ -1,0 +1,55 @@
+{
+  "name": "TikTokVideo",
+  "type": "object",
+  "properties": {
+    "connected_account_id": {
+      "type": "string",
+      "title": "Connected Account ID"
+    },
+    "tiktok_video_id": {
+      "type": "string",
+      "title": "TikTok Video ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "video_description": {
+      "type": "string",
+      "title": "Video Description"
+    },
+    "create_time": {
+      "type": "number",
+      "title": "Create Time (Unix)"
+    },
+    "duration": {
+      "type": "number",
+      "title": "Duration (seconds)"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "title": "Cover Image URL"
+    },
+    "share_url": {
+      "type": "string",
+      "title": "Share URL"
+    },
+    "embed_html": {
+      "type": "string",
+      "title": "Embed HTML"
+    },
+    "raw_payload_json": {
+      "type": "string",
+      "title": "Raw Payload JSON"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Seen At"
+    }
+  },
+  "required": [
+    "connected_account_id",
+    "tiktok_video_id"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "name": "ConnectedAccount",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "title": "Provider",
+      "enum": [
+        "tiktok"
+      ],
+      "default": "tiktok"
+    },
+    "provider_user_id": {
+      "type": "string",
+      "title": "Provider User ID (open_id)"
+    },
+    "open_id": {
+      "type": "string",
+      "title": "TikTok open_id"
+    },
+    "union_id": {
+      "type": "string",
+      "title": "TikTok union_id (if granted)"
+    },
+    "username": {
+      "type": "string",
+      "title": "Username / Handle"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "Avatar URL"
+    },
+    "connection_status": {
+      "type": "string",
+      "title": "Connection Status",
+      "enum": [
+        "connected",
+        "disconnected",
+        "error",
+        "token_expired"
+      ],
+      "default": "connected"
+    },
+    "scopes_granted": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Scopes Granted"
+    },
+    "access_token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Access Token Expires At"
+    },
+    "refresh_token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Refresh Token Expires At"
+    },
+    "last_sync_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Sync At"
+    },
+    "last_sync_status": {
+      "type": "string",
+      "title": "Last Sync Status",
+      "enum": [
+        "success",
+        "partial",
+        "failed",
+        "never"
+      ],
+      "default": "never"
+    },
+    "last_error": {
+      "type": "string",
+      "title": "Last Error Message"
+    },
+    "webhook_enabled": {
+      "type": "boolean",
+      "title": "Webhook Enabled",
+      "default": false
+    }
+  },
+  "required": [
+    "provider",
+    "open_id"
+  ]
+}
