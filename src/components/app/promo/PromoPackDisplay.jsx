@@ -11,7 +11,7 @@ function CopyBtn({ text, label }) {
   };
   return (
     <button onClick={handle}
-      className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-3 py-2 rounded border transition-all ${
+      className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-3 py-2.5 min-h-[36px] rounded border transition-all ${
         copied
           ? "bg-cyan-500/10 border-cyan-500/40 text-cyan-400"
           : "bg-transparent border-cyan-900/30 text-slate-600 hover:border-cyan-500/30 hover:text-cyan-400"
@@ -101,7 +101,7 @@ export default function PromoPackDisplay({ kit, onMarkPosted, onRegenerate, post
               {kit.hashtags.map((h, i) => (
                 <button key={i}
                   onClick={() => { navigator.clipboard.writeText(`#${h.replace(/^#/, "")}`); }}
-                  className="text-xs font-mono text-cyan-400 bg-cyan-500/5 border border-cyan-900/40 px-2.5 py-1 rounded hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all">
+                  className="text-xs font-mono text-cyan-400 bg-cyan-500/5 border border-cyan-900/40 px-3 py-2 min-h-[36px] rounded hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all">
                   #{h.replace(/^#/, "")}
                 </button>
               ))}

@@ -166,7 +166,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
             <div className="flex flex-wrap gap-1">
               {DURATIONS.map(d => (
                 <button key={d} onClick={() => set("duration_minutes", d)}
-                  className={`px-2 py-1.5 rounded text-[10px] font-mono transition-all ${
+                  className={`px-2 py-2.5 rounded text-[10px] font-mono transition-all ${
                     form.duration_minutes === d
                       ? "bg-yellow-400/10 border border-yellow-400/30 text-yellow-400"
                       : "bg-[#02040f] border border-cyan-900/30 text-slate-600 hover:text-slate-300"
@@ -182,19 +182,19 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
         <div className="grid grid-cols-3 gap-2">
           <div>
             <label className={lbl}>Avg Viewers</label>
-            <input type="number" min={0} value={form.avg_viewers}
+            <input type="number" inputMode="numeric" min={0} value={form.avg_viewers}
               onChange={e => set("avg_viewers", e.target.value)}
               placeholder="0" className={inp} />
           </div>
           <div>
             <label className={lbl}>Peak Viewers</label>
-            <input type="number" min={0} value={form.peak_viewers}
+            <input type="number" inputMode="numeric" min={0} value={form.peak_viewers}
               onChange={e => set("peak_viewers", e.target.value)}
               placeholder="0" className={inp} />
           </div>
           <div>
             <label className={lbl}>Followers +</label>
-            <input type="number" min={0} value={form.followers_gained}
+            <input type="number" inputMode="numeric" min={0} value={form.followers_gained}
               onChange={e => set("followers_gained", e.target.value)}
               placeholder="0" className={inp} />
           </div>
@@ -249,7 +249,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
           <div className="flex gap-2">
             {ENERGY.map(e => (
               <button key={e} onClick={() => set("energy_level", e)}
-                className={`flex-1 py-2 rounded border text-xs font-mono uppercase transition-all ${
+                className={`flex-1 py-3 rounded border text-xs font-mono uppercase transition-all ${
                   form.energy_level === e
                     ? `${ENERGY_BG[e]} ${ENERGY_ACCENT[e]}`
                     : "bg-[#02040f] border-cyan-900/30 text-slate-600 hover:text-slate-300"
