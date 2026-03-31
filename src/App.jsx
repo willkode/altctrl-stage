@@ -34,6 +34,14 @@ import AudienceMonetization from './pages/app/AudienceMonetization';
 import Experiments from './pages/app/Experiments';
 import Profile from './pages/app/Profile';
 import Settings from './pages/app/Settings';
+import AdminAuthGate from './components/app/admin/AdminAuthGate';
+import AdminDashboard from './pages/app/admin/Dashboard';
+import AdminExtensions from './pages/app/admin/ExtensionIntegrations';
+import AdminImports from './pages/app/admin/ImportLogCenter';
+import AdminReview from './pages/app/admin/ManualReviewQueue';
+import AdminSessions from './pages/app/admin/SessionInspection';
+import AdminErrors from './pages/app/admin/ErrorCenter';
+import AdminSupport from './pages/app/admin/CreatorSupport';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -76,6 +84,15 @@ const AuthenticatedApp = () => {
           <Route path="/app/replay" element={<ReplayReviewPage />} />
           <Route path="/app/audience" element={<AudienceMonetization />} />
           <Route path="/app/experiments" element={<Experiments />} />
+        </Route>
+        <Route element={<AdminAuthGate />}>
+          <Route path="/app/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/app/admin/extensions" element={<AdminExtensions />} />
+          <Route path="/app/admin/imports" element={<AdminImports />} />
+          <Route path="/app/admin/review" element={<AdminReview />} />
+          <Route path="/app/admin/sessions" element={<AdminSessions />} />
+          <Route path="/app/admin/errors" element={<AdminErrors />} />
+          <Route path="/app/admin/support" element={<AdminSupport />} />
         </Route>
       </Route>
       <Route element={<Layout />}>
