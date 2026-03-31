@@ -3,6 +3,8 @@
  * Pages through the authenticated user's public video list and upserts TikTokVideo records.
  * Uses officially documented /v2/video/list/ endpoint (user.videos.list scope).
  *
+ * Required scope: video.list
+ *
  * NOTE: TikTok LIVE session stats (avg viewers, peak viewers, diamonds, gifts etc.)
  * are NOT available through any currently approved public TikTok API endpoint.
  * Those metrics must still be entered manually via AltCtrl's session logging.

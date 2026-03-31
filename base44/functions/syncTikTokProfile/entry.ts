@@ -6,10 +6,12 @@
  * Uses the base44 App User Connector for token management — tokens are NEVER
  * exposed to the client. All TikTok API calls happen server-side only.
  *
- * Officially supported fields (user.info.basic + user.info.stats scopes):
- *   open_id, union_id, avatar_url, display_name, username,
- *   follower_count, following_count, likes_count, video_count,
- *   profile_deep_link, bio_description, is_verified
+ * Required scopes: user.info.basic, user.info.profile, user.info.stats
+ *
+ * Officially supported fields:
+ *   user.info.basic  → open_id, union_id, avatar_url, display_name, username
+ *   user.info.profile → bio_description, profile_deep_link, is_verified
+ *   user.info.stats  → follower_count, following_count, likes_count, video_count
  */
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
