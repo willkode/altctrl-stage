@@ -58,7 +58,7 @@ export default function Coach() {
         <LoadingState message="Loading coaching insights..." />
       ) : (
         <div className="space-y-6">
-          <DailyCoachingCard recommendation={recommendation} sessions={sessions} profile={profile} />
+          <DailyCoachingCard recommendation={recommendation} sessions={sessions} profile={profile} onRefresh={loadData} />
           <div className="grid md:grid-cols-2 gap-6">
             <WeeklyGamePlan plan={weeklyPlan} streams={streams.filter(s => {
               const d = new Date(s.scheduled_date);
