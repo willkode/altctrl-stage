@@ -1,0 +1,81 @@
+{
+  "name": "ExtensionToken",
+  "type": "object",
+  "properties": {
+    "token_hash": {
+      "type": "string",
+      "title": "Token Hash (SHA-256)"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "revoked",
+        "expired"
+      ],
+      "default": "active"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Generated At"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Expires At"
+    },
+    "last_used_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Used At"
+    },
+    "last_used_ip": {
+      "type": "string",
+      "title": "Last Used IP"
+    },
+    "revoked_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Revoked At"
+    },
+    "revoke_reason": {
+      "type": "string",
+      "title": "Revoke Reason",
+      "enum": [
+        "manual",
+        "security",
+        "user_requested",
+        null
+      ]
+    },
+    "name": {
+      "type": "string",
+      "title": "Token Name (e.g., 'Chrome Extension')"
+    },
+    "extension_version": {
+      "type": "string",
+      "title": "Extension Version"
+    },
+    "total_syncs": {
+      "type": "number",
+      "title": "Total Syncs Performed",
+      "default": 0
+    },
+    "total_sessions_imported": {
+      "type": "number",
+      "title": "Total Sessions Imported",
+      "default": 0
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "token_hash",
+    "generated_at",
+    "expires_at"
+  ]
+}
