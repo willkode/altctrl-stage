@@ -77,7 +77,7 @@ export default function Home() {
           <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
             {["PLAN", "→", "PROMOTE", "→", "GO LIVE", "→", "LEARN"].map((step, i) =>
             <span key={i} className="text-sm font-mono font-bold uppercase"
-            style={step !== "→" ? { color: "#fff", textShadow: "0 0 10px rgba(0,245,255,0.4)" } : { color: "#1a3040" }}>
+            style={step !== "→" ? { color: "#ff0080", textShadow: "0 0 10px rgba(255,0,128,0.5)" } : { color: "#1a3040" }}>
                 {step}
               </span>
             )}
