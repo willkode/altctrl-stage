@@ -42,7 +42,7 @@ export default function FoundingCreators() {
             <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// BETA RECRUITMENT — ACTIVE</span>
           </div>
           <GlitchText text="JOIN THE FIRST WAVE OF" className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-4xl sm:text-5xl font-black uppercase text-pink-400 mt-2">ALTCTRL CREATORS.</h1>
+          <GlitchText text="ALTCTRL CREATORS." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mt-2" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-2xl mx-auto text-sm leading-relaxed">
             Become a founding creator and help shape the system built for TikTok LIVE gaming growth. Get early access to AltCtrl's core features, help guide what comes next, and start building better habits before the public launch.
           </p>
@@ -135,7 +135,7 @@ export default function FoundingCreators() {
         {/* Form */}
         <div className="bg-[#060d1f] border border-cyan-900/40 rounded-lg p-8">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-2">// APPLY FOR BETA ACCESS</div>
-          <h2 className="text-2xl font-black uppercase text-white mb-6">CLAIM YOUR FOUNDING CREATOR SPOT</h2>
+          <GlitchText text="CLAIM YOUR FOUNDING CREATOR SPOT" className="text-2xl font-black uppercase text-white block mb-6" tag="h2" />
           <WaitlistForm source="founding-creators" founding={true} />
         </div>
 

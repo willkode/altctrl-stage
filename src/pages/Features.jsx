@@ -106,7 +106,7 @@ export default function Features() {
         <div className="text-center mb-20">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// SYSTEM MODULES — FULL SPEC</div>
           <GlitchText text="EVERYTHING YOU NEED TO RUN YOUR" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-4xl sm:text-5xl font-black uppercase text-cyan-400">TIKTOK LIVE GAMING GROWTH LOOP.</h1>
+          <GlitchText text="TIKTOK LIVE GAMING GROWTH LOOP." className="text-4xl sm:text-5xl font-black uppercase text-cyan-400 block" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed">
             AltCtrl is built around four core pillars: Programming, Promotion, Coaching, and Performance. Each one supports a different part of your weekly creator workflow.
           </p>

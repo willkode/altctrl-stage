@@ -102,14 +102,14 @@ export default function HowItWorks() {
         <div className="text-center mb-20">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// THE SYSTEM</div>
           <GlitchText text="A BETTER WEEK OF STREAMING" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-4xl sm:text-5xl font-black uppercase text-cyan-400">STARTS WITH A BETTER SYSTEM.</h1>
+          <GlitchText text="STARTS WITH A BETTER SYSTEM." className="text-4xl sm:text-5xl font-black uppercase text-cyan-400 block" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-xl mx-auto leading-relaxed">
             AltCtrl is built around one simple loop. Every feature in the product exists to help you move through that cycle faster and more consistently.
           </p>
           <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
             {["PLAN", "→", "PROMOTE", "→", "GO LIVE", "→", "LEARN"].map((step, i) => (
               <span key={i} className="text-sm font-mono font-bold uppercase"
-                style={step !== "→" ? { color: "#fff", textShadow: "0 0 10px rgba(0,245,255,0.4)" } : { color: "#1a3040" }}>
+                style={step === "→" ? { color: "#ff0080", textShadow: "0 0 10px rgba(255,0,128,0.5)" } : { color: "#fff", textShadow: "0 0 10px rgba(0,245,255,0.4)" }}>
                 {step}
               </span>
             ))}

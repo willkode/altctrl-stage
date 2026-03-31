@@ -17,7 +17,7 @@ export default function About() {
         <div className="text-center mb-16">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// MISSION BRIEF</div>
           <GlitchText text="WHY ALTCTRL" className="text-6xl sm:text-8xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-4xl sm:text-5xl font-black uppercase text-cyan-400">EXISTS.</h1>
+          <GlitchText text="EXISTS." className="text-4xl sm:text-5xl font-black uppercase text-cyan-400 block" tag="h1" />
         </div>
 
         <div className="prose-custom space-y-8 mb-16">

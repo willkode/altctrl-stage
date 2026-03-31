@@ -20,7 +20,7 @@ export default function ForCreators() {
         <div className="text-center mb-20">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// TARGET PROFILE</div>
           <GlitchText text="BUILT FOR TIKTOK LIVE GAMING CREATORS" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 mt-2">WHO WANT MORE THAN RANDOM GROWTH.</h1>
+          <GlitchText text="WHO WANT MORE THAN RANDOM GROWTH." className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 block mt-2" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed text-sm">
             AltCtrl is for creators who are serious about streaming, but do not have a manager, agency, or full team behind them. It gives you the support system top creators rely on — without the overhead.
           </p>
@@ -56,8 +56,8 @@ export default function ForCreators() {
         <div className="mb-16">
           <div className="text-xs font-mono uppercase tracking-widest text-slate-500 mb-6">// THE PROBLEM</div>
           <div className="bg-[#060d1f] border border-pink-900/40 rounded-lg p-8">
-            <h2 className="text-2xl font-black uppercase text-white mb-2">MOST CREATORS DON'T FAIL BECAUSE</h2>
-            <h2 className="text-2xl font-black uppercase text-pink-400 mb-6">THEY LACK TALENT.</h2>
+            <GlitchText text="MOST CREATORS DON'T FAIL BECAUSE" className="text-2xl font-black uppercase text-white block mb-1" tag="h2" />
+            <GlitchText text="THEY LACK TALENT." className="text-2xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
             <p className="text-slate-400 text-sm mb-6">They stall because their workflow is broken. Maybe that looks like:</p>
             <div className="space-y-2 mb-8">
               {[
@@ -149,7 +149,7 @@ export default function ForCreators() {
         <div className="text-center bg-[#060d1f] border border-cyan-900/40 rounded-lg p-10">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// BUILT FOR THE CREATOR BEHIND THE STREAM</div>
           <GlitchText text="GET THE TOOLS, STRUCTURE, AND FEEDBACK" className="text-3xl sm:text-4xl font-black uppercase text-white block mb-2" tag="h2" />
-          <h2 className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 mb-8">TO GROW WITH MORE INTENTION.</h2>
+          <GlitchText text="TO GROW WITH MORE INTENTION." className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 block mb-8" tag="h2" />
           <Link to="/waitlist"
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}

@@ -27,7 +27,7 @@ export default function Pricing() {
         <div className="text-center mb-20">
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// PRICING PROTOCOL</div>
           <GlitchText text="ONE DEAL." className="text-5xl sm:text-6xl font-black uppercase text-white block" tag="h1" />
-          <h1 className="text-5xl sm:text-6xl font-black uppercase text-cyan-400">ONE TIME ONLY.</h1>
+          <GlitchText text="ONE TIME ONLY." className="text-5xl sm:text-6xl font-black uppercase text-cyan-400 block" tag="h1" />
           <p className="text-slate-400 mt-6 max-w-xl mx-auto">We're not hiding anything. Right now, we're recruiting Founding Creators at a special rate. After that, pricing goes up — and doesn't come back down.</p>
         </div>
 
