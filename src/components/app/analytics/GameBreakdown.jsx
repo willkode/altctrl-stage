@@ -1,33 +1,14 @@
 import EmptyState from "../EmptyState";
+import { buildGameBreakdown } from "../../../utils/analyticsCalc";
 
 export default function GameBreakdown({ sessions }) {
-  const withViewers = sessions.filter(s => s.game && s.avg_viewers != null);
-
-  const gameMap = {};
-  withViewers.forEach(s => {
-    if (!gameMap[s.game]) gameMap[s.game] = { sessions: 0, totalAvg: 0, totalPeak: 0, totalFollowers: 0 };
-    gameMap[s.game].sessions++;
-    gameMap[s.game].totalAvg += s.avg_viewers || 0;
-    gameMap[s.game].totalPeak = Math.max(gameMap[s.game].totalPeak, s.peak_viewers || 0);
-    gameMap[s.game].totalFollowers += s.followers_gained || 0;
-  });
-
-  const rows = Object.entries(gameMap)
-    .map(([game, d]) => ({
-      game,
-      sessions: d.sessions,
-      avgViewers: Math.round(d.totalAvg / d.sessions),
-      peakViewers: d.totalPeak,
-      followers: d.totalFollowers,
-    }))
-    .sort((a, b) => b.avgViewers - a.avgViewers);
-
+  const { rows, hasEnoughData } = buildGameBreakdown(sessions);
   const maxAvg = rows[0]?.avgViewers || 1;
 
   return (
     <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5">
       <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// GAME BREAKDOWN</div>
-      {rows.length === 0 ? (
+      {!hasEnoughData ? (
         <EmptyState title="No game data" message="Log sessions with viewer data to see game performance." />
       ) : (
         <div className="space-y-3">
@@ -58,7 +39,7 @@ export default function GameBreakdown({ sessions }) {
               </div>
               <div className="h-1 bg-[#02040f] rounded-full overflow-hidden">
                 <div className="h-full rounded-full bg-cyan-400 transition-all duration-500"
-                  style={{ width: `${(r.avgViewers / maxAvg) * 100}%`, boxShadow: i === 0 ? "0 0 6px rgba(0,245,255,0.6)" : "none" }} />
+                  style={{ width: `${r.barWidth}%`, boxShadow: i === 0 ? "0 0 6px rgba(0,245,255,0.6)" : "none" }} />
               </div>
             </div>
           ))}

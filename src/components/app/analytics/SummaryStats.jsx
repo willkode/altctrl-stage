@@ -1,4 +1,5 @@
 import { Zap, TrendingUp, Users, Clock, Flame, Radio } from "lucide-react";
+import { buildSummaryStats } from "../../../utils/analyticsCalc";
 
 function StatBox({ label, value, sub, icon: IconComponent, accent = "cyan", glow = false }) {
   const colors = {
@@ -24,31 +25,17 @@ function StatBox({ label, value, sub, icon: IconComponent, accent = "cyan", glow
 }
 
 export default function SummaryStats({ sessions }) {
-  const total = sessions.length;
-  const last30 = sessions.filter(s => {
-    const d = new Date(s.stream_date);
-    return (Date.now() - d.getTime()) / 86400000 <= 30;
-  });
-  const withViewers = sessions.filter(s => s.avg_viewers != null && s.avg_viewers > 0);
-  const avgViewers = withViewers.length > 0
-    ? Math.round(withViewers.reduce((a, s) => a + s.avg_viewers, 0) / withViewers.length)
-    : null;
-  const peakViewers = sessions.reduce((m, s) => Math.max(m, s.peak_viewers || 0), 0);
-  const totalMins = sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0);
-  const totalHours = totalMins >= 60 ? `${Math.floor(totalMins / 60)}h ${totalMins % 60}m` : `${totalMins}m`;
-  const promoRate = total > 0
-    ? Math.round((sessions.filter(s => s.promo_posted).length / total) * 100)
-    : 0;
-  const totalFollowers = sessions.reduce((a, s) => a + (s.followers_gained || 0), 0);
+  const { total, last30Count, avgViewers, peakViewers, totalMinutes, totalFollowers, promoRate } = buildSummaryStats(sessions);
+  const totalHours = totalMinutes >= 60 ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m` : `${totalMinutes}m`;
 
   return (
     <div>
       <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// OVERVIEW</div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatBox label="Total Sessions" value={total} sub="all time" icon={Zap} accent="cyan" glow />
-        <StatBox label="Last 30 Days" value={last30.length} sub="sessions" icon={Radio} accent="pink" />
+        <StatBox label="Last 30 Days" value={last30Count} sub="sessions" icon={Radio} accent="pink" />
         <StatBox label="Avg Viewers" value={avgViewers ?? "—"} sub="across sessions" icon={Users} accent="cyan" />
-        <StatBox label="Peak Viewers" value={peakViewers || "—"} sub="single session" icon={TrendingUp} accent="yellow" />
+        <StatBox label="Peak Viewers" value={peakViewers ?? "—"} sub="single session" icon={TrendingUp} accent="yellow" />
         <StatBox label="Stream Time" value={total > 0 ? totalHours : "—"} sub="total logged" icon={Clock} accent="cyan" />
         <StatBox label="Promo Rate" value={`${promoRate}%`} sub="sessions w/ promo" icon={Flame} accent={promoRate >= 60 ? "green" : "pink"} />
       </div>

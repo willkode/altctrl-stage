@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown, Search, Plus } from "lucide-react";
+import { filterSessions } from "../../../utils/analyticsCalc";
 import AppBadge from "../AppBadge";
 import EmptyState from "../EmptyState";
 
@@ -19,20 +20,7 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
     setPage(0);
   };
 
-  const filtered = sessions.filter(s => {
-    const q = search.toLowerCase();
-    return !q || s.game?.toLowerCase().includes(q) || s.stream_date?.includes(q) || s.stream_type?.toLowerCase().includes(q);
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    const va = a[sortKey] ?? "";
-    const vb = b[sortKey] ?? "";
-    const cmp = typeof va === "number" ? va - vb : String(va).localeCompare(String(vb));
-    return sortDir === "asc" ? cmp : -cmp;
-  });
-
-  const paginated = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  const { rows: paginated, total: filteredTotal, totalPages, page: safePage } = filterSessions(sessions, { query: search, sortKey, sortDir, page, pageSize: PAGE_SIZE });
 
   const SortIcon = ({ k }) => {
     if (sortKey !== k) return null;
@@ -114,7 +102,7 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-5 py-3 border-t border-white/5">
-              <span className="text-[10px] font-mono text-slate-600">{sorted.length} sessions · page {page + 1} of {totalPages}</span>
+              <span className="text-[10px] font-mono text-slate-600">{filteredTotal} sessions · page {safePage + 1} of {totalPages}</span>
               <div className="flex gap-2">
                 <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
                   className="text-[10px] font-mono uppercase px-3 py-1.5 rounded border border-cyan-900/30 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30 disabled:opacity-30 transition-all">

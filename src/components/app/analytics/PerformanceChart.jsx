@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { buildTrendData } from "../../../utils/analyticsCalc";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import EmptyState from "../EmptyState";
 
@@ -27,20 +28,8 @@ function CustomTooltip({ active, payload, label }) {
 export default function PerformanceChart({ sessions }) {
   const [activeMetric, setActiveMetric] = useState("avg_viewers");
 
-  // Last 30 days bucketed by date
-  const cutoff = Date.now() - 30 * 86400000;
-  const recent = sessions
-    .filter(s => new Date(s.stream_date).getTime() >= cutoff)
-    .sort((a, b) => a.stream_date.localeCompare(b.stream_date));
-
-  const data = recent.map(s => ({
-    date: new Date(s.stream_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    game: s.game,
-    avg_viewers: s.avg_viewers || null,
-    peak_viewers: s.peak_viewers || null,
-    followers_gained: s.followers_gained || null,
-  }));
-
+  const { points, hasEnoughData } = buildTrendData(sessions);
+  const data = points.map(p => ({ ...p, date: p.label }));
   const metric = METRICS.find(m => m.key === activeMetric);
 
   return (
@@ -61,7 +50,7 @@ export default function PerformanceChart({ sessions }) {
         </div>
       </div>
 
-      {data.length < 2 ? (
+      {!hasEnoughData ? (
         <div className="py-8">
           <EmptyState
             title="Not enough data yet"
