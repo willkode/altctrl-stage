@@ -14,7 +14,7 @@ function QuickCopy({ text }) {
   );
 }
 
-export default function PromoPackCard({ kit, onView, onTogglePosted }) {
+export default function PromoPackCard({ kit, versionLabel, onView, onTogglePosted }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -24,6 +24,7 @@ export default function PromoPackCard({ kit, onView, onTogglePosted }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-black uppercase text-white">{kit.game}</span>
             {kit.stream_type && <span className="text-xs font-mono text-slate-600">{kit.stream_type}</span>}
+            {versionLabel && <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border border-pink-900/30 text-pink-400/60">{versionLabel}</span>}
           </div>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <AppBadge label={kit.status} accent={STATUS_ACCENT[kit.status] || "slate"} dot />

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import AppBadge from "../../components/app/AppBadge";
@@ -8,23 +9,23 @@ import PromoPackDisplay from "../../components/app/promo/PromoPackDisplay";
 import PromoPackCard from "../../components/app/promo/PromoPackCard";
 import PromoPackDrawer from "../../components/app/drawers/PromoPackDrawer";
 import { useAppToast } from "../../hooks/useAppToast";
-import { Zap, Radio, Clock, Gamepad2, Search, Filter, RefreshCw, AlertCircle } from "lucide-react";
+import { Zap, Radio, Search, RefreshCw, AlertCircle, Calendar, ChevronDown, ChevronUp } from "lucide-react";
 
 const TODAY = new Date().toISOString().split("T")[0];
-const NEXT_7 = new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0];
 
 export default function Promo() {
   const [loading, setLoading] = useState(true);
   const [upcomingStreams, setUpcomingStreams] = useState([]);
   const [packs, setPacks] = useState([]);
   const [profile, setProfile] = useState(null);
-  const [generating, setGenerating] = useState(null); // stream id being generated
+  const [generating, setGenerating] = useState(null);
   const [generatedKit, setGeneratedKit] = useState(null);
   const [viewKit, setViewKit] = useState(null);
   const [posting, setPosting] = useState(false);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [genError, setGenError] = useState(null);
+  const [expandedVersions, setExpandedVersions] = useState({});
   const toast = useAppToast();
 
   useEffect(() => { loadData(); }, []);
@@ -38,7 +39,7 @@ export default function Promo() {
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
     ]);
     const upcoming = streams
-      .filter(s => s.scheduled_date >= TODAY && s.status !== "cancelled")
+      .filter(s => s.scheduled_date >= TODAY && s.status !== "cancelled" && s.status !== "skipped")
       .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date))
       .slice(0, 10);
     setUpcomingStreams(upcoming);
@@ -94,7 +95,11 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
           title_options: { type: "array", items: { type: "string" } },
         },
       },
-    }).catch(() => { setGenError("Generation failed — check your connection and try again."); setGenerating(null); return null; });
+    }).catch(() => {
+      setGenError("Generation failed — check your connection and try again.");
+      setGenerating(null);
+      return null;
+    });
 
     if (!result) return;
 
@@ -118,18 +123,44 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
 
   async function markPosted(kit) {
     setPosting(true);
-    await base44.entities.PromoKit.update(kit.id, { status: "posted", posted_at: new Date().toISOString() });
+    const updated = { status: "posted", posted_at: new Date().toISOString() };
+    await base44.entities.PromoKit.update(kit.id, updated);
     toast.saved("Marked as posted!");
     setPosting(false);
-    if (generatedKit?.id === kit.id) setGeneratedKit(k => ({ ...k, status: "posted", posted_at: new Date().toISOString() }));
-    setPacks(p => p.map(x => x.id === kit.id ? { ...x, status: "posted", posted_at: new Date().toISOString() } : x));
+    const patch = k => k.id === kit.id ? { ...k, ...updated } : k;
+    if (generatedKit?.id === kit.id) setGeneratedKit(patch);
+    setPacks(p => p.map(patch));
+    if (viewKit?.id === kit.id) setViewKit(k => ({ ...k, ...updated }));
   }
 
-  const filteredPacks = packs.filter(k => {
-    const matchSearch = !search || k.game?.toLowerCase().includes(search.toLowerCase()) || k.caption?.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filterStatus === "all" || k.status === filterStatus;
-    return matchSearch && matchFilter;
-  });
+  // Group packs by stream, most recent version first
+  const groupedPacks = (() => {
+    const filtered = packs.filter(k => {
+      const q = search.toLowerCase();
+      const matchSearch = !q ||
+        k.game?.toLowerCase().includes(q) ||
+        k.stream_date?.includes(q) ||
+        k.caption?.toLowerCase().includes(q);
+      const matchStatus = filterStatus === "all" || k.status === filterStatus;
+      return matchSearch && matchStatus;
+    });
+
+    const groups = [];
+    const seen = new Set();
+    filtered.forEach(kit => {
+      const key = kit.scheduled_stream_id || `standalone-${kit.id}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        const versions = filtered.filter(k =>
+          (k.scheduled_stream_id || `standalone-${k.id}`) === key
+        );
+        groups.push({ key, versions, latest: versions[0] });
+      }
+    });
+    return groups;
+  })();
+
+  const toggleVersions = (key) => setExpandedVersions(e => ({ ...e, [key]: !e[key] }));
 
   if (loading) return <div className="pt-16"><LoadingState message="Loading promo center..." /></div>;
 
@@ -145,28 +176,40 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
       {/* ── Upcoming Streams ── */}
       <div className="mb-6">
         <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// UPCOMING STREAMS</div>
+
         {upcomingStreams.length === 0 ? (
-          <div className="bg-[#060d1f] border border-pink-900/20 rounded-lg p-5 text-center">
+          <div className="bg-[#060d1f] border border-pink-900/20 rounded-lg p-6 text-center">
             <Radio className="w-5 h-5 text-slate-700 mx-auto mb-2" />
-            <p className="text-xs font-mono text-slate-600">No upcoming streams scheduled. Add one in the Schedule tab.</p>
+            <p className="text-xs font-mono text-slate-500 mb-3">No upcoming streams scheduled.</p>
+            <Link to="/app/schedule"
+              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all">
+              <Calendar className="w-3.5 h-3.5" /> Schedule a Stream
+            </Link>
           </div>
         ) : (
           <div className="space-y-2">
             {upcomingStreams.map(stream => {
-              const alreadyHasPack = packs.some(k => k.scheduled_stream_id === stream.id);
+              const streamPacks = packs.filter(k => k.scheduled_stream_id === stream.id);
+              const hasPosted = streamPacks.some(k => k.status === "posted");
               const isGenerating = generating === stream.id;
-              const dateLabel = stream.scheduled_date === TODAY ? "Today" :
-                new Date(stream.scheduled_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+              const dateLabel = stream.scheduled_date === TODAY
+                ? "Today"
+                : new Date(stream.scheduled_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
               return (
-                <div key={stream.id} className={`bg-[#060d1f] border rounded-lg px-4 py-3 flex items-center gap-3 transition-all ${
-                  stream.scheduled_date === TODAY ? "border-pink-500/30" : "border-pink-900/20"
+                <div key={stream.id} className={`bg-[#060d1f] border rounded-xl px-4 py-3 flex items-center gap-3 transition-all ${
+                  stream.scheduled_date === TODAY ? "border-pink-500/40" : "border-pink-900/20"
                 }`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-black uppercase text-white">{stream.game}</span>
                       {stream.stream_type && <AppBadge label={stream.stream_type} accent="pink" />}
-                      {alreadyHasPack && <AppBadge label="Pack Ready" accent="cyan" dot />}
+                      {hasPosted
+                        ? <AppBadge label="Posted ✓" accent="green" dot />
+                        : streamPacks.length > 0
+                          ? <AppBadge label={`${streamPacks.length} pack${streamPacks.length > 1 ? "s" : ""}`} accent="cyan" />
+                          : <AppBadge label="No promo yet" accent="slate" />
+                      }
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
                       <span className={`text-xs font-mono ${stream.scheduled_date === TODAY ? "text-pink-400" : "text-slate-600"}`}>{dateLabel}</span>
@@ -177,12 +220,14 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
                     onClick={() => generatePack(stream)}
                     disabled={!!generating}
                     className={`flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-3 py-2 rounded border transition-all disabled:opacity-40 shrink-0 ${
-                      alreadyHasPack
-                        ? "border-cyan-900/40 text-slate-600 hover:text-cyan-400 hover:border-cyan-500/30"
+                      streamPacks.length > 0
+                        ? "border-cyan-900/40 text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30"
                         : "bg-pink-500/10 border-pink-500/30 text-pink-400 hover:bg-pink-500/20"
                     }`}>
-                    {isGenerating ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
-                    {isGenerating ? "Generating…" : alreadyHasPack ? "Regenerate" : "Generate"}
+                    {isGenerating
+                      ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Generating…</>
+                      : <><Zap className="w-3.5 h-3.5" /> {streamPacks.length > 0 ? "New Version" : "Generate"}</>
+                    }
                   </button>
                 </div>
               );
@@ -191,7 +236,7 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         )}
       </div>
 
-      {/* ── Generation loading state ── */}
+      {/* ── Generation loading ── */}
       {generating && (
         <div className="mb-6 bg-[#060d1f] border border-pink-500/20 rounded-xl p-8 text-center"
           style={{ boxShadow: "0 0 30px rgba(255,0,128,0.04)" }}>
@@ -205,16 +250,20 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
       {genError && (
         <div className="mb-6 bg-red-500/5 border border-red-500/20 rounded-lg p-4 flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-xs font-mono text-red-400">{genError}</p>
+          <div className="flex-1">
+            <p className="text-xs font-mono text-red-400 mb-2">{genError}</p>
+            <button onClick={() => setGenError(null)} className="text-[10px] font-mono uppercase text-red-400/60 hover:text-red-400 transition-colors">Dismiss</button>
           </div>
         </div>
       )}
 
-      {/* ── Generated pack display ── */}
+      {/* ── Latest generated pack ── */}
       {generatedKit && !generating && (
         <div className="mb-8">
-          <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// JUST GENERATED</div>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400">// JUST GENERATED</div>
+            <span className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse" />
+          </div>
           <PromoPackDisplay
             kit={generatedKit}
             onMarkPosted={() => markPosted(generatedKit)}
@@ -236,14 +285,12 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
 
         {packs.length > 0 && (
           <div className="flex gap-2 mb-4 flex-wrap">
-            {/* Search */}
             <div className="relative flex-1 min-w-[160px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-600" />
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search packs…"
+                placeholder="Search by game, date…"
                 className="w-full bg-[#060d1f] border border-cyan-900/30 text-white placeholder-slate-700 rounded pl-9 pr-4 py-2 text-xs font-mono outline-none focus:border-cyan-500/30 transition-all" />
             </div>
-            {/* Filter */}
             {["all", "saved", "posted"].map(f => (
               <button key={f} onClick={() => setFilterStatus(f)}
                 className={`text-xs font-mono uppercase px-3 py-2 rounded border transition-all ${
@@ -257,7 +304,7 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
           </div>
         )}
 
-        {filteredPacks.length === 0 ? (
+        {groupedPacks.length === 0 ? (
           <EmptyState
             title={packs.length === 0 ? "No packs yet" : "No results"}
             message={packs.length === 0
@@ -267,45 +314,42 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
           />
         ) : (
           <div className="space-y-4">
-            {/* Group by stream, show version history */}
-            {(() => {
-              const grouped = [];
-              const seen = new Set();
-              filteredPacks.forEach(kit => {
-                const key = kit.scheduled_stream_id || kit.id;
-                if (!seen.has(key)) {
-                  seen.add(key);
-                  const versions = filteredPacks.filter(k =>
-                    (k.scheduled_stream_id || k.id) === key
-                  );
-                  grouped.push({ key, versions });
-                }
-              });
-              return grouped.map(({ key, versions }) => (
-                <div key={key}>
-                  {versions.length > 1 && (
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5 flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 bg-pink-500/10 border border-pink-900/30 rounded text-pink-400/70">{versions.length} versions</span>
-                      <span>{versions[0].game}</span>
-                    </div>
-                  )}
-                  <div className={`space-y-1.5 ${versions.length > 1 ? "pl-3 border-l border-pink-900/20" : ""}`}>
-                    {versions.map((kit, i) => (
-                      <div key={kit.id} className="relative">
-                        {versions.length > 1 && (
-                          <span className="absolute -left-5 top-3.5 text-[9px] font-mono text-slate-700">v{versions.length - i}</span>
-                        )}
-                        <PromoPackCard
-                          kit={kit}
-                          onView={setViewKit}
-                          onTogglePosted={markPosted}
-                        />
+            {groupedPacks.map(({ key, versions, latest }) => (
+              <div key={key}>
+                {/* Latest version always shown */}
+                <PromoPackCard
+                  kit={latest}
+                  versionLabel={versions.length > 1 ? `v${versions.length} (latest)` : null}
+                  onView={setViewKit}
+                  onTogglePosted={markPosted}
+                />
+
+                {/* Older versions collapsed */}
+                {versions.length > 1 && (
+                  <div className="mt-1 pl-3 border-l-2 border-pink-900/20">
+                    <button
+                      onClick={() => toggleVersions(key)}
+                      className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-slate-600 hover:text-slate-400 py-1.5 transition-colors">
+                      {expandedVersions[key] ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      {expandedVersions[key] ? "Hide" : "Show"} {versions.length - 1} older version{versions.length - 1 > 1 ? "s" : ""}
+                    </button>
+                    {expandedVersions[key] && (
+                      <div className="space-y-1.5 pb-1">
+                        {versions.slice(1).map((kit, i) => (
+                          <PromoPackCard
+                            key={kit.id}
+                            kit={kit}
+                            versionLabel={`v${versions.length - 1 - i}`}
+                            onView={setViewKit}
+                            onTogglePosted={markPosted}
+                          />
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
-              ));
-            })()}
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -316,7 +360,7 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         onClose={() => setViewKit(null)}
         kit={viewKit}
         onMarkedPosted={() => {
-          markPosted(viewKit);
+          if (viewKit) markPosted(viewKit);
           setViewKit(null);
         }}
       />
