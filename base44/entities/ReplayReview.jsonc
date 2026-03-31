@@ -1,0 +1,60 @@
+{
+  "name": "ReplayReview",
+  "type": "object",
+  "properties": {
+    "live_session_id": {
+      "type": "string",
+      "title": "Live Session ID"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Session Date"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Reviewed At"
+    },
+    "strongest_opening": {
+      "type": "string",
+      "title": "Strongest Opening Moment"
+    },
+    "strongest_engagement": {
+      "type": "string",
+      "title": "Strongest Engagement Moment"
+    },
+    "dead_zones": {
+      "type": "string",
+      "title": "Dead Zones / Slow Periods"
+    },
+    "clip_worthy": {
+      "type": "string",
+      "title": "Clip-Worthy Moments"
+    },
+    "timestamp_notes": {
+      "type": "string",
+      "title": "Timestamp Notes (JSON)"
+    },
+    "lessons": {
+      "type": "string",
+      "title": "Lessons for Next Time"
+    },
+    "overall_rating": {
+      "type": "number",
+      "title": "Overall Rating (1-5)"
+    },
+    "reviewed": {
+      "type": "boolean",
+      "title": "Marked as Reviewed",
+      "default": false
+    }
+  },
+  "required": [
+    "live_session_id"
+  ]
+}

@@ -59,6 +59,31 @@
       "title": "Likes Received",
       "default": 0
     },
+    "comments": {
+      "type": "number",
+      "title": "Comments",
+      "default": 0
+    },
+    "shares": {
+      "type": "number",
+      "title": "Shares",
+      "default": 0
+    },
+    "gifters": {
+      "type": "number",
+      "title": "Gifters",
+      "default": 0
+    },
+    "diamonds": {
+      "type": "number",
+      "title": "Diamonds / Gift Value",
+      "default": 0
+    },
+    "fan_club_joins": {
+      "type": "number",
+      "title": "Fan Club Joins",
+      "default": 0
+    },
     "promo_posted": {
       "type": "boolean",
       "title": "Promo Posted Before Stream",
@@ -71,6 +96,11 @@
     "went_as_planned": {
       "type": "boolean",
       "title": "Went As Planned",
+      "default": true
+    },
+    "would_repeat": {
+      "type": "boolean",
+      "title": "Would Repeat This Format",
       "default": true
     },
     "energy_level": {
@@ -94,6 +124,27 @@
     "notes": {
       "type": "string",
       "title": "Personal Notes"
+    },
+    "best_moment": {
+      "type": "string",
+      "title": "Best Moment"
+    },
+    "weakest_moment": {
+      "type": "string",
+      "title": "Weakest Moment"
+    },
+    "spike_reason": {
+      "type": "string",
+      "title": "Spike Reason"
+    },
+    "drop_off_reason": {
+      "type": "string",
+      "title": "Drop-Off Reason"
+    },
+    "replay_reviewed": {
+      "type": "boolean",
+      "title": "Replay Reviewed",
+      "default": false
     },
     "source": {
       "type": "string",

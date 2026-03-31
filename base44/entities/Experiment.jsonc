@@ -1,0 +1,109 @@
+{
+  "name": "Experiment",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Experiment Title"
+    },
+    "variable_tested": {
+      "type": "string",
+      "title": "Variable Tested",
+      "enum": [
+        "stream_title",
+        "promo_posted",
+        "stream_type",
+        "game",
+        "start_time",
+        "duration",
+        "collab",
+        "energy_level",
+        "custom"
+      ],
+      "default": "game"
+    },
+    "custom_variable": {
+      "type": "string",
+      "title": "Custom Variable Description"
+    },
+    "variant_a": {
+      "type": "string",
+      "title": "Variant A"
+    },
+    "variant_b": {
+      "type": "string",
+      "title": "Variant B"
+    },
+    "success_metric": {
+      "type": "string",
+      "title": "Success Metric",
+      "enum": [
+        "avg_viewers",
+        "peak_viewers",
+        "followers_gained",
+        "comments",
+        "gifters",
+        "diamonds",
+        "duration",
+        "custom"
+      ],
+      "default": "avg_viewers"
+    },
+    "custom_metric": {
+      "type": "string",
+      "title": "Custom Metric Description"
+    },
+    "hypothesis": {
+      "type": "string",
+      "title": "Hypothesis"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Start Date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "End Date"
+    },
+    "sessions_a_ids": {
+      "type": "string",
+      "title": "Session IDs for Variant A (comma-separated)"
+    },
+    "sessions_b_ids": {
+      "type": "string",
+      "title": "Session IDs for Variant B (comma-separated)"
+    },
+    "result": {
+      "type": "string",
+      "title": "Result",
+      "enum": [
+        "pending",
+        "a_wins",
+        "b_wins",
+        "inconclusive"
+      ],
+      "default": "pending"
+    },
+    "result_notes": {
+      "type": "string",
+      "title": "Result Notes"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "completed",
+        "cancelled"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "title",
+    "variable_tested",
+    "success_metric"
+  ]
+}

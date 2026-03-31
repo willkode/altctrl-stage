@@ -27,6 +27,11 @@ import Terms from './pages/Terms';
 import Waitlist from './pages/Waitlist';
 import Blog from './pages/Blog';
 import Notifications from './pages/app/Notifications';
+import GoLive from './pages/app/GoLive';
+import PostLiveDebrief from './pages/app/PostLiveDebrief';
+import ReplayReviewPage from './pages/app/ReplayReview';
+import AudienceMonetization from './pages/app/AudienceMonetization';
+import Experiments from './pages/app/Experiments';
 import Profile from './pages/app/Profile';
 import Settings from './pages/app/Settings';
 
@@ -66,6 +71,11 @@ const AuthenticatedApp = () => {
           <Route path="/app/notifications" element={<Notifications />} />
           <Route path="/app/profile" element={<Profile />} />
           <Route path="/app/settings" element={<Settings />} />
+          <Route path="/app/golive" element={<GoLive />} />
+          <Route path="/app/debrief" element={<PostLiveDebrief />} />
+          <Route path="/app/replay" element={<ReplayReviewPage />} />
+          <Route path="/app/audience" element={<AudienceMonetization />} />
+          <Route path="/app/experiments" element={<Experiments />} />
         </Route>
       </Route>
       <Route element={<Layout />}>

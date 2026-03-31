@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -19,6 +19,14 @@ const navItems = [
   { path: "/app/coach", label: "Coach", icon: Brain },
 ];
 
+const moreNavItems = [
+  { path: "/app/golive", label: "Go Live", icon: PlayCircle },
+  { path: "/app/debrief", label: "Debrief", icon: ClipboardList },
+  { path: "/app/replay", label: "Replay", icon: Film },
+  { path: "/app/audience", label: "Audience", icon: Users },
+  { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
+];
+
 const pageTitles = {
   "/app/dashboard": "DASHBOARD",
   "/app/schedule": "SCHEDULE",
@@ -28,6 +36,11 @@ const pageTitles = {
   "/app/notifications": "NOTIFICATIONS",
   "/app/profile": "PROFILE",
   "/app/settings": "SETTINGS",
+  "/app/golive": "GO LIVE OPS",
+  "/app/debrief": "POST-LIVE DEBRIEF",
+  "/app/replay": "REPLAY REVIEW",
+  "/app/audience": "AUDIENCE & MONETIZATION",
+  "/app/experiments": "EXPERIMENTS",
 };
 
 export default function AppLayout() {
@@ -130,7 +143,22 @@ export default function AppLayout() {
             })}
           </nav>
 
-          <div className="px-3 pb-6">
+          <div className="px-3 pb-2">
+            <div className="text-[9px] font-mono uppercase tracking-widest text-slate-700 mb-2 px-1">More</div>
+            {moreNavItems.map(({ path, label, icon: Icon }) => {
+              const active = location.pathname === path;
+              return (
+                <Link key={path} to={path}
+                  className={`flex items-center gap-3 px-3 py-2 rounded text-xs font-mono uppercase tracking-widest transition-all mb-0.5 ${
+                    active ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30" : "text-slate-600 hover:text-white hover:bg-white/5 border border-transparent"
+                  }`}>
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${active ? "text-cyan-400" : ""}`} />
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+          <div className="px-3 pb-6 mt-2">
             <div className="border border-cyan-900/30 rounded p-3 text-xs font-mono text-slate-600">
               <div className="flex items-center gap-1.5 mb-1">
                 <Zap className="w-3 h-3 text-cyan-900" />

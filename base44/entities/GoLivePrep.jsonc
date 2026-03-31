@@ -1,0 +1,74 @@
+{
+  "name": "GoLivePrep",
+  "type": "object",
+  "properties": {
+    "linked_stream_id": {
+      "type": "string",
+      "title": "Linked Scheduled Stream ID"
+    },
+    "stream_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Stream Date"
+    },
+    "stream_title": {
+      "type": "string",
+      "title": "Stream Title"
+    },
+    "objective": {
+      "type": "string",
+      "title": "Session Objective"
+    },
+    "opening_points": {
+      "type": "string",
+      "title": "Opening Talking Points"
+    },
+    "first_five_plan": {
+      "type": "string",
+      "title": "First 5-Minute Plan"
+    },
+    "promo_confirmed": {
+      "type": "boolean",
+      "title": "Promo Confirmed Posted",
+      "default": false
+    },
+    "moderator_ready": {
+      "type": "boolean",
+      "title": "Moderator Ready",
+      "default": false
+    },
+    "event_ready": {
+      "type": "boolean",
+      "title": "Event / Challenge Ready",
+      "default": false
+    },
+    "guest_ready": {
+      "type": "boolean",
+      "title": "Guest / Collab Confirmed",
+      "default": false
+    },
+    "title_confirmed": {
+      "type": "boolean",
+      "title": "Title Confirmed",
+      "default": false
+    },
+    "game_confirmed": {
+      "type": "boolean",
+      "title": "Game Confirmed",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "prepping",
+        "ready",
+        "live"
+      ],
+      "default": "prepping"
+    }
+  },
+  "required": [
+    "stream_date"
+  ]
+}
