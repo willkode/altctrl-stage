@@ -26,6 +26,7 @@ import Terms from './pages/Terms';
 import Waitlist from './pages/Waitlist';
 import Blog from './pages/Blog';
 import Notifications from './pages/app/Notifications';
+import Profile from './pages/app/Profile';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         <Route path="/app/analytics" element={<Analytics />} />
         <Route path="/app/coach" element={<Coach />} />
         <Route path="/app/notifications" element={<Notifications />} />
+        <Route path="/app/profile" element={<Profile />} />
       </Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />

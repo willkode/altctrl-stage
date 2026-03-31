@@ -71,6 +71,25 @@
       "title": "Timezone",
       "default": "UTC"
     },
+    "region": {
+      "type": "string",
+      "title": "Region"
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Languages"
+    },
+    "avg_viewers": {
+      "type": "number",
+      "title": "Average Viewers"
+    },
+    "follower_count": {
+      "type": "number",
+      "title": "Follower Count"
+    },
     "promo_tone": {
       "type": "string",
       "title": "Promo Tone",

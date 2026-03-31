@@ -26,6 +26,7 @@ const pageTitles = {
   "/app/analytics": "ANALYTICS",
   "/app/coach": "COACH",
   "/app/notifications": "NOTIFICATIONS",
+  "/app/profile": "PROFILE",
 };
 
 export default function AppLayout() {
@@ -96,9 +97,10 @@ export default function AppLayout() {
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full" style={{ boxShadow: "0 0 4px #ff0080" }} />
             )}
           </Link>
-          <button className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          <Link to="/app/profile"
+            className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <User className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
       </header>
 
