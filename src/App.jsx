@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -66,33 +66,33 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
+  // Redirect authenticated users to dashboard
   return (
     <Routes>
-      <Route element={<AppAuthGate />}>
+      <Route path="/app/*" element={<AppAuthGate />}>
         <Route element={<AppLayout />}>
-          <Route path="/app/dashboard" element={<Dashboard />} />
-          <Route path="/app/schedule" element={<Schedule />} />
-          <Route path="/app/promo" element={<Promo />} />
-          <Route path="/app/analytics" element={<Analytics />} />
-          <Route path="/app/coach" element={<Coach />} />
-          <Route path="/app/notifications" element={<Notifications />} />
-          <Route path="/app/profile" element={<Profile />} />
-          <Route path="/app/settings" element={<Settings />} />
-          <Route path="/app/golive" element={<GoLive />} />
-          <Route path="/app/debrief" element={<PostLiveDebrief />} />
-          <Route path="/app/replay" element={<ReplayReviewPage />} />
-          <Route path="/app/audience" element={<AudienceMonetization />} />
-          <Route path="/app/experiments" element={<Experiments />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="schedule" element={<Schedule />} />
+          <Route path="promo" element={<Promo />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="coach" element={<Coach />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="golive" element={<GoLive />} />
+          <Route path="debrief" element={<PostLiveDebrief />} />
+          <Route path="replay" element={<ReplayReviewPage />} />
+          <Route path="audience" element={<AudienceMonetization />} />
+          <Route path="experiments" element={<Experiments />} />
         </Route>
         <Route element={<AdminAuthGate />}>
-          <Route path="/app/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/app/admin/extensions" element={<AdminExtensions />} />
-          <Route path="/app/admin/imports" element={<AdminImports />} />
-          <Route path="/app/admin/review" element={<AdminReview />} />
-          <Route path="/app/admin/sessions" element={<AdminSessions />} />
-          <Route path="/app/admin/errors" element={<AdminErrors />} />
-          <Route path="/app/admin/support" element={<AdminSupport />} />
+          <Route path="admin/dashboard" element={<AdminDashboard />} />
+          <Route path="admin/extensions" element={<AdminExtensions />} />
+          <Route path="admin/imports" element={<AdminImports />} />
+          <Route path="admin/review" element={<AdminReview />} />
+          <Route path="admin/sessions" element={<AdminSessions />} />
+          <Route path="admin/errors" element={<AdminErrors />} />
+          <Route path="admin/support" element={<AdminSupport />} />
         </Route>
       </Route>
       <Route element={<Layout />}>
