@@ -76,8 +76,14 @@ export default function Dashboard() {
   const handleConnectTikTok = async () => {
     setConnectingTikTok(true);
     try {
-      const res = await base44.functions.invoke("tiktokOAuthInit", {});
+      const redirectUri = window.location.origin + "/tiktok-callback";
+      const res = await base44.functions.invoke("tiktokAuth", { 
+        action: "get_auth_url", 
+        redirect_uri: redirectUri 
+      });
       if (res.data.auth_url) {
+        sessionStorage.setItem("tiktok_oauth_state", res.data.state);
+        sessionStorage.setItem("tiktok_redirect_uri", redirectUri);
         window.open(res.data.auth_url, "_blank");
       }
     } catch (err) {

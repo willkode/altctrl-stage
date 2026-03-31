@@ -1,8 +1,7 @@
 /**
  * runTikTokFullSync
  * Orchestrates a full TikTok sync: profile + videos.
- * Logs a SyncJobRun record for observability.
- * Safe to call from scheduled automation or manually.
+ * Uses TikTokConnection entity for token management (NO connector SDK).
  */
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
@@ -11,6 +10,12 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Verify TikTok is connected
+    const connections = await base44.asServiceRole.entities.TikTokConnection.filter({ user_id: user.id });
+    if (!connections[0] || !connections[0].connected) {
+      return Response.json({ error: "TikTok not connected" }, { status: 400 });
+    }
 
     const startedAt = new Date().toISOString();
 

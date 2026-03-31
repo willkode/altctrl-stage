@@ -1,15 +1,14 @@
 /**
  * TikTokConnectionCard
- * Follows the three app-user-connector rules:
- *  Rule 1 — Auth gate: check isAuthenticated before showing connect UI
- *  Rule 2 — Connection status via data fetch (getTikTokConnectionStatus backend fn)
- *  Rule 3 — Auto-refresh after OAuth popup closes
+ * Uses manual OAuth flow via tiktokAuth backend function.
+ * NO Base44 connector SDK — tokens stored in TikTokConnection entity.
  */
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { ExternalLink, RefreshCw, Unlink, AlertTriangle, CheckCircle, Clock, Loader2 } from "lucide-react";
 
-const CONNECTOR_ID = "69c7e25af1fbef3a6d3efd4d";
+// Redirect URI must match what's registered in TikTok Developer Portal
+const REDIRECT_URI = window.location.origin + "/tiktok-callback";
 
 export default function TikTokConnectionCard() {
   const [status, setStatus] = useState(null); // null = loading
@@ -17,10 +16,10 @@ export default function TikTokConnectionCard() {
   const [disconnecting, setDisconnecting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Rule 2: reusable fetch — doubles as connection check
+  // Fetch connection status from tiktokAuth
   const fetchStatus = async () => {
     try {
-      const res = await base44.functions.invoke("getTikTokConnectionStatus", {});
+      const res = await base44.functions.invoke("tiktokAuth", { action: "get_status" });
       setStatus(res.data);
       setError(null);
     } catch (e) {
@@ -28,26 +27,31 @@ export default function TikTokConnectionCard() {
     }
   };
 
-  // Rule 1+2: check auth then load
   useEffect(() => {
     base44.auth.isAuthenticated().then(authed => {
       if (authed) fetchStatus();
     });
   }, []);
 
-  // Open custom TikTok OAuth flow, poll for popup close, then re-fetch
+  // Open TikTok OAuth popup
   const handleConnect = async () => {
     try {
-      const res = await base44.functions.invoke("tiktokOAuthInit", {});
+      const res = await base44.functions.invoke("tiktokAuth", { 
+        action: "get_auth_url", 
+        redirect_uri: REDIRECT_URI 
+      });
       if (!res.data.auth_url) {
         setError("Failed to get TikTok auth URL");
         return;
       }
+      // Store state for CSRF validation
+      sessionStorage.setItem("tiktok_oauth_state", res.data.state);
+      sessionStorage.setItem("tiktok_redirect_uri", REDIRECT_URI);
+      
       const popup = window.open(res.data.auth_url, "_blank");
       const timer = setInterval(() => {
         if (!popup || popup.closed) {
           clearInterval(timer);
-          // After OAuth, do an immediate status + sync
           fetchStatus().then(() => handleSync());
         }
       }, 500);
@@ -71,7 +75,7 @@ export default function TikTokConnectionCard() {
     if (!confirm("Disconnect TikTok? Your imported data will be preserved.")) return;
     setDisconnecting(true);
     try {
-      await base44.functions.invoke("disconnectTikTok", {});
+      await base44.functions.invoke("tiktokAuth", { action: "disconnect" });
       await fetchStatus();
     } catch (e) {
       setError(e.message);
@@ -79,7 +83,7 @@ export default function TikTokConnectionCard() {
     setDisconnecting(false);
   };
 
-  const isConnected = status?.token_present && status?.connection_status === "connected";
+  const isConnected = status?.connected === true;
   const fmt = (iso) => iso ? new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : null;
 
   if (!status) {

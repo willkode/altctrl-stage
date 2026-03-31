@@ -12,11 +12,11 @@ export default function TikTokCallback() {
       try {
         const params = new URLSearchParams(window.location.search);
         const code = params.get("code");
-        const state = params.get("state");
+        const stateParam = params.get("state");
         const errorParam = params.get("error");
 
         if (errorParam) {
-          setError(`TikTok auth failed: ${errorParam} (${params.get("error_type") || ""})`);
+          setError(`TikTok auth failed: ${errorParam}`);
           setLoading(false);
           return;
         }
@@ -30,34 +30,42 @@ export default function TikTokCallback() {
         // Check if user is authenticated
         const isAuthed = await base44.auth.isAuthenticated();
         if (!isAuthed) {
-          // Store code/state so we can resume after login
           sessionStorage.setItem("tiktok_oauth_code", code);
-          sessionStorage.setItem("tiktok_oauth_state", state || "");
-          // Redirect to login, then back here
+          sessionStorage.setItem("tiktok_oauth_state", stateParam || "");
           base44.auth.redirectToLogin("/tiktok-callback?resumed=1");
           return;
         }
 
-        // Check if resuming after login
+        // Get stored redirect_uri and validate state
         let finalCode = code;
-        let finalState = state;
         if (params.get("resumed") === "1") {
           finalCode = sessionStorage.getItem("tiktok_oauth_code") || code;
-          finalState = sessionStorage.getItem("tiktok_oauth_state") || state;
-          sessionStorage.removeItem("tiktok_oauth_code");
-          sessionStorage.removeItem("tiktok_oauth_state");
         }
+        
+        const storedRedirectUri = sessionStorage.getItem("tiktok_redirect_uri") || (window.location.origin + "/tiktok-callback");
+        
+        // Clean up session storage
+        sessionStorage.removeItem("tiktok_oauth_code");
+        sessionStorage.removeItem("tiktok_oauth_state");
+        sessionStorage.removeItem("tiktok_redirect_uri");
 
-        // Call backend to exchange code for token
-        const response = await base44.functions.invoke("tiktokOAuthCallback", {
+        // Exchange code for token using tiktokAuth
+        const response = await base44.functions.invoke("tiktokAuth", {
+          action: "exchange_code",
           code: finalCode,
-          state: finalState,
+          redirect_uri: storedRedirectUri,
         });
 
         if (response.data.success) {
-          navigate("/app/dashboard", { replace: true });
+          // Trigger initial sync
+          try {
+            await base44.functions.invoke("runTikTokFullSync", {});
+          } catch (e) {
+            console.warn("Initial sync failed:", e);
+          }
+          navigate("/app/settings", { replace: true });
         } else {
-          setError(response.data.error || "Failed to complete TikTok connection");
+          setError(response.data.error || response.data.error_description || "Failed to complete TikTok connection");
         }
       } catch (err) {
         setError(err.message || "An error occurred during TikTok authentication");

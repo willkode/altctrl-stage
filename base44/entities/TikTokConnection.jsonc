@@ -1,0 +1,76 @@
+{
+  "name": "TikTokConnection",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "access_token": {
+      "type": "string",
+      "title": "Access Token"
+    },
+    "refresh_token": {
+      "type": "string",
+      "title": "Refresh Token"
+    },
+    "open_id": {
+      "type": "string",
+      "title": "TikTok Open ID"
+    },
+    "token_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Token Expires At"
+    },
+    "refresh_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Refresh Token Expires At"
+    },
+    "scopes": {
+      "type": "string",
+      "title": "Granted Scopes"
+    },
+    "connected": {
+      "type": "boolean",
+      "title": "Connected",
+      "default": false
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "username": {
+      "type": "string",
+      "title": "Username"
+    },
+    "avatar_url": {
+      "type": "string",
+      "title": "Avatar URL"
+    },
+    "last_sync_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Sync At"
+    },
+    "last_sync_status": {
+      "type": "string",
+      "title": "Last Sync Status",
+      "enum": [
+        "success",
+        "partial",
+        "failed",
+        "never"
+      ],
+      "default": "never"
+    },
+    "last_error": {
+      "type": "string",
+      "title": "Last Error"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}
