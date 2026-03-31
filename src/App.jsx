@@ -43,6 +43,7 @@ import AdminSessions from './pages/app/admin/SessionInspection';
 import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
 import TikTokCallback from './pages/TikTokCallback';
+import ILoveYouMegan from './pages/ILoveYouMegan';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -119,6 +120,7 @@ const AuthenticatedApp = () => {
         <Route path="/terms" element={<Terms />} />
         <Route path="/waitlist" element={<Waitlist />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/i-love-you-megan" element={<ILoveYouMegan />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
