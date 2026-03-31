@@ -25,6 +25,25 @@
     "founding_creator": {
       "type": "boolean",
       "title": "Founding Creator Interest"
+    },
+    "admin_notes": {
+      "type": "string",
+      "title": "Admin Notes"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "is_sample": {
+      "type": "boolean",
+      "title": "Is Sample Data",
+      "default": false
     }
   },
   "required": [
