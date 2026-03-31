@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
+import SourceBadge from "../../components/app/SourceBadge";
 import LoadingState from "../../components/app/LoadingState";
 import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import SummaryStats from "../../components/app/analytics/SummaryStats";
@@ -21,6 +22,7 @@ export default function Analytics() {
     endDate: null,
     game: null,
     streamType: null,
+    source: null,
   });
   const [allGames, setAllGames] = useState([]);
   const [allStreamTypes, setAllStreamTypes] = useState([]);
@@ -48,11 +50,12 @@ export default function Analytics() {
     if (filters.endDate && new Date(s.stream_date) > new Date(filters.endDate)) return false;
     if (filters.game && s.game !== filters.game) return false;
     if (filters.streamType && s.stream_type !== filters.streamType) return false;
+    if (filters.source && s.source !== filters.source) return false;
     return true;
   });
 
   const hasFilters = Object.values(filters).some(v => v !== null);
-  const clearFilters = () => setFilters({ startDate: null, endDate: null, game: null, streamType: null });
+  const clearFilters = () => setFilters({ startDate: null, endDate: null, game: null, streamType: null, source: null });
 
   return (
     <PageContainer>
@@ -116,6 +119,19 @@ export default function Analytics() {
                 {allStreamTypes.map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-mono uppercase text-slate-600 mb-1 block">Source</label>
+              <select
+                value={filters.source || ""}
+                onChange={e => setFilters(f => ({ ...f, source: e.target.value || null }))}
+                className="w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white rounded px-3 py-2 text-sm font-mono outline-none transition-all"
+              >
+                <option value="">All Sources</option>
+                <option value="manual">Manual</option>
+                <option value="extension_import">Extension</option>
+                <option value="hybrid">Hybrid</option>
               </select>
             </div>
           </div>

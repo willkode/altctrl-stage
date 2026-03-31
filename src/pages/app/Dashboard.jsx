@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
+import SourceBadge from "../../components/app/SourceBadge";
 import StatCard from "../../components/app/StatCard";
 import ProgressBar from "../../components/app/ProgressBar";
 import LoadingState from "../../components/app/LoadingState";
@@ -218,6 +219,7 @@ export default function Dashboard() {
                     </div>
                   )}
                   <AppBadge label={s.promo_posted ? "promo" : "no promo"} accent={s.promo_posted ? "cyan" : "slate"} />
+                  <SourceBadge source={s.source} size="sm" />
                 </div>
               </div>
             ))}

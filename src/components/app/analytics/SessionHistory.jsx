@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown, Search, Plus } from "lucide-react";
 import { filterSessions } from "../../../utils/analyticsCalc";
+import SourceBadge from "../SourceBadge";
 import AppBadge from "../AppBadge";
 import EmptyState from "../EmptyState";
 
@@ -94,10 +95,11 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                   <span className={`ml-auto text-xs font-mono ${s.promo_posted ? "text-green-400" : "text-slate-800"}`}>
                     {s.promo_posted ? "promo ✓" : "no promo"}
                   </span>
-                </div>
-              </div>
-            ))}
-          </div>
+                  </div>
+                  {s.source && <div className="mt-2"><SourceBadge source={s.source} size="sm" /></div>}
+                  </div>
+                  ))}
+                  </div>
 
           {/* Desktop table */}
           <div className="hidden sm:block overflow-x-auto">
@@ -113,8 +115,9 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                   <th className={thCls("followers_gained")} onClick={() => handleSort("followers_gained")}>Follows <SortIcon k="followers_gained" /></th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Promo</th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Energy</th>
-                </tr>
-              </thead>
+                  <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Source</th>
+                  </tr>
+                  </thead>
               <tbody className="divide-y divide-white/[0.03]">
                 {paginated.map(s => (
                   <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
@@ -137,9 +140,12 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                     <td className="py-2.5 px-3">
                       {s.energy_level && <AppBadge label={s.energy_level} accent={ENERGY_COLOR[s.energy_level] || "slate"} />}
                     </td>
-                  </tr>
-                ))}
-              </tbody>
+                    <td className="py-2.5 px-3">
+                      {s.source && <SourceBadge source={s.source} size="sm" />}
+                    </td>
+                    </tr>
+                    ))}
+                    </tbody>
             </table>
           </div>
 
