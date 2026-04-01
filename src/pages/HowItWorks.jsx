@@ -164,3 +164,4 @@ export default function HowItWorks() {
 
     </div>
   );
+}
