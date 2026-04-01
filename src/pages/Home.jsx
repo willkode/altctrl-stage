@@ -259,87 +259,74 @@ export default function Home() {
 
       {/* ── DESKTOP APP ───────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// MEET THE ALTCTRL DESKTOP APP</div>
-            <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4">
-              STREAMING USUALLY MEANS<br />
-              <span style={{ color: "#ff0080" }}>JUGGLING TOO MUCH AT ONCE.</span>
+        <div className="max-w-5xl mx-auto">
+
+          {/* Header */}
+          <div className="text-center mb-10">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// MEET THE ALTCTRL DESKTOP APP</div>
+            <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-3">
+              YOUR LIVE<br /><span style={{ color: "#ff0080" }}>CONTROL CENTER.</span>
             </h2>
-            <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed">
-              You have your game open, chat flying, alerts going off, goals in your head, and way too many things to watch while trying to stay entertaining.
-            </p>
-            <p className="text-slate-300 text-base font-semibold mt-4">That is why we are building the ALT Ctrl Desktop App.</p>
-          </div>
-
-          <div className="bg-[#060d1f] border border-pink-900/40 rounded-xl p-8 mb-8 text-center">
-            <p className="text-slate-300 leading-relaxed text-sm max-w-xl mx-auto">
-              It is designed to replace tools like OBS and Streamlabs by giving you <span className="text-pink-400 font-bold">one place to run your stream and get help while you are live</span>.
-            </p>
-            <p className="text-cyan-400 font-mono text-sm mt-4">
-              With ALT Ctrl, you do not just go live.<br />
-              <span className="text-white font-bold">You go live with a system built to help you perform better.</span>
+            <p className="text-slate-400 text-sm max-w-xl mx-auto">
+              One place to run your stream, watch what is happening, and get help in the moments that matter.
             </p>
           </div>
 
-          <div className="mb-10">
-            <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-6">// WHAT IT DOES</div>
-            <p className="text-slate-400 text-sm mb-5">The desktop app is your live control center. It lets you:</p>
-            <div className="grid sm:grid-cols-2 gap-3">
+          {/* Mockup image */}
+          <div className="rounded-xl overflow-hidden border border-pink-900/40 mb-10" style={{ boxShadow: "0 0 60px rgba(255,0,128,0.1)" }}>
+            <img
+              src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/0b289f144_generated_image.png"
+              alt="ALT Ctrl Desktop App Mockup"
+              className="w-full object-cover"
+              style={{ maxHeight: "420px" }}
+            />
+          </div>
+
+          {/* Two-col: left description + right features */}
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="space-y-4">
+              <p className="text-slate-300 text-sm leading-relaxed">
+                It is designed to replace tools like OBS and Streamlabs — giving you one place to run your stream and get help while you are live.
+              </p>
+              <p className="text-slate-500 text-sm leading-relaxed font-mono">
+                It is not there to replace you. It is there to help you stay on top of everything while you stay focused on being you.
+              </p>
+              <p className="text-pink-400 text-sm font-bold">Most tools help you broadcast. ALT Ctrl helps you broadcast better.</p>
+            </div>
+            <div className="space-y-2">
               {[
-                "Run your stream from one place",
-                "Manage your scenes, overlays, and live setup",
-                "Watch chat, gifts, likes, and shares as they happen",
-                "Get simple live prompts that help you know what to do next"
+                { label: "Run your stream", body: "Scenes, overlays, and live setup — all from one place." },
+                { label: "Watch everything live", body: "Chat, gifts, likes, and shares as they happen." },
+                { label: "Get live prompts", body: "Smart cues that tell you when to react, push engagement, or switch it up." },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3 bg-[#060d1f] border border-cyan-900/30 rounded-lg px-4 py-3">
                   <span className="text-cyan-400 font-mono font-bold text-sm mt-0.5 shrink-0">→</span>
-                  <span className="text-slate-300 text-sm">{item}</span>
+                  <div>
+                    <div className="text-white text-xs font-black uppercase mb-0.5">{item.label}</div>
+                    <div className="text-slate-500 text-xs font-mono">{item.body}</div>
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="text-sm text-slate-500 font-mono mt-5">So instead of guessing, you get help in the moments that matter.</p>
           </div>
 
-          <div className="mb-10">
-            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-5">// WHAT THAT LOOKS LIKE WHILE YOU STREAM</div>
-            <div className="space-y-3">
+          {/* Live prompt examples — compact row */}
+          <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-5">
+            <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400 mb-3">// EXAMPLE LIVE PROMPTS</div>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
               {[
-                "If chat starts slowing down, ALT Ctrl can tell you to pull them back in.",
-                "If new viewers start coming in, it can remind you to reintroduce what you are doing.",
-                "If gifts or support pick up, it can prompt you to react and build momentum."
-              ].map((line, i) => (
-                <div key={i} className="flex items-start gap-3 py-3 px-4 rounded-lg bg-pink-500/5 border border-pink-900/40">
-                  <span className="text-pink-400 text-sm mt-0.5 shrink-0">▸</span>
-                  <p className="text-sm text-slate-300 font-mono leading-relaxed">{line}</p>
+                "Chat slowing down — ask a quick question.",
+                "New viewers arriving — reintroduce yourself.",
+                "Gifts picking up — react and build momentum.",
+              ].map((p, i) => (
+                <div key={i} className="flex items-start gap-2 px-3 py-2 rounded bg-pink-500/5 border border-pink-900/30">
+                  <span className="text-pink-400 text-xs mt-0.5 shrink-0">▸</span>
+                  <p className="text-xs text-slate-400 font-mono leading-relaxed italic">{p}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-5 bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 text-center">
-              <p className="text-sm text-slate-400 font-mono">It is not there to replace you.</p>
-              <p className="text-sm text-cyan-400 font-mono font-bold mt-1">It is there to help you stay on top of everything while you stay focused on being you.</p>
-            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              { label: "Run your stream", body: "Tools to broadcast and manage your live setup from one place.", accent: "cyan" },
-              { label: "Stay engaged while live", body: "Smart prompts that help you react and connect in the moments that matter.", accent: "pink" },
-              { label: "Come back stronger", body: "Session data flows into ALT Ctrl so your next stream strategy is smarter.", accent: "yellow" },
-            ].map((c, i) => {
-              const colors = { cyan: "border-cyan-500/30 text-cyan-400", pink: "border-pink-500/30 text-pink-400", yellow: "border-yellow-400/30 text-yellow-400" };
-              return (
-                <div key={i} className={`rounded-xl border ${colors[c.accent].split(" ")[0]} bg-[#060d1f] p-5`}>
-                  <div className={`text-[10px] font-mono uppercase tracking-widest ${colors[c.accent].split(" ")[1]} mb-2`}>{c.label}</div>
-                  <p className="text-sm text-slate-400 font-mono leading-relaxed">{c.body}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="text-center text-sm text-slate-500 font-mono mt-8">
-            Most streaming tools help you broadcast. ALT Ctrl is being built to help you <span className="text-white">broadcast better</span>.
-          </p>
         </div>
       </section>
 
