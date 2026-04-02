@@ -42,6 +42,7 @@ import AdminReview from './pages/app/admin/ManualReviewQueue';
 import AdminSessions from './pages/app/admin/SessionInspection';
 import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
+import AdminMessaging from './pages/app/admin/Messaging';
 import TikTokCallback from './pages/TikTokCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
 
@@ -103,6 +104,7 @@ const AuthenticatedApp = () => {
           <Route path="admin/sessions" element={<AdminSessions />} />
           <Route path="admin/errors" element={<AdminErrors />} />
           <Route path="admin/support" element={<AdminSupport />} />
+          <Route path="admin/messaging" element={<AdminMessaging />} />
         </Route>
       </Route>
       <Route element={<Layout />}>

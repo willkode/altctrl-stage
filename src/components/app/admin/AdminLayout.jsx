@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Zap, Activity, AlertCircle, CheckSquare, Database, Settings, Users, Menu, X } from "lucide-react";
+import { LayoutDashboard, Zap, Activity, AlertCircle, CheckSquare, Database, Users, Menu, X, Mail } from "lucide-react";
 
 const ADMIN_NAV = [
   { label: "Dashboard", path: "/app/admin/dashboard", icon: LayoutDashboard },
@@ -10,6 +10,7 @@ const ADMIN_NAV = [
   { label: "Session Inspection", path: "/app/admin/sessions", icon: Database },
   { label: "Error Center", path: "/app/admin/errors", icon: AlertCircle },
   { label: "Creator Support", path: "/app/admin/support", icon: Users },
+  { label: "Messaging", path: "/app/admin/messaging", icon: Mail },
 ];
 
 export default function AdminLayout({ children }) {
