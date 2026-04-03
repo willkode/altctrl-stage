@@ -3,10 +3,21 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { email, name } = await req.json();
+    const payload = await req.json();
+
+    // Support both entity automation payload and direct invocation
+    const email = payload?.data?.email || payload?.email;
+    const name = payload?.data?.name || payload?.name;
 
     if (!email) {
       return Response.json({ error: 'Missing email' }, { status: 400 });
+    }
+
+    // Only send for founding creators (automation trigger condition handles this,
+    // but guard here for direct invocations too)
+    const isFoundingCreator = payload?.data?.founding_creator ?? true;
+    if (!isFoundingCreator) {
+      return Response.json({ skipped: true, reason: 'Not a founding creator' });
     }
 
     const firstName = name ? name.split(' ')[0] : 'Creator';

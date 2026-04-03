@@ -8,7 +8,7 @@ export default function SeatCounter({ compact = false }) {
 
   useEffect(() => {
     async function load() {
-      const entries = await base44.entities.WaitlistEntry.list('-created_date', 200);
+      const entries = await base44.entities.WaitlistEntry.filter({ is_sample: false }, '-created_date', 200);
       setClaimed(entries.length);
     }
     load();

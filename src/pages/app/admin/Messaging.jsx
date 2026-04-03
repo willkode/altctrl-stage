@@ -36,37 +36,22 @@ export default function Messaging() {
 
   async function handleSend() {
     if (!subject.trim() || !body.trim()) return;
-    if (!confirm(`Send this email to ${recipientCount} recipients?`)) return;
+    if (!confirm(`Send this email to approximately ${recipientCount} recipients?`)) return;
 
     setSending(true);
     setResult(null);
 
-    let emails = [];
-
-    if (audience === "users" || audience === "all") {
-      const users = await base44.entities.User.list("-created_date", 200);
-      emails.push(...users.map(u => u.email).filter(Boolean));
-    }
-
-    if (audience === "waitlist" || audience === "all") {
-      const waitlist = await base44.entities.WaitlistEntry.list("-created_date", 200);
-      emails.push(...waitlist.map(w => w.email).filter(Boolean));
-    }
-
-    // Deduplicate
-    const unique = [...new Set(emails.map(e => e.toLowerCase()))];
-
     const res = await base44.functions.invoke('sendEmail', {
-      to: unique,
+      audience,
       subject,
       body,
       from_name: 'AltCtrl',
     });
 
-    const { sent = 0, failed = 0 } = res.data;
+    const { sent = 0, failed = 0, total = 0 } = res.data;
 
     setSending(false);
-    setResult({ sent, failed, total: unique.length });
+    setResult({ sent, failed, total });
   }
 
   const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-2.5 text-sm outline-none transition-all font-mono";
