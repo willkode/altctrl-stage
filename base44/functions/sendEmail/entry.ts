@@ -42,6 +42,8 @@ Deno.serve(async (req) => {
         failed++;
         errors.push({ email, error: err.message || 'Unknown error' });
       }
+      // Respect Resend's 5 req/s rate limit
+      await new Promise(r => setTimeout(r, 250));
     }
 
     return Response.json({ sent, failed, total: emails.length, errors });
