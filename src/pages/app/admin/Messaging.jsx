@@ -56,22 +56,14 @@ export default function Messaging() {
     // Deduplicate
     const unique = [...new Set(emails.map(e => e.toLowerCase()))];
 
-    let sent = 0;
-    let failed = 0;
+    const res = await base44.functions.invoke('sendEmail', {
+      to: unique,
+      subject,
+      body,
+      from_name: 'AltCtrl',
+    });
 
-    for (const email of unique) {
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: email,
-          subject: subject,
-          body: body,
-          from_name: "AltCtrl",
-        });
-        sent++;
-      } catch {
-        failed++;
-      }
-    }
+    const { sent = 0, failed = 0 } = res.data;
 
     setSending(false);
     setResult({ sent, failed, total: unique.length });
