@@ -14,6 +14,9 @@ export default function WaitlistForm({ source = "waitlist", founding = false, cl
       source,
       founding_creator: founding,
     });
+    if (founding && form.email) {
+      base44.functions.invoke('sendWaitlistWelcome', { email: form.email, name: form.name }).catch(() => {});
+    }
     setSubmitted(true);
     setLoading(false);
   };
