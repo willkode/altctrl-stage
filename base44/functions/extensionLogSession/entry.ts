@@ -18,11 +18,11 @@ function getISOWeek(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-function generateExternalSessionKey(session) {
-  const date = session.date || "unknown";
-  const start = session.start_time || "00:00";
-  const duration = session.duration_minutes || 0;
-  const peak = session.peak_viewers || 0;
+function generateExternalSessionKey(sess) {
+  const date = sess.date || "unknown";
+  const start = sess.start_time || "00:00";
+  const duration = sess.duration_minutes || 0;
+  const peak = sess.peak_viewers || sess.peak_concurrent_viewers || 0;
   const str = `${date}|${start}|${duration}|${peak}`;
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -43,37 +43,49 @@ function validateDate(date) {
 }
 
 /**
- * Maps the extension's payload fields → LiveSession entity fields.
+ * Maps the Chrome extension payload → LiveSession entity fields.
  *
- * EXTENSION FORMAT (v2):
- * {
- *   date: "2026-03-24",              // required, YYYY-MM-DD
- *   start_time: "2026-03-24T17:56:00.000Z",  // ISO string or null
- *   end_time: "2026-03-24T19:30:00.000Z",    // ISO string or null
- *   duration_minutes: 103,            // number
- *   game: "Dead By Daylight",         // string — game/category name
- *   stream_type: "solo",              // solo | duo | squad | collab | other
- *   avg_viewers: 5,                   // number
- *   peak_viewers: 12,                 // number
- *   new_followers: 3,                 // number
- *   likes: 45,                        // number
- *   comments: 20,                     // number
- *   shares: 2,                        // number
- *   gifters: 1,                       // number
- *   diamonds: 5,                      // number
- *   views: 62,                        // number (total views)
- *   unique_viewers: 30,               // number
- *   notes: "...",                      // string
- * }
+ * EXTENSION PAYLOAD FORMAT:
+ *
+ * Core:
+ *   date             — "2026-03-24" (YYYY-MM-DD)
+ *   start_time       — ISO timestamp or null
+ *   end_time         — ISO timestamp or null (TikTok doesn't provide this)
+ *   duration_minutes — whole minutes
+ *   session_type     — solo | duo | squad | collab | other
+ *   day_of_week      — "Tuesday" (derived, informational)
+ *   hour_of_day      — 24h hour (e.g. 17)
+ *
+ * Viewership:
+ *   views                    — total view count
+ *   unique_viewers           — distinct accounts
+ *   avg_watch_time_seconds   — avg viewer watch duration in seconds
+ *   peak_viewers             — highest simultaneous viewers (alias: peak_concurrent_viewers)
+ *   avg_viewers              — avg simultaneous viewers (alias: avg_concurrent_viewers, usually 0)
+ *
+ * Engagement:
+ *   new_followers   — followers gained
+ *   gifters         — unique gift senders
+ *   comments        — total comments (alias: comments_count)
+ *   likes           — total likes
+ *   shares          — times shared
+ *   diamonds        — diamond rewards
+ *
+ * Meta:
+ *   game             — game/category (alias: content_category, often "")
+ *   partner_name     — co-streamer name (often "")
+ *   notes            — free text
+ *   viewer_timeline  — array of snapshots (always [])
  */
 function mapSessionFields(sess, email) {
   const d = new Date(sess.date);
   const now = new Date().toISOString();
   const externalKey = generateExternalSessionKey(sess);
 
-  // Map stream_type: extension sends "solo"/"duo"/"squad" etc
+  // Map session_type → stream_type enum
+  const rawType = sess.session_type || sess.stream_type || "other";
   const typeMap = { solo: "ranked", duo: "collab", squad: "viewer_games" };
-  const streamType = typeMap[sess.stream_type] || sess.stream_type || "other";
+  const streamType = typeMap[rawType] || rawType;
 
   return {
     owner_email: email,
@@ -83,16 +95,24 @@ function mapSessionFields(sess, email) {
     start_time: sess.start_time || "",
     end_time: sess.end_time || "",
     duration_minutes: sess.duration_minutes || null,
+
+    // Viewership — prefer named fields, fall back to aliases
     avg_viewers: sess.avg_viewers || sess.avg_concurrent_viewers || null,
     peak_viewers: sess.peak_viewers || sess.peak_concurrent_viewers || null,
-    followers_gained: sess.new_followers || sess.followers_gained || 0,
-    likes_received: sess.likes || sess.likes_received || 0,
+
+    // Engagement
+    followers_gained: sess.new_followers || 0,
+    likes_received: sess.likes || 0,
     comments: sess.comments || sess.comments_count || 0,
     shares: sess.shares || 0,
     gifters: sess.gifters || 0,
     diamonds: sess.diamonds || 0,
     fan_club_joins: sess.fan_club_joins || 0,
+
+    // Notes
     notes: sess.notes || "",
+
+    // Source tracking
     source: "extension_import",
     source_confidence: "high",
     external_session_key: externalKey,
@@ -108,7 +128,8 @@ function mapSessionFields(sess, email) {
 
 const SAFE_FIELDS_AUTO_UPDATE = [
   "avg_viewers", "peak_viewers", "followers_gained", "comments",
-  "shares", "gifters", "diamonds", "fan_club_joins", "duration_minutes", "game", "stream_type",
+  "shares", "gifters", "diamonds", "fan_club_joins", "duration_minutes",
+  "game", "stream_type", "likes_received",
 ];
 
 // ============================================================================
@@ -190,19 +211,21 @@ Deno.serve(async (req) => {
       const match = existing.find(e => e.external_session_key === incomingKey);
 
       if (!match) {
+        // ── CREATE new session ──
         const record = mapSessionFields(sess, userEmail);
         const created_sess = await base44.asServiceRole.entities.LiveSession.create(record);
         createdIds.push(created_sess.id);
         created++;
         results.push({ index: sess._index, status: "created", session_id: created_sess.id });
       } else {
+        // ── UPDATE only null/zero fields with new data ──
         const mapped = mapSessionFields(sess, userEmail);
         const safeUpdate = {};
         let hasChanges = false;
         for (const field of SAFE_FIELDS_AUTO_UPDATE) {
           const eVal = match[field];
           const iVal = mapped[field];
-          if ((eVal === null || eVal === undefined || eVal === 0) && iVal !== null && iVal !== undefined && iVal !== 0) {
+          if ((eVal === null || eVal === undefined || eVal === 0 || eVal === "") && iVal !== null && iVal !== undefined && iVal !== 0 && iVal !== "") {
             safeUpdate[field] = iVal;
             hasChanges = true;
           }
@@ -236,7 +259,10 @@ Deno.serve(async (req) => {
         const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: userEmail });
         if (profiles[0] && allSessions.length > 0) {
           const totalFollowers = allSessions.reduce((sum, s) => sum + (s.followers_gained || 0), 0);
-          const avgViewers = Math.round(allSessions.reduce((sum, s) => sum + (s.avg_viewers || 0), 0) / allSessions.length);
+          const withViewers = allSessions.filter(s => s.avg_viewers > 0);
+          const avgViewers = withViewers.length > 0
+            ? Math.round(withViewers.reduce((sum, s) => sum + s.avg_viewers, 0) / withViewers.length)
+            : null;
           await base44.asServiceRole.entities.CreatorProfile.update(profiles[0].id, {
             follower_count: totalFollowers,
             avg_viewers: avgViewers,
