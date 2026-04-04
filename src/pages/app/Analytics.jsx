@@ -148,10 +148,8 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* TikTok Account Stats — always shown if connected */}
+      {/* TikTok Account Stats + Video Stats — always shown */}
       <TikTokAccountStats />
-
-      {/* TikTok Video Performance — always shown if connected */}
       <div className="mt-6">
         <TikTokVideoStats />
       </div>
@@ -159,18 +157,18 @@ export default function Analytics() {
       {loading ? (
         <LoadingState message="Loading performance data..." />
       ) : sessions.length === 0 ? (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center mt-6">
-          <div className="text-sm font-black uppercase text-slate-400 mb-2">No sessions logged yet</div>
-          <p className="text-xs font-mono text-slate-600 mb-6">Start tracking your streams to unlock analytics insights.</p>
+        <div className="mt-6 bg-[#060d1f] border border-cyan-900/30 rounded-lg p-8 text-center">
+          <div className="text-sm font-black uppercase text-slate-400 mb-1">No live sessions logged yet</div>
+          <p className="text-xs font-mono text-slate-600 mb-4">Log your first stream session to unlock performance analytics.</p>
           <button
             onClick={() => setLogOpen(true)}
-            className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest px-5 py-3 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all mx-auto"
+            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest px-5 py-3 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all"
           >
             <Plus className="w-3.5 h-3.5" /> Log Your First Session
           </button>
         </div>
       ) : sessions.length < 3 ? (
-        <div>
+        <div className="mt-6">
           <DataProgressBanner
             current={sessions.length}
             required={3}
@@ -183,7 +181,7 @@ export default function Analytics() {
           <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center">
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center mt-6">
           <div className="text-sm font-black uppercase text-slate-400 mb-2">No sessions match filters</div>
           <p className="text-xs font-mono text-slate-600 mb-4">Try adjusting your filters to see data.</p>
           <button
@@ -194,7 +192,7 @@ export default function Analytics() {
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6 mt-6">
           <SummaryStats sessions={filtered} />
           <PerformanceChart sessions={filtered} />
           <div className="grid md:grid-cols-2 gap-6">
@@ -204,8 +202,7 @@ export default function Analytics() {
           <TimeHeatmap sessions={filtered} />
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
         </div>
-      )
-      }
+      )}
 
       <LogSessionDrawer open={logOpen} onClose={() => { setLogOpen(false); }} onSaved={loadData} />
     </PageContainer>

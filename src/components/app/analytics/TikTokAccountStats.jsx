@@ -84,20 +84,66 @@ export default function TikTokAccountStats() {
 
   if (loading) {
     return (
-      <div className="bg-[#060d1f] border border-pink-900/30 rounded-lg p-6">
-        <div className="flex items-center gap-3">
-          <div className="w-4 h-4 border-2 border-pink-900 border-t-pink-400 rounded-full animate-spin" />
-          <span className="text-xs font-mono text-slate-600">Loading TikTok data…</span>
+      <div>
+        <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// TIKTOK ACCOUNT</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {["Followers", "Following", "Total Likes", "Videos"].map(label => (
+            <div key={label} className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-4 animate-pulse">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-2">{label}</div>
+              <div className="h-7 w-16 bg-white/5 rounded" />
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  if (!account || account.connection_status !== "connected") return null;
+  if (!account || account.connection_status !== "connected") {
+    return (
+      <div>
+        <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// TIKTOK ACCOUNT</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+          {[
+            { label: "Followers", icon: Users, accent: "pink" },
+            { label: "Following", icon: UserPlus, accent: "cyan" },
+            { label: "Total Likes", icon: Heart, accent: "pink" },
+            { label: "Videos", icon: Video, accent: "yellow" },
+          ].map(({ label, icon: Icon, accent }) => (
+            <StatBox key={label} label={label} value="—" sub="not connected" icon={Icon} accent={accent} />
+          ))}
+        </div>
+        <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-4 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-xs font-black uppercase text-white mb-0.5">Connect TikTok to sync your stats</div>
+            <div className="text-[10px] font-mono text-slate-600">Followers, likes, videos and live stream data will appear here.</div>
+          </div>
+          <a href="/app/settings" className="shrink-0 text-xs font-mono uppercase tracking-widest px-4 py-2 rounded bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all whitespace-nowrap">
+            Connect →
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const latest = snapshots[0];
   const previous = snapshots[1];
-  if (!latest) return null;
+  if (!latest) {
+    return (
+      <div>
+        <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// TIKTOK ACCOUNT</div>
+        <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-4 flex items-center gap-4">
+          {account.avatar_url && <img src={account.avatar_url} alt="" className="w-10 h-10 rounded-lg border border-pink-900/40 object-cover" />}
+          <div className="flex-1">
+            <div className="text-white font-black">{account.display_name || account.username}</div>
+            <div className="text-xs font-mono text-slate-500">Connected — sync in progress</div>
+          </div>
+          <button onClick={handleSync} disabled={syncing} className="flex items-center gap-1 text-[10px] font-mono uppercase text-pink-400 hover:text-pink-300 transition-colors disabled:opacity-40">
+            <RefreshCw className={`w-3 h-3 ${syncing ? "animate-spin" : ""}`} /> {syncing ? "Syncing…" : "Sync Now"}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const lastSynced = account.last_sync_at
     ? new Date(account.last_sync_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
