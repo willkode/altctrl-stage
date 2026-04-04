@@ -47,6 +47,7 @@ import TikTokCallback from './pages/TikTokCallback';
 import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
+import ExtensionAuth from './pages/ExtensionAuth';
 
 const HomeRedirect = () => <Navigate to="/app/dashboard" replace />;
 
@@ -129,6 +130,7 @@ const AuthenticatedApp = () => {
         <Route path="/waitlist" element={<Waitlist />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/i-love-you-megan" element={<ILoveYouMegan />} />
+        <Route path="/extension-auth" element={<ExtensionAuth />} />
         <Route path="/desktop/auth" element={<DesktopAuth />} />
         <Route path="/desktop/callback" element={<DesktopCallback />} />
         <Route path="*" element={<PageNotFound />} />
