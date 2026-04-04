@@ -48,6 +48,8 @@ import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
 
+const HomeRedirect = () => <Navigate to="/app/dashboard" replace />;
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
@@ -112,7 +114,7 @@ const AuthenticatedApp = () => {
         </Route>
       </Route>
       <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/tiktok-callback" element={<TikTokCallback />} />
         <Route path="/features" element={<Features />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
