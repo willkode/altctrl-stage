@@ -297,51 +297,6 @@ export default function TikTokAccountStats() {
                 </div>
               )}
 
-              {/* Snapshot history table */}
-              {snapshots.length >= 3 && (
-                <div className="bg-[#02040f] border border-cyan-900/20 rounded-xl overflow-hidden">
-                  <div className="px-4 py-3 border-b border-white/5">
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600">Snapshot History</div>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs font-mono">
-                      <thead>
-                        <tr className="text-[10px] text-slate-600 uppercase border-b border-white/5">
-                          <th className="text-left px-4 py-2">Date</th>
-                          <th className="text-right px-4 py-2">Followers</th>
-                          <th className="text-right px-4 py-2">Δ Followers</th>
-                          <th className="text-right px-4 py-2">Likes</th>
-                          <th className="text-right px-4 py-2">Videos</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {snapshots.slice(0, 10).map((snap, i) => {
-                          const next = snapshots[i + 1];
-                          const followerDiff = next ? (snap.follower_count ?? 0) - (next.follower_count ?? 0) : null;
-                          return (
-                            <tr key={snap.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                              <td className="px-4 py-2.5 text-slate-400">
-                                {new Date(snap.captured_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                                {i === 0 && <span className="ml-2 text-[9px] text-cyan-400 uppercase">latest</span>}
-                              </td>
-                              <td className="px-4 py-2.5 text-right text-white font-bold">{fmt(snap.follower_count)}</td>
-                              <td className="px-4 py-2.5 text-right">
-                                {followerDiff != null ? (
-                                  <span className={followerDiff > 0 ? "text-green-400" : followerDiff < 0 ? "text-red-400" : "text-slate-600"}>
-                                    {followerDiff > 0 ? "+" : ""}{followerDiff.toLocaleString()}
-                                  </span>
-                                ) : <span className="text-slate-700">—</span>}
-                              </td>
-                              <td className="px-4 py-2.5 text-right text-slate-400">{fmt(snap.likes_count)}</td>
-                              <td className="px-4 py-2.5 text-right text-slate-400">{fmt(snap.video_count)}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
             </>
           ) : (
             <div className="text-center py-8">
