@@ -12,8 +12,8 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
     // Verify TikTok is connected
-    const connections = await base44.asServiceRole.entities.TikTokConnection.filter({ user_id: user.id });
-    if (!connections[0] || !connections[0].connected) {
+    const accounts = await base44.asServiceRole.entities.ConnectedAccount.filter({ created_by: user.email, provider: "tiktok" });
+    if (!accounts[0] || accounts[0].connection_status !== "connected") {
       return Response.json({ error: "TikTok not connected" }, { status: 400 });
     }
 
