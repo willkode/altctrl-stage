@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -51,9 +51,11 @@ export default function AppLayout() {
   const { profile, loading, completeOnboarding } = useCreatorBootstrap();
   const [activeDrawer, setActiveDrawer] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(user => {
+      setIsAdmin(user.role === 'admin');
       base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false, read: false }, '-created_date', 50)
         .then(alerts => setUnreadCount(alerts.length))
         .catch(() => {});
@@ -104,6 +106,13 @@ export default function AppLayout() {
 
         {/* Header actions */}
         <div className="flex items-center gap-3">
+          {isAdmin && (
+            <Link to="/app/admin/dashboard"
+              className="w-9 h-9 flex items-center justify-center rounded border border-red-900/40 hover:border-red-500/40 text-red-500 hover:text-red-400 transition-all"
+              title="Admin Panel">
+              <ShieldAlert className="w-4 h-4" />
+            </Link>
+          )}
           <Link to="/app/notifications"
             className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Bell className="w-4 h-4" />
