@@ -69,12 +69,13 @@ const AuthenticatedApp = () => {
     return <UserNotRegisteredError />;
   } else if (authError.type === 'auth_required') {
     // Allow TikTok callback page to load without auth — it will handle login redirect itself
-    if (['/tiktok-callback', '/desktop/auth', '/desktop/callback'].includes(window.location.pathname)) {
+    if (['/tiktok-callback', '/desktop/auth', '/desktop/callback', '/extension-auth'].includes(window.location.pathname)) {
       return (
         <Routes>
           <Route path="/tiktok-callback" element={<TikTokCallback />} />
           <Route path="/desktop/auth" element={<DesktopAuth />} />
           <Route path="/desktop/callback" element={<DesktopCallback />} />
+          <Route path="/extension-auth" element={<ExtensionAuth />} />
           <Route path="*" element={null} />
         </Routes>
       );
