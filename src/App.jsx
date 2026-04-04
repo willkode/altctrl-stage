@@ -53,6 +53,7 @@ import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
 import ExtensionAuth from './pages/ExtensionAuth';
+import OGCreators from './pages/OGCreators';
 
 const HomeRedirect = () => <Navigate to="/app/dashboard" replace />;
 
@@ -81,6 +82,7 @@ const AuthenticatedApp = () => {
           <Route path="/desktop/auth" element={<DesktopAuth />} />
           <Route path="/desktop/callback" element={<DesktopCallback />} />
           <Route path="/extension-auth" element={<ExtensionAuth />} />
+          <Route path="/og-creators" element={<OGCreators />} />
           <Route path="*" element={null} />
         </Routes>
       );
@@ -139,6 +141,7 @@ const AuthenticatedApp = () => {
         <Route path="/extension-auth" element={<ExtensionAuth />} />
         <Route path="/desktop/auth" element={<DesktopAuth />} />
         <Route path="/desktop/callback" element={<DesktopCallback />} />
+        <Route path="/og-creators" element={<OGCreators />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
