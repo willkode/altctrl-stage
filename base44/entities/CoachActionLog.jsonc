@@ -1,0 +1,81 @@
+{
+  "name": "CoachActionLog",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "title": "Session ID"
+    },
+    "pulse_id": {
+      "type": "string",
+      "title": "Pulse ID (LivePulse reference)"
+    },
+    "action_type": {
+      "type": "string",
+      "title": "Action Type",
+      "enum": [
+        "reintroduce_stream",
+        "engagement_prompt",
+        "follow_cta",
+        "supporter_push",
+        "pace_change",
+        "recovery_action",
+        "closing_move",
+        "opening_reminder",
+        "experiment_reminder",
+        "general_tip"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "title": "Message"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason / Context"
+    },
+    "confidence": {
+      "type": "number",
+      "title": "Confidence (0-1)"
+    },
+    "stream_state_at_fire": {
+      "type": "string",
+      "title": "Stream State When Fired",
+      "enum": [
+        "warmup",
+        "settling",
+        "stable",
+        "rising",
+        "high_momentum",
+        "monetization_window",
+        "drop_risk",
+        "fatigue_risk",
+        "closing_window"
+      ]
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Sent At"
+    },
+    "dismissed": {
+      "type": "boolean",
+      "title": "Dismissed by Creator",
+      "default": false
+    },
+    "helpful": {
+      "type": "boolean",
+      "title": "Marked Helpful",
+      "default": false
+    },
+    "outcome_note": {
+      "type": "string",
+      "title": "Outcome Note"
+    }
+  },
+  "required": [
+    "session_id",
+    "action_type",
+    "message"
+  ]
+}

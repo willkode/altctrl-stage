@@ -1,0 +1,229 @@
+{
+  "name": "SessionFact",
+  "type": "object",
+  "properties": {
+    "session_key": {
+      "type": "string",
+      "title": "Session Key (dedupe identifier)"
+    },
+    "live_session_id": {
+      "type": "string",
+      "title": "LiveSession ID"
+    },
+    "desktop_session_id": {
+      "type": "string",
+      "title": "DesktopSession ID"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    },
+    "stream_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Stream Date"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "stream_type": {
+      "type": "string",
+      "title": "Stream Type",
+      "enum": [
+        "ranked",
+        "chill",
+        "viewer_games",
+        "challenge",
+        "collab",
+        "special",
+        "other"
+      ]
+    },
+    "platform": {
+      "type": "string",
+      "title": "Platform",
+      "default": "TikTok"
+    },
+    "start_time": {
+      "type": "string",
+      "title": "Start Time"
+    },
+    "end_time": {
+      "type": "string",
+      "title": "End Time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Duration (minutes)"
+    },
+    "avg_viewers": {
+      "type": "number",
+      "title": "Average Viewers"
+    },
+    "peak_viewers": {
+      "type": "number",
+      "title": "Peak Viewers"
+    },
+    "followers_gained": {
+      "type": "number",
+      "title": "Followers Gained",
+      "default": 0
+    },
+    "likes_received": {
+      "type": "number",
+      "title": "Likes Received",
+      "default": 0
+    },
+    "comments": {
+      "type": "number",
+      "title": "Comments",
+      "default": 0
+    },
+    "shares": {
+      "type": "number",
+      "title": "Shares",
+      "default": 0
+    },
+    "gifters_count": {
+      "type": "number",
+      "title": "Gifters Count",
+      "default": 0
+    },
+    "diamonds": {
+      "type": "number",
+      "title": "Diamonds",
+      "default": 0
+    },
+    "fan_club_joins": {
+      "type": "number",
+      "title": "Fan Club Joins",
+      "default": 0
+    },
+    "promo_posted": {
+      "type": "boolean",
+      "title": "Promo Posted",
+      "default": false
+    },
+    "went_as_planned": {
+      "type": "boolean",
+      "title": "Went As Planned",
+      "default": true
+    },
+    "energy_level": {
+      "type": "string",
+      "title": "Energy Level",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "best_moment": {
+      "type": "string",
+      "title": "Best Moment"
+    },
+    "weakest_moment": {
+      "type": "string",
+      "title": "Weakest Moment"
+    },
+    "spike_reason": {
+      "type": "string",
+      "title": "Spike Reason"
+    },
+    "drop_off_reason": {
+      "type": "string",
+      "title": "Drop-Off Reason"
+    },
+    "desktop_alerts_fired": {
+      "type": "number",
+      "title": "Desktop Alerts Fired",
+      "default": 0
+    },
+    "desktop_alerts_helpful": {
+      "type": "number",
+      "title": "Desktop Alerts Marked Helpful",
+      "default": 0
+    },
+    "desktop_timeline": {
+      "type": "string",
+      "title": "Desktop Timeline (JSON)"
+    },
+    "replay_reviewed": {
+      "type": "boolean",
+      "title": "Replay Reviewed",
+      "default": false
+    },
+    "source_live_session": {
+      "type": "boolean",
+      "title": "Has LiveSession Source",
+      "default": false
+    },
+    "source_desktop_session": {
+      "type": "boolean",
+      "title": "Has DesktopSession Source",
+      "default": false
+    },
+    "source_manual": {
+      "type": "boolean",
+      "title": "Manually Entered",
+      "default": false
+    },
+    "source_extension": {
+      "type": "boolean",
+      "title": "From Extension Import",
+      "default": false
+    },
+    "week_number": {
+      "type": "number",
+      "title": "ISO Week Number"
+    },
+    "year": {
+      "type": "number",
+      "title": "Year"
+    },
+    "session_score": {
+      "type": "number",
+      "title": "Computed Session Score"
+    },
+    "viewer_score": {
+      "type": "number",
+      "title": "Viewer Score vs Baseline"
+    },
+    "growth_score": {
+      "type": "number",
+      "title": "Growth Score vs Baseline"
+    },
+    "engagement_score": {
+      "type": "number",
+      "title": "Engagement Score vs Baseline"
+    },
+    "monetization_score": {
+      "type": "number",
+      "title": "Monetization Score vs Baseline"
+    },
+    "execution_score": {
+      "type": "number",
+      "title": "Execution Score"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "last_computed_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Computed At"
+    }
+  },
+  "required": [
+    "session_key",
+    "owner_email",
+    "stream_date"
+  ]
+}

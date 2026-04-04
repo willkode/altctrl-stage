@@ -1,0 +1,81 @@
+{
+  "name": "LivePulse",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "title": "Session ID"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Captured At"
+    },
+    "minute_live": {
+      "type": "number",
+      "title": "Minute Live"
+    },
+    "current_viewers": {
+      "type": "number",
+      "title": "Current Viewers"
+    },
+    "rolling_avg_viewers_5m": {
+      "type": "number",
+      "title": "Rolling Avg Viewers (5m)"
+    },
+    "peak_viewers_so_far": {
+      "type": "number",
+      "title": "Peak Viewers So Far"
+    },
+    "comments_last_2m": {
+      "type": "number",
+      "title": "Comments Last 2 Min",
+      "default": 0
+    },
+    "shares_last_2m": {
+      "type": "number",
+      "title": "Shares Last 2 Min",
+      "default": 0
+    },
+    "gifts_last_2m": {
+      "type": "number",
+      "title": "Gifts Last 2 Min",
+      "default": 0
+    },
+    "follows_last_2m": {
+      "type": "number",
+      "title": "Follows Last 2 Min",
+      "default": 0
+    },
+    "momentum_score": {
+      "type": "number",
+      "title": "Momentum Score (0-100)"
+    },
+    "stream_state": {
+      "type": "string",
+      "title": "Stream State",
+      "enum": [
+        "warmup",
+        "settling",
+        "stable",
+        "rising",
+        "high_momentum",
+        "monetization_window",
+        "drop_risk",
+        "fatigue_risk",
+        "closing_window"
+      ],
+      "default": "warmup"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_id",
+    "captured_at",
+    "minute_live"
+  ]
+}
