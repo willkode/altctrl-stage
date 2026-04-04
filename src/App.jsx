@@ -44,6 +44,8 @@ import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
 import AdminMessaging from './pages/app/admin/Messaging';
 import TikTokCallback from './pages/TikTokCallback';
+import DesktopAuth from './pages/DesktopAuth';
+import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
 
 const AuthenticatedApp = () => {
@@ -123,6 +125,8 @@ const AuthenticatedApp = () => {
         <Route path="/waitlist" element={<Waitlist />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/i-love-you-megan" element={<ILoveYouMegan />} />
+        <Route path="/desktop/auth" element={<DesktopAuth />} />
+        <Route path="/desktop/callback" element={<DesktopCallback />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
