@@ -14,6 +14,8 @@ export default function TikTokConnectionCard() {
   const [syncing, setSyncing] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [error, setError] = useState(null);
+  const [syncLog, setSyncLog] = useState(null);
+  const [showLog, setShowLog] = useState(false);
 
   // Fetch connection status from tiktokAuth
   const fetchStatus = async () => {
@@ -61,11 +63,16 @@ export default function TikTokConnectionCard() {
 
   const handleSync = async () => {
     setSyncing(true);
+    setSyncLog(null);
     try {
-      await base44.functions.invoke("runTikTokFullSync", {});
+      const res = await base44.functions.invoke("runTikTokFullSync", {});
+      setSyncLog(res.data);
+      setShowLog(true);
       await fetchStatus();
     } catch (e) {
       setError(e.message);
+      setSyncLog({ errors: [e.message] });
+      setShowLog(true);
     }
     setSyncing(false);
   };
@@ -174,14 +181,35 @@ export default function TikTokConnectionCard() {
             // MANUAL ONLY: avg viewers · peak viewers · LIVE gifts · diamonds · fan club joins
           </div>
 
+          {/* Sync Log Toggle */}
+          {syncLog && (
+            <div>
+              <button
+                onClick={() => setShowLog(v => !v)}
+                className="text-[10px] font-mono uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-colors flex items-center gap-1"
+              >
+                {showLog ? "▾" : "▸"} {syncLog.errors?.length ? `${syncLog.errors.length} error(s)` : "Sync log"}
+              </button>
+              {showLog && (
+                <div className="mt-2 bg-[#02040f] border border-cyan-900/20 rounded-lg p-3 text-[11px] font-mono text-slate-400 space-y-1 max-h-48 overflow-y-auto">
+                  {syncLog.errors?.length > 0 ? (
+                    syncLog.errors.map((e, i) => (
+                      <div key={i} className="text-red-400">✕ {e}</div>
+                    ))
+                  ) : (
+                    <div className="text-green-400">✓ Sync completed successfully</div>
+                  )}
+                  {syncLog.profile_synced != null && <div>Profile: {syncLog.profile_synced ? "✓" : "skipped"}</div>}
+                  {syncLog.videos_synced != null && <div>Videos synced: {syncLog.videos_synced}</div>}
+                  {syncLog.snapshots_created != null && <div>Snapshots: {syncLog.snapshots_created}</div>}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex gap-2 flex-wrap">
             <button onClick={handleSync} disabled={syncing}
-              className="flex items-center gap-1.5 text-xs font-mono uppercase px-3 py-2 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all disabled:opacity-40">
-              <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
-              {syncing ? "Syncing…" : "Sync Now"}
-            </button>
-            <button onClick={handleConnect}
               className="flex items-center gap-1.5 text-xs font-mono uppercase px-3 py-2 rounded border border-cyan-900/30 text-slate-500 hover:text-slate-300 transition-all">
               <ExternalLink className="w-3.5 h-3.5" /> Reconnect
             </button>
