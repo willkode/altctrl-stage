@@ -3,6 +3,7 @@ import AppModal from "../AppModal";
 import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
 import { Trash2, Zap, Check } from "lucide-react";
+import ImportedMetricsBar from "./ImportedMetricsBar";
 
 const STREAM_TYPES = ["ranked", "chill", "viewer_games", "challenge", "collab", "special", "other"];
 const DURATIONS = [30, 45, 60, 90, 120, 180, 240];
@@ -23,6 +24,10 @@ const empty = () => ({
   energy_level: "medium",
   notes: "",
   scheduled_stream_id: "",
+  best_moment: "",
+  weakest_moment: "",
+  spike_reason: "",
+  drop_off_reason: "",
 });
 
 function getISOWeek(date) {
@@ -47,6 +52,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
   const gameRef = useRef(null);
   const toast = useAppToast();
   const isEdit = !!session?.id;
+  const isImported = session?.source === "extension_import" || session?.source === "hybrid";
 
   useEffect(() => {
     if (!open) return;
@@ -54,6 +60,10 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
       avg_viewers: session.avg_viewers ?? "",
       peak_viewers: session.peak_viewers ?? "",
       followers_gained: session.followers_gained ?? "",
+      best_moment: session.best_moment ?? "",
+      weakest_moment: session.weakest_moment ?? "",
+      spike_reason: session.spike_reason ?? "",
+      drop_off_reason: session.drop_off_reason ?? "",
     });
     else setForm(empty());
     setConfirmDelete(false);
@@ -123,6 +133,9 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
     <AppModal open={open} onClose={() => { setConfirmDelete(false); onClose(); }}
       title={isEdit ? "Edit Session" : "Log Session"} accent="yellow">
       <div className="space-y-4">
+
+        {/* Imported metrics bar for extension sessions */}
+        {isEdit && isImported && <ImportedMetricsBar session={session} />}
 
         {/* Game — with suggestions */}
         <div className="relative" ref={gameRef}>
@@ -285,6 +298,31 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
           <textarea value={form.notes} onChange={e => set("notes", e.target.value)}
             rows={2} placeholder="What happened? What to improve?"
             className={inp + " resize-none"} />
+        </div>
+
+        {/* Enrichment fields — especially useful for imported sessions */}
+        <div className="space-y-3">
+          <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400">// Stream Highlights</div>
+          <div>
+            <label className={lbl}>Best Moment</label>
+            <input value={form.best_moment} onChange={e => set("best_moment", e.target.value)}
+              placeholder="What was the best part of this stream?" className={inp} />
+          </div>
+          <div>
+            <label className={lbl}>Weakest Moment</label>
+            <input value={form.weakest_moment} onChange={e => set("weakest_moment", e.target.value)}
+              placeholder="Where did it drag or lose energy?" className={inp} />
+          </div>
+          <div>
+            <label className={lbl}>Spike Reason <span className="normal-case text-slate-700">(why did viewers jump?)</span></label>
+            <input value={form.spike_reason} onChange={e => set("spike_reason", e.target.value)}
+              placeholder="Raid, clip went viral, hype moment…" className={inp} />
+          </div>
+          <div>
+            <label className={lbl}>Drop-Off Reason <span className="normal-case text-slate-700">(why did viewers leave?)</span></label>
+            <input value={form.drop_off_reason} onChange={e => set("drop_off_reason", e.target.value)}
+              placeholder="Boring stretch, technical issue, late night…" className={inp} />
+          </div>
         </div>
 
         {/* Actions */}

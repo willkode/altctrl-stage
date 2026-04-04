@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronUp, ChevronDown, Search, Plus } from "lucide-react";
+import { ChevronUp, ChevronDown, Search, Plus, Pencil } from "lucide-react";
 import { filterSessions } from "../../../utils/analyticsCalc";
 import SourceBadge from "../SourceBadge";
 import AppBadge from "../AppBadge";
@@ -8,7 +8,7 @@ import EmptyState from "../EmptyState";
 const ENERGY_COLOR = { low: "slate", medium: "cyan", high: "yellow" };
 const SORT_KEYS = ["stream_date", "avg_viewers", "peak_viewers", "duration_minutes", "followers_gained", "comments", "gifters", "diamonds"];
 
-export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
+export default function SessionHistory({ sessions, onLogSession, onRefresh, onEditSession }) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("stream_date");
   const [sortDir, setSortDir] = useState("desc");
@@ -61,10 +61,16 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
           {/* Mobile card list */}
           <div className="sm:hidden divide-y divide-white/[0.03]">
             {paginated.map(s => (
-              <div key={s.id} className="px-4 py-3.5">
+              <div key={s.id} className="px-4 py-3.5 cursor-pointer hover:bg-white/[0.02] transition-colors" onClick={() => onEditSession?.(s)}>
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="text-sm font-black uppercase text-white truncate">{s.game}</span>
-                  {s.energy_level && <AppBadge label={s.energy_level} accent={ENERGY_COLOR[s.energy_level] || "slate"} />}
+                  <span className="text-sm font-black uppercase text-white truncate">{s.game || <span className="text-slate-600 italic normal-case">No game set</span>}</span>
+                  <div className="flex items-center gap-2">
+                    {s.source === "extension_import" && (!s.game || !s.energy_level) && (
+                      <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-yellow-400/10 border border-yellow-400/30 text-yellow-400">needs details</span>
+                    )}
+                    {s.energy_level && <AppBadge label={s.energy_level} accent={ENERGY_COLOR[s.energy_level] || "slate"} />}
+                    <Pencil className="w-3 h-3 text-slate-700 hover:text-cyan-400 transition-colors" />
+                  </div>
                 </div>
                 <div className="text-[11px] font-mono text-slate-600 mb-2">{s.stream_date} · {s.stream_type?.replace("_", " ")}</div>
                 <div className="flex items-center gap-4">
@@ -118,14 +124,18 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                   <th className={thCls("diamonds")} onClick={() => handleSort("diamonds")}>Diamonds <SortIcon k="diamonds" /></th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Promo</th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Source</th>
+                  <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600 w-8"></th>
                   </tr>
                   </thead>
               <tbody className="divide-y divide-white/[0.03]">
                 {paginated.map(s => (
-                  <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={s.id} className="hover:bg-white/[0.02] transition-colors cursor-pointer" onClick={() => onEditSession?.(s)}>
                     <td className="py-2.5 px-3 text-xs font-mono text-slate-400">{s.stream_date}</td>
                     <td className="py-2.5 px-3">
-                      <span className="text-xs font-black uppercase text-white">{s.game}</span>
+                      <span className="text-xs font-black uppercase text-white">{s.game || <span className="text-slate-600 italic normal-case">No game</span>}</span>
+                      {s.source === "extension_import" && (!s.game || !s.energy_level) && (
+                        <span className="ml-2 text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-yellow-400/10 border border-yellow-400/30 text-yellow-400">enrich</span>
+                      )}
                     </td>
                     <td className="py-2.5 px-3">
                       {s.stream_type && <AppBadge label={s.stream_type.replace("_", " ")} accent="slate" />}
@@ -144,6 +154,9 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                     </td>
                     <td className="py-2.5 px-3">
                       {s.source && <SourceBadge source={s.source} size="sm" />}
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <Pencil className="w-3 h-3 text-slate-700 hover:text-cyan-400 transition-colors" />
                     </td>
                     </tr>
                     ))}

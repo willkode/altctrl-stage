@@ -19,6 +19,7 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState([]);
   const [logOpen, setLogOpen] = useState(false);
+  const [editSession, setEditSession] = useState(null);
   const [filters, setFilters] = useState({
     startDate: null,
     endDate: null,
@@ -177,7 +178,7 @@ export default function Analytics() {
             actionLabel="Log a session"
             actionLink="/app/analytics"
           />
-          <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
+          <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
           <TikTokAccountStats />
           <TikTokVideoStats />
         </div>
@@ -214,11 +215,12 @@ export default function Analytics() {
           <TikTokVideoStats />
 
           {/* 6. Session history table */}
-          <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
+          <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
         </div>
       )}
 
-      <LogSessionDrawer open={logOpen} onClose={() => { setLogOpen(false); }} onSaved={loadData} />
+      <LogSessionDrawer open={logOpen} onClose={() => setLogOpen(false)} onSaved={loadData} />
+      <LogSessionDrawer open={!!editSession} onClose={() => setEditSession(null)} session={editSession} onSaved={loadData} />
     </PageContainer>
   );
 }
