@@ -7,8 +7,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { ExternalLink, RefreshCw, Unlink, AlertTriangle, CheckCircle, Clock, Loader2 } from "lucide-react";
 
-// Redirect URI must match what's registered in TikTok Developer Portal
-const REDIRECT_URI = window.location.origin + "/tiktok-callback";
+// Redirect URI is managed via TIKTOK_REDIRECT_URI env var on the backend
 
 export default function TikTokConnectionCard() {
   const [status, setStatus] = useState(null); // null = loading
@@ -37,8 +36,8 @@ export default function TikTokConnectionCard() {
   const handleConnect = async () => {
     try {
       const res = await base44.functions.invoke("tiktokAuth", { 
-        action: "get_auth_url", 
-        redirect_uri: REDIRECT_URI 
+        action: "get_auth_url",
+        redirect_uri: "", // backend uses TIKTOK_REDIRECT_URI env var
       });
       if (!res.data.auth_url) {
         setError("Failed to get TikTok auth URL");
@@ -46,7 +45,7 @@ export default function TikTokConnectionCard() {
       }
       // Store state for CSRF validation
       sessionStorage.setItem("tiktok_oauth_state", res.data.state);
-      sessionStorage.setItem("tiktok_redirect_uri", REDIRECT_URI);
+      sessionStorage.setItem("tiktok_redirect_uri", res.data.redirect_uri);
       
       const popup = window.open(res.data.auth_url, "_blank");
       const timer = setInterval(() => {

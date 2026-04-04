@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 const CLIENT_KEY = Deno.env.get("TIKTOK_CLIENT_KEY");
 const CLIENT_SECRET = Deno.env.get("TIKTOK_CLIENT_SECRET");
+const REDIRECT_URI = Deno.env.get("TIKTOK_REDIRECT_URI");
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
@@ -17,9 +18,9 @@ Deno.serve(async (req) => {
   if (action === "get_auth_url") {
     const csrfState = crypto.randomUUID();
     const scopes = "user.info.basic,user.info.profile,user.info.stats,video.list";
-    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${CLIENT_KEY}&scope=${scopes}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&state=${csrfState}`;
+    const authUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${CLIENT_KEY}&scope=${scopes}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${csrfState}`;
 
-    return Response.json({ auth_url: authUrl, state: csrfState });
+    return Response.json({ auth_url: authUrl, state: csrfState, redirect_uri: REDIRECT_URI });
   }
 
   // ACTION: exchange_code — exchange the auth code for tokens
@@ -32,7 +33,7 @@ Deno.serve(async (req) => {
         client_secret: CLIENT_SECRET,
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: redirect_uri,
+        redirect_uri: REDIRECT_URI,
       }),
     });
 
