@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AppModal from "../AppModal";
 import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
-import { Trash2, Zap, Check } from "lucide-react";
+import { Trash2, Zap, Check, ExternalLink } from "lucide-react";
 import ImportedMetricsBar from "./ImportedMetricsBar";
 
 const STREAM_TYPES = ["ranked", "chill", "viewer_games", "challenge", "collab", "special", "other"];
@@ -135,7 +135,20 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
       <div className="space-y-4">
 
         {/* Imported metrics bar for extension sessions */}
-        {isEdit && isImported && <ImportedMetricsBar session={session} />}
+        {isEdit && isImported && (
+          <>
+            <ImportedMetricsBar session={session} />
+            <a
+              href="https://livecenter.tiktok.com/analytics/live_video"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded border border-pink-500/30 bg-pink-500/5 text-pink-400 text-xs font-mono uppercase tracking-widest hover:bg-pink-500/10 transition-all"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Review on TikTok Live Center
+            </a>
+          </>
+        )}
 
         {/* Game — with suggestions */}
         <div className="relative" ref={gameRef}>
