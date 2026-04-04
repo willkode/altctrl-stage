@@ -1,6 +1,7 @@
 import { useState } from "react";
 import GlitchText from "../../components/GlitchText";
 import { ArrowRight, Zap, ExternalLink, CheckCircle } from "lucide-react";
+import OnboardingGameStep from "../../components/app/games/OnboardingGameStep";
 import { base44 } from "@/api/base44Client";
 
 const CONNECTOR_ID = "69c7e25af1fbef3a6d3efd4d";
@@ -17,6 +18,8 @@ const GOALS = [
 
 export default function Onboarding({ onComplete }) {
   const [step, setStep] = useState(1);
+  const [selectedGames, setSelectedGames] = useState([]);
+  const [topGameIds, setTopGameIds] = useState([]);
   const [form, setForm] = useState({
     display_name: "",
     tiktok_handle: "",
@@ -58,7 +61,20 @@ export default function Onboarding({ onComplete }) {
 
   const handleFinish = async () => {
     setSaving(true);
-    await onComplete(form);
+    // Save game preferences
+    const topGame = selectedGames.find(g => topGameIds.includes(g.id));
+    const formData = { ...form };
+    if (topGame) formData.primary_game = topGame.title;
+    for (const game of selectedGames) {
+      await base44.entities.CreatorGamePreference.create({
+        game_id: game.id,
+        game_title: game.title,
+        priority_type: topGameIds.includes(game.id) ? "top_game" : "regular_game",
+        skill_confidence: "medium",
+        enjoys_challenge_mode: game.challenge_friendly || false,
+      });
+    }
+    await onComplete(formData);
     setSaving(false);
   };
 
@@ -75,12 +91,12 @@ export default function Onboarding({ onComplete }) {
             <span className="text-xs font-mono uppercase tracking-widest text-cyan-400">// INITIALIZING CREATOR PROFILE</span>
           </div>
           <GlitchText text="WELCOME TO ALTCTRL" className="text-3xl font-black uppercase text-white block mb-1" tag="h1" />
-          <p className="text-slate-500 text-sm font-mono">Step {step} of 4 — Let's get you set up.</p>
+          <p className="text-slate-500 text-sm font-mono">Step {step} of 5 — Let's get you set up.</p>
         </div>
 
         {/* Progress */}
         <div className="flex gap-1.5 mb-8">
-          {[1, 2, 3, 4].map(s => (
+          {[1, 2, 3, 4, 5].map(s => (
             <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-300 ${s <= step ? "bg-cyan-400" : "bg-cyan-900/30"}`}
               style={s <= step ? { boxShadow: "0 0 6px rgba(0,245,255,0.4)" } : {}} />
           ))}
@@ -109,17 +125,9 @@ export default function Onboarding({ onComplete }) {
                   className="w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-4 py-3 text-sm outline-none transition-all"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5">Primary Game *</label>
-                <input
-                  value={form.primary_game}
-                  onChange={e => setForm(f => ({ ...f, primary_game: e.target.value }))}
-                  placeholder="e.g. Fortnite, Warzone, Free Fire"
-                  className="w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-4 py-3 text-sm outline-none transition-all"
-                />
-              </div>
+
               <button
-                disabled={!form.display_name || !form.primary_game}
+                disabled={!form.display_name}
                 onClick={() => setStep(2)}
                 className="w-full flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                 Next <ArrowRight className="w-4 h-4" />
@@ -127,8 +135,18 @@ export default function Onboarding({ onComplete }) {
             </div>
           )}
 
-          {/* Step 2: Goal + Target + Promo */}
+          {/* Step 2: Select Games */}
           {step === 2 && (
+            <OnboardingGameStep
+              onNext={(games, tops) => { setSelectedGames(games); setTopGameIds(tops); if (games.length > 0 && tops.length > 0) setForm(f => ({ ...f, primary_game: games.find(g => tops.includes(g.id))?.title || games[0]?.title || f.primary_game })); setStep(3); }}
+              onBack={() => setStep(1)}
+              initialSelections={selectedGames}
+              initialTopIds={topGameIds}
+            />
+          )}
+
+          {/* Step 3: Goal + Target + Promo */}
+          {step === 3 && (
             <div className="space-y-5">
               <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// STEP 2 — YOUR GOAL & STYLE</div>
               <div>
@@ -189,20 +207,20 @@ export default function Onboarding({ onComplete }) {
                 <p className="text-xs font-mono text-slate-600 mt-1.5">{form.weekly_stream_target} streams per week</p>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setStep(1)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
+                <button onClick={() => setStep(2)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
                   Back
                 </button>
-                <button onClick={() => setStep(3)} className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all">
+                <button onClick={() => setStep(4)} className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all">
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Schedule preference */}
-          {step === 3 && (
+          {/* Step 4: Schedule preference */}
+          {step === 4 && (
             <div className="space-y-5">
-              <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// STEP 3 — YOUR SCHEDULE</div>
+              <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// STEP 4 — YOUR SCHEDULE</div>
               <div>
                 <label className="block text-xs font-mono uppercase tracking-widest text-slate-500 mb-2">Preferred Stream Days</label>
                 <div className="flex gap-1.5">
@@ -226,20 +244,20 @@ export default function Onboarding({ onComplete }) {
                 />
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setStep(2)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
+                <button onClick={() => setStep(3)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
                   Back
                 </button>
-                <button onClick={() => setStep(4)} className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all">
+                <button onClick={() => setStep(5)} className="flex-[2] flex items-center justify-center gap-2 bg-cyan-400 text-[#02040f] font-black uppercase tracking-widest py-3.5 rounded text-xs hover:bg-cyan-300 transition-all">
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 4: Connect TikTok (optional) */}
-          {step === 4 && (
+          {/* Step 5: Connect TikTok (optional) */}
+          {step === 5 && (
             <div className="space-y-5">
-              <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// STEP 4 — CONNECT TIKTOK (OPTIONAL)</div>
+              <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// STEP 5 — CONNECT TIKTOK (OPTIONAL)</div>
               <div className="bg-[#02040f] border border-pink-900/30 rounded-lg p-4 space-y-3">
                 <p className="text-xs font-mono text-slate-400 leading-relaxed">
                   Connecting TikTok imports your <span className="text-cyan-400">profile stats</span>, <span className="text-cyan-400">follower count</span>, and <span className="text-cyan-400">video library</span> automatically.
@@ -266,7 +284,7 @@ export default function Onboarding({ onComplete }) {
               )}
 
               <div className="flex gap-3">
-                <button onClick={() => setStep(3)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
+                <button onClick={() => setStep(4)} className="flex-1 py-3.5 rounded border border-cyan-900/40 text-slate-500 text-xs font-mono uppercase tracking-widest hover:text-slate-300 transition-all">
                   Back
                 </button>
                 <button onClick={handleFinish} disabled={saving}

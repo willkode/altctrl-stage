@@ -195,6 +195,12 @@ export default function AdminDashboard() {
             >
               Creator Support
             </a>
+            <a
+              href="/app/admin/games"
+              className="px-4 py-2 rounded border border-border hover:bg-muted text-center text-xs font-mono uppercase transition-colors"
+            >
+              Game Library
+            </a>
           </div>
         </div>
       </div>

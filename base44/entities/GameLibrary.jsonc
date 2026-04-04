@@ -1,0 +1,187 @@
+{
+  "name": "GameLibrary",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "normalized_title": {
+      "type": "string",
+      "title": "Normalized Title (lowercase)"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "description_short": {
+      "type": "string",
+      "title": "Short Description"
+    },
+    "description_full": {
+      "type": "string",
+      "title": "Full Description"
+    },
+    "cover_image": {
+      "type": "string",
+      "title": "Cover Image URL"
+    },
+    "banner_image": {
+      "type": "string",
+      "title": "Banner Image URL"
+    },
+    "website_url": {
+      "type": "string",
+      "title": "Website URL"
+    },
+    "steam_url": {
+      "type": "string",
+      "title": "Steam URL"
+    },
+    "developer": {
+      "type": "string",
+      "title": "Developer"
+    },
+    "publisher": {
+      "type": "string",
+      "title": "Publisher"
+    },
+    "release_date": {
+      "type": "string",
+      "title": "Release Date"
+    },
+    "franchise": {
+      "type": "string",
+      "title": "Franchise"
+    },
+    "pc_supported": {
+      "type": "boolean",
+      "title": "PC Supported",
+      "default": true
+    },
+    "genres": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Genres"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags"
+    },
+    "game_modes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Game Modes"
+    },
+    "multiplayer_type": {
+      "type": "string",
+      "title": "Multiplayer Type",
+      "enum": [
+        "single_player",
+        "co_op",
+        "online_multiplayer",
+        "mmo",
+        "battle_royale",
+        "mixed"
+      ],
+      "default": "mixed"
+    },
+    "gameplay_pacing": {
+      "type": "string",
+      "title": "Gameplay Pacing",
+      "enum": [
+        "slow",
+        "medium",
+        "fast",
+        "mixed"
+      ],
+      "default": "medium"
+    },
+    "session_style": {
+      "type": "string",
+      "title": "Session Style",
+      "enum": [
+        "short_runs",
+        "long_sessions",
+        "sandbox",
+        "mission_based",
+        "endless",
+        "mixed"
+      ],
+      "default": "mixed"
+    },
+    "challenge_friendly": {
+      "type": "boolean",
+      "title": "Challenge Friendly",
+      "default": false
+    },
+    "difficulty_style": {
+      "type": "string",
+      "title": "Difficulty Style",
+      "enum": [
+        "casual",
+        "competitive",
+        "punishing",
+        "mixed"
+      ],
+      "default": "mixed"
+    },
+    "camera_style": {
+      "type": "string",
+      "title": "Camera Style",
+      "enum": [
+        "first_person",
+        "third_person",
+        "top_down",
+        "side_scroller",
+        "isometric",
+        "mixed"
+      ],
+      "default": "mixed"
+    },
+    "core_objective": {
+      "type": "string",
+      "title": "Core Objective"
+    },
+    "win_conditions": {
+      "type": "string",
+      "title": "Win Conditions"
+    },
+    "fail_conditions": {
+      "type": "string",
+      "title": "Fail Conditions"
+    },
+    "challenge_notes": {
+      "type": "string",
+      "title": "Challenge Notes"
+    },
+    "safety_notes": {
+      "type": "string",
+      "title": "Safety Notes"
+    },
+    "ai_summary": {
+      "type": "string",
+      "title": "AI Summary"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    },
+    "sort_priority": {
+      "type": "number",
+      "title": "Sort Priority",
+      "default": 100
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

@@ -92,6 +92,37 @@
       "type": "string",
       "title": "Linked Live Session ID"
     },
+    "primary_game_id": {
+      "type": "string",
+      "title": "Primary Game Library ID"
+    },
+    "secondary_game_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Secondary Game IDs"
+    },
+    "challenge_mode_enabled": {
+      "type": "boolean",
+      "title": "Challenge Mode Enabled",
+      "default": false
+    },
+    "selected_challenge_style": {
+      "type": "string",
+      "title": "Selected Challenge Style",
+      "enum": [
+        "skill",
+        "speed",
+        "survival",
+        "viewer_vote",
+        "restriction",
+        "chaos",
+        "progression",
+        "custom"
+      ],
+      "default": "skill"
+    },
     "challenge_mode": {
       "type": "string",
       "title": "Challenge Mode",
@@ -119,9 +150,17 @@
       ],
       "default": "competitive"
     },
+    "challenge_brief": {
+      "type": "string",
+      "title": "Challenge Brief"
+    },
     "ai_game_context_snapshot": {
       "type": "string",
       "title": "AI Game Context Snapshot (JSON)"
+    },
+    "ai_challenge_output": {
+      "type": "string",
+      "title": "AI Challenge Output (JSON)"
     }
   },
   "required": [

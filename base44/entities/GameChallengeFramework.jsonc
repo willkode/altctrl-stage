@@ -1,0 +1,75 @@
+{
+  "name": "GameChallengeFramework",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "string",
+      "title": "Game Library ID"
+    },
+    "challenge_type": {
+      "type": "string",
+      "title": "Challenge Type",
+      "enum": [
+        "skill",
+        "speed",
+        "survival",
+        "viewer_vote",
+        "restriction",
+        "chaos",
+        "progression",
+        "custom"
+      ],
+      "default": "skill"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "rules": {
+      "type": "string",
+      "title": "Rules"
+    },
+    "difficulty_level": {
+      "type": "string",
+      "title": "Difficulty",
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme"
+      ],
+      "default": "medium"
+    },
+    "viewer_friendly": {
+      "type": "boolean",
+      "title": "Viewer Friendly",
+      "default": true
+    },
+    "duo_friendly": {
+      "type": "boolean",
+      "title": "Duo Friendly",
+      "default": false
+    },
+    "squad_friendly": {
+      "type": "boolean",
+      "title": "Squad Friendly",
+      "default": false
+    },
+    "estimated_length": {
+      "type": "string",
+      "title": "Estimated Length"
+    },
+    "ai_hint": {
+      "type": "string",
+      "title": "AI Hint"
+    }
+  },
+  "required": [
+    "game_id",
+    "title"
+  ]
+}

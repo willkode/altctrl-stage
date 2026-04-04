@@ -50,6 +50,7 @@ import AdminSessions from './pages/app/admin/SessionInspection';
 import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
 import AdminMessaging from './pages/app/admin/Messaging';
+import AdminGameLibrary from './pages/app/admin/GameLibraryAdmin';
 import TikTokCallback from './pages/TikTokCallback';
 import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
@@ -124,6 +125,7 @@ const AuthenticatedApp = () => {
           <Route path="admin/errors" element={<AdminErrors />} />
           <Route path="admin/support" element={<AdminSupport />} />
           <Route path="admin/messaging" element={<AdminMessaging />} />
+          <Route path="admin/games" element={<AdminGameLibrary />} />
         </Route>
       </Route>
       <Route element={<Layout />}>

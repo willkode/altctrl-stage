@@ -1,0 +1,47 @@
+{
+  "name": "CreatorGamePreference",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "string",
+      "title": "Game Library ID"
+    },
+    "game_title": {
+      "type": "string",
+      "title": "Game Title (denormalized)"
+    },
+    "priority_type": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "top_game",
+        "regular_game",
+        "interested_game"
+      ],
+      "default": "regular_game"
+    },
+    "skill_confidence": {
+      "type": "string",
+      "title": "Skill Confidence",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "enjoys_challenge_mode": {
+      "type": "boolean",
+      "title": "Enjoys Challenge Mode",
+      "default": false
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    }
+  },
+  "required": [
+    "game_id",
+    "game_title"
+  ]
+}

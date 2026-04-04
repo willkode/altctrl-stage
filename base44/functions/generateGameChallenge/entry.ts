@@ -17,10 +17,14 @@ Deno.serve(async (req) => {
   const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email });
   const profile = profiles[0] || {};
 
-  // Parse game context if available
+  // Build game context if not already cached, or parse existing
   let gameContext = null;
   if (stream.ai_game_context_snapshot) {
     try { gameContext = JSON.parse(stream.ai_game_context_snapshot); } catch {}
+  }
+  if (!gameContext && stream.primary_game_id) {
+    const ctxRes = await base44.functions.invoke("buildGameContext", { scheduled_stream_id });
+    gameContext = ctxRes?.context || null;
   }
 
   // Get existing challenges for this stream to avoid duplicates

@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import AppModal from "../AppModal";
 import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
-import { RefreshCw, Trash2, ChevronDown, Sparkles, Loader2 } from "lucide-react";
+import { RefreshCw, Trash2, ChevronDown, Sparkles, Loader2, Swords } from "lucide-react";
+import GameContextPanel from "../games/GameContextPanel";
 
 const STREAM_TYPES = ["ranked", "chill", "viewer_games", "challenge", "collab", "special", "other"];
 const STATUSES = ["planned", "live", "completed", "skipped", "cancelled"];
@@ -18,6 +19,9 @@ const empty = () => ({
   notes: "",
   recurring: false,
   status: "planned",
+  primary_game_id: "",
+  challenge_mode_enabled: false,
+  selected_challenge_style: "",
 });
 
 export default function StreamDrawer({ open, onClose, stream = null, onSaved }) {
@@ -33,13 +37,32 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
   const toast = useAppToast();
   const isEdit = !!stream?.id;
 
-  // Load past games for suggestions
+  const [gameLibrary, setGameLibrary] = useState([]);
+  const [selectedGame, setSelectedGame] = useState(null);
+
   useEffect(() => {
     if (!open) return;
     base44.auth.me().then(user => {
-      base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 50).then(sessions => {
+      Promise.all([
+        base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 50),
+        base44.entities.GameLibrary.filter({ is_active: true, pc_supported: true }, "sort_priority", 200),
+        base44.entities.CreatorGamePreference.filter({ created_by: user.email }),
+      ]).then(([sessions, library, prefs]) => {
         const games = [...new Set(sessions.map(s => s.game).filter(Boolean))];
         setGameSuggestions(games);
+        // Sort library: creator prefs first, then by priority
+        const prefIds = new Set(prefs.map(p => p.game_id));
+        library.sort((a, b) => {
+          const aP = prefIds.has(a.id) ? 0 : 1;
+          const bP = prefIds.has(b.id) ? 0 : 1;
+          if (aP !== bP) return aP - bP;
+          return (a.sort_priority || 100) - (b.sort_priority || 100);
+        });
+        setGameLibrary(library);
+        // If editing, find the game
+        if (stream?.primary_game_id) {
+          setSelectedGame(library.find(g => g.id === stream.primary_game_id) || null);
+        }
       });
     });
   }, [open]);
@@ -244,6 +267,48 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
               ))}
             </div>
           </div>
+        )}
+
+        {/* Game from library */}
+        {gameLibrary.length > 0 && (
+          <div>
+            <label className={lbl}>Select from Library <span className="text-slate-700 normal-case tracking-normal">(recommended)</span></label>
+            <div className="flex flex-wrap gap-1.5 max-h-[140px] overflow-y-auto">
+              {gameLibrary.slice(0, 20).map(g => (
+                <button key={g.id} onClick={() => { set("game", g.title); set("primary_game_id", g.id); setSelectedGame(g); }}
+                  className={`text-[10px] font-mono uppercase px-2.5 py-1.5 rounded-lg border transition-all flex items-center gap-1 ${
+                    form.primary_game_id === g.id
+                      ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+                      : "border-cyan-900/20 text-slate-600 hover:text-slate-300"
+                  }`}>
+                  {g.challenge_friendly && <Swords className="w-2.5 h-2.5 text-pink-400/60" />}
+                  {g.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Challenge mode toggle */}
+        <div className="flex items-center justify-between py-3 px-4 bg-[#02040f] border border-pink-900/20 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Swords className="w-3.5 h-3.5 text-pink-400" />
+            <span className="text-xs font-mono uppercase tracking-widest text-slate-400">Challenge Mode</span>
+          </div>
+          <button onClick={() => set("challenge_mode_enabled", !form.challenge_mode_enabled)}
+            className={`w-10 h-5 rounded-full transition-all relative ${form.challenge_mode_enabled ? "bg-pink-500" : "bg-cyan-900/40"}`}>
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${form.challenge_mode_enabled ? "left-[22px]" : "left-0.5"}`} />
+          </button>
+        </div>
+
+        {/* Game context panel */}
+        {selectedGame && (
+          <GameContextPanel
+            game={selectedGame}
+            challengeEnabled={form.challenge_mode_enabled}
+            selectedStyle={form.selected_challenge_style}
+            onStyleSelect={(style) => set("selected_challenge_style", style)}
+          />
         )}
 
         {/* Notes */}
