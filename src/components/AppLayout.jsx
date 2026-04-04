@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -22,6 +22,7 @@ const navItems = [
 const moreNavItems = [
   { path: "/app/golive", label: "Go Live", icon: PlayCircle },
   { path: "/app/debrief", label: "Debrief", icon: ClipboardList },
+  { path: "/app/auto-debrief", label: "AI Debrief", icon: Sparkles },
   { path: "/app/replay", label: "Replay", icon: Film },
   { path: "/app/audience", label: "Audience", icon: Users },
   { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
@@ -38,6 +39,7 @@ const pageTitles = {
   "/app/settings": "SETTINGS",
   "/app/golive": "GO LIVE OPS",
   "/app/debrief": "POST-LIVE DEBRIEF",
+  "/app/auto-debrief": "AI AUTO DEBRIEF",
   "/app/replay": "REPLAY REVIEW",
   "/app/audience": "AUDIENCE & MONETIZATION",
   "/app/experiments": "EXPERIMENTS",
