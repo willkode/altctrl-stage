@@ -57,12 +57,10 @@ export default function TikTokCallback() {
         });
 
         if (response.data.success) {
-          // Trigger initial sync
-          try {
-            await base44.functions.invoke("runTikTokFullSync", {});
-          } catch (e) {
-            console.warn("Initial sync failed:", e);
-          }
+          // Delay sync by 3s to avoid TikTok rate limits immediately after OAuth
+          setTimeout(() => {
+            base44.functions.invoke("runTikTokFullSync", {}).catch(e => console.warn("Initial sync failed:", e));
+          }, 3000);
           navigate("/app/settings", { replace: true });
         } else {
           setError(response.data.error || response.data.error_description || "Failed to complete TikTok connection");
