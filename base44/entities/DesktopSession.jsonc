@@ -1,0 +1,90 @@
+{
+  "name": "DesktopSession",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "title": "Session ID (unique per user)"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "User ID"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "platform": {
+      "type": "string",
+      "title": "Platform"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Started At"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Ended At"
+    },
+    "duration_min": {
+      "type": "number",
+      "title": "Duration (minutes)"
+    },
+    "pack_version_used": {
+      "type": "string",
+      "title": "Pack Version Used"
+    },
+    "peak_viewers": {
+      "type": "number",
+      "title": "Peak Viewers"
+    },
+    "avg_viewers": {
+      "type": "number",
+      "title": "Average Viewers"
+    },
+    "total_gifts": {
+      "type": "number",
+      "title": "Total Gifts",
+      "default": 0
+    },
+    "total_follows": {
+      "type": "number",
+      "title": "Total Follows",
+      "default": 0
+    },
+    "total_shares": {
+      "type": "number",
+      "title": "Total Shares",
+      "default": 0
+    },
+    "alerts_fired": {
+      "type": "number",
+      "title": "Alerts Fired",
+      "default": 0
+    },
+    "alerts_marked_helpful": {
+      "type": "number",
+      "title": "Alerts Marked Helpful",
+      "default": 0
+    },
+    "timeline": {
+      "type": "string",
+      "title": "Timeline (JSON array)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Synced At"
+    }
+  },
+  "required": [
+    "session_id",
+    "user_id"
+  ]
+}

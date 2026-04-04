@@ -2,135 +2,79 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 /**
  * Desktop App Session Sync
- * 
+ *
  * POST /api/syncDesktopSession
- * Authorization: Bearer <user-token>
- * 
- * Body:
- * {
- *   session: {
- *     game: string,
- *     stream_type: string,        // "ranked" | "chill" | "viewer_games" | etc.
- *     stream_date: string,        // "YYYY-MM-DD"
- *     start_time: string,         // "HH:MM"
- *     end_time: string,           // "HH:MM"
- *     duration_minutes: number,
- *     scheduled_stream_id?: string
- *   },
- *   engagement: {
- *     avg_viewers?: number,
- *     peak_viewers?: number,
- *     followers_gained?: number,
- *     likes_received?: number,
- *     comments?: number,
- *     shares?: number,
- *     gifters?: number,
- *     diamonds?: number,
- *     fan_club_joins?: number
- *   },
- *   alerts?: Array<{ type: string, title: string, body: string, severity: string }>,
- *   chatLog?: string,             // raw chat log text / JSON string (not stored, reserved)
- *   timeline?: string             // JSON string of timestamped events (not stored, reserved)
- * }
+ * Authorization: Bearer <token>
+ *
+ * Accepts a flat session payload, upserts into DesktopSession entity.
+ * Returns { ok: true, sessionId: "..." }
  */
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Authenticate the user via the Bearer token from the Electron app
+    // Authenticate
     const user = await base44.auth.me();
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      return Response.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { session, engagement = {}, alerts = [] } = body;
 
-    // Validate required session fields
-    if (!session?.game || !session?.stream_date) {
-      return Response.json(
-        { error: 'Missing required fields: session.game and session.stream_date' },
-        { status: 400 }
-      );
+    // Validate required fields
+    if (!body.sessionId) {
+      return Response.json({ message: 'Missing required field: sessionId' }, { status: 400 });
+    }
+    if (!body.startedAt) {
+      return Response.json({ message: 'Missing required field: startedAt' }, { status: 400 });
     }
 
-    // Calculate week number
-    const date = new Date(session.stream_date);
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    const weekNumber = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    const now = new Date().toISOString();
 
-    // Build the LiveSession record
-    const sessionData = {
-      // Core
-      game: session.game,
-      stream_type: session.stream_type || 'other',
-      stream_date: session.stream_date,
-      start_time: session.start_time || null,
-      end_time: session.end_time || null,
-      duration_minutes: session.duration_minutes || null,
-      week_number: weekNumber,
-      year: date.getFullYear(),
-
-      // Link to scheduled stream if provided
-      scheduled_stream_id: session.scheduled_stream_id || null,
-
-      // Engagement metrics
-      avg_viewers: engagement.avg_viewers ?? null,
-      peak_viewers: engagement.peak_viewers ?? null,
-      followers_gained: engagement.followers_gained ?? 0,
-      likes_received: engagement.likes_received ?? 0,
-      comments: engagement.comments ?? 0,
-      shares: engagement.shares ?? 0,
-      gifters: engagement.gifters ?? 0,
-      diamonds: engagement.diamonds ?? 0,
-      fan_club_joins: engagement.fan_club_joins ?? 0,
-
-      // Source tracking
-      source: 'hybrid',
-      source_confidence: 'high',
-      source_notes: 'Synced from AltCtrl Desktop App',
-      was_auto_imported: true,
-      imported_at: new Date().toISOString(),
+    const record = {
+      session_id: body.sessionId,
+      user_id: user.id,
+      title: body.title || "",
+      platform: body.platform || "TikTok",
+      started_at: body.startedAt,
+      ended_at: body.endedAt || null,
+      duration_min: body.durationMin || 0,
+      pack_version_used: body.packVersionUsed || "",
+      peak_viewers: body.peakViewers ?? 0,
+      avg_viewers: body.avgViewers ?? 0,
+      total_gifts: body.totalGifts ?? 0,
+      total_follows: body.totalFollows ?? 0,
+      total_shares: body.totalShares ?? 0,
+      alerts_fired: body.alertsFired ?? 0,
+      alerts_marked_helpful: body.alertsMarkedHelpful ?? 0,
+      timeline: body.timeline ? JSON.stringify(body.timeline) : "[]",
+      notes: body.notes || "",
+      synced_at: now,
     };
 
-    // Create the session
-    const created = await base44.entities.LiveSession.create(sessionData);
-
-    // If the scheduled stream exists, mark it completed
-    if (session.scheduled_stream_id) {
-      await base44.entities.ScheduledStream.update(session.scheduled_stream_id, {
-        status: 'completed',
-        live_session_id: created.id,
-      });
-    }
-
-    // Create any performance alerts generated by the desktop app
-    const createdAlerts = [];
-    for (const alert of alerts) {
-      if (!alert.title) continue;
-      const a = await base44.entities.PerformanceAlert.create({
-        alert_type: alert.type || 'consistency_drop',
-        severity: alert.severity || 'info',
-        title: alert.title,
-        body: alert.body || '',
-        week_number: weekNumber,
-        year: date.getFullYear(),
-        source: 'system',
-        read: false,
-        dismissed: false,
-      });
-      createdAlerts.push(a.id);
-    }
-
-    return Response.json({
-      success: true,
-      session_id: created.id,
-      alerts_created: createdAlerts.length,
+    // Check for existing session with same sessionId for this user (upsert)
+    const existing = await base44.asServiceRole.entities.DesktopSession.filter({
+      session_id: body.sessionId,
+      user_id: user.id,
     });
 
+    let sessionId;
+    if (existing.length > 0) {
+      // Update existing
+      await base44.asServiceRole.entities.DesktopSession.update(existing[0].id, record);
+      sessionId = existing[0].id;
+    } else {
+      // Create new
+      const created = await base44.asServiceRole.entities.DesktopSession.create(record);
+      sessionId = created.id;
+    }
+
+    return Response.json({ ok: true, sessionId });
+
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    if (error.message?.includes('Unauthorized') || error.message?.includes('auth')) {
+      return Response.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    return Response.json({ message: error.message || 'Internal error' }, { status: 500 });
   }
 });
