@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Flame, Zap, Crown, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
+import { Flame, Zap, Crown, ArrowRight, Loader2, CheckCircle2, LogOut } from "lucide-react";
 
 export default function OGCreators() {
   const [loading, setLoading] = useState(false);
@@ -90,6 +90,13 @@ export default function OGCreators() {
         <p className="text-xs font-mono text-slate-700 text-center">
           This invite link is exclusive to approved founding creators.
         </p>
+
+        <button
+          onClick={() => base44.auth.logout("/og-creators")}
+          className="flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-colors mx-auto mt-2"
+        >
+          <LogOut className="w-3.5 h-3.5" /> Sign Out
+        </button>
       </div>
     </div>
   );
