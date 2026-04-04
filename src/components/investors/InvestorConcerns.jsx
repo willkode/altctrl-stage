@@ -8,23 +8,31 @@ const POSITIVES = [
   "TikTok Live is now #2 by watch hours with 10B+ hours in Q4 2025.",
   "TikTok already has built-in live monetization through Gifts and Diamonds.",
   "Existing creator tools prove $27–$45/mo willingness to pay for infrastructure.",
+  "Multi-platform expansion (YouTube, Twitch, Kick) dramatically increases TAM.",
+  "Full-stack vision (broadcast + distribute + monetize + commerce) creates massive switching costs.",
+  "Platform-agnostic data layer means creator intelligence compounds across every platform.",
 ];
 
 const CONCERNS = [
   {
-    title: "TikTok Platform Dependence",
-    detail: "Despite the Jan 2026 joint venture (80.1% American-owned), legal challenges remain. Platform risk is reduced but not eliminated.",
-    mitigation: "ALT CTRL's data layer, coaching engine, and scheduling system are platform-agnostic. Multi-platform expansion is on the roadmap.",
+    title: "TikTok Platform Dependence (Phase 1)",
+    detail: "Phase 1 launches on TikTok. Despite the Jan 2026 joint venture (80.1% American-owned), legal challenges remain.",
+    mitigation: "TikTok is the beachhead, not the destination. Multi-platform expansion to YouTube, Twitch, and Kick begins in Year 2. The data layer and coaching engine are already platform-agnostic.",
   },
   {
-    title: "OBS is Free",
-    detail: "ALT CTRL cannot win by selling 'cheaper broadcasting' — OBS covers that for free.",
-    mitigation: "ALT CTRL doesn't compete on broadcasting. It sells growth outcomes: better revenue, better retention, better schedule discipline, and AI-driven live decisions.",
+    title: "Broadcasting is a Crowded Market",
+    detail: "OBS is free. Streamlabs has millions of users. Entering broadcasting in Phase 2 means competing with entrenched players.",
+    mitigation: "ALT CTRL won't win on broadcasting alone — it wins by being the only tool where broadcasting, coaching, analytics, promo, and monetization are unified. The AI layer makes the broadcaster smarter, not just prettier.",
   },
   {
-    title: "Product Thesis vs. Market Fact",
-    detail: "The strongest case for ALT CTRL is better outcomes, not cheaper tools. This is product thesis that needs to be proven with data.",
-    mitigation: "Early creator cohorts are already tracking retention, viewer growth, and monetization improvements. Product-market fit signals inform every sprint.",
+    title: "Platform Ambition (Phase 3) is Massive",
+    detail: "Replacing Twitch/TikTok/Kick as a streaming destination is an enormous undertaking requiring significant capital and network effects.",
+    mitigation: "Phase 3 only activates after owning the creator workflow. If 100K+ creators broadcast, schedule, promote, and monetize through ALT CTRL, viewer traffic follows. The platform emerges from the tool, not the other way around.",
+  },
+  {
+    title: "Execution Risk Across Multiple Product Lines",
+    detail: "Broadcasting + AI coaching + commerce + platform = high engineering complexity.",
+    mitigation: "Phased rollout de-risks execution. Each phase is independently valuable. Phase 1 SaaS is profitable on its own. Each expansion layer compounds rather than replaces.",
   },
 ];
 
@@ -32,7 +40,7 @@ export default function InvestorConcerns() {
   return (
     <section className="py-20 px-4 border-t border-cyan-900/20">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader tag="H" title="Investor Framework" subtitle="What the market supports — and what we still need to prove." />
+        <SectionHeader tag="I" title="Investor Framework" subtitle="What the market supports, what we still need to prove, and how we de-risk the 5-year bet." />
 
         <div className="grid md:grid-cols-2 gap-8 mt-12">
           {/* Positive signals */}

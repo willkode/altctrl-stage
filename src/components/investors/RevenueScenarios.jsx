@@ -15,7 +15,7 @@ export default function RevenueScenarios() {
   return (
     <section className="py-20 px-4 border-t border-cyan-900/20">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader tag="G" title="Revenue Scenarios" subtitle="Model assumptions — not sourced facts. Three scenarios based on unit economics." />
+        <SectionHeader tag="H" title="Revenue Scenarios" subtitle="Phase 1 SaaS model. Revenue multiplies as broadcasting + commerce layers activate." />
 
         <div className="grid md:grid-cols-[1fr_320px] gap-8 mt-12">
           {/* Scenario cards */}

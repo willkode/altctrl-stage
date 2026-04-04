@@ -21,10 +21,13 @@ export default function InvestorHero() {
           <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// INVESTOR OVERVIEW</span>
         </div>
 
-        <GlitchText text="THE AI OPERATING SYSTEM" className="text-4xl md:text-6xl font-black uppercase text-white block mb-2" tag="h1" />
-        <h2 className="text-2xl md:text-3xl font-black uppercase text-cyan-400 mb-4">FOR LIVESTREAM GAMING CREATORS</h2>
-        <p className="text-lg text-slate-400 font-mono max-w-3xl mx-auto mb-12 leading-relaxed">
-          ALT CTRL transforms how gaming creators prepare, perform, and grow on TikTok LIVE — turning scattered workflows into a data-driven command center.
+        <GlitchText text="THE ENTIRE STREAMING" className="text-4xl md:text-6xl font-black uppercase text-white block mb-1" tag="h1" />
+        <GlitchText text="CAREER ECOSYSTEM" className="text-4xl md:text-6xl font-black uppercase text-cyan-400 block mb-4" tag="h2" />
+        <p className="text-lg text-slate-400 font-mono max-w-3xl mx-auto mb-6 leading-relaxed">
+          ALT CTRL is building the AI-powered platform that replaces every tool a streaming creator needs — from broadcasting to promotion to monetization to merch.
+        </p>
+        <p className="text-sm text-slate-500 font-mono max-w-2xl mx-auto mb-12 leading-relaxed">
+          Starting with TikTok LIVE gaming. Expanding to YouTube, Twitch, Kick, and every major platform. Then becoming the platform itself.
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

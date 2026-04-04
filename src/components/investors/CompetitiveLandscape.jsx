@@ -6,36 +6,43 @@ const COMPETITORS = [
     name: "OBS",
     price: "Free",
     type: "Open Source",
-    features: { broadcasting: true, overlays: true, multistream: false, ai_coaching: false, scheduling: false, analytics: false, promo: false, monetization: false, challenge_engine: false },
-    note: "Free broadcasting. No growth tools whatsoever.",
+    features: { broadcasting: true, overlays: true, multistream: false, ai_coaching: false, scheduling: false, analytics: false, promo: false, monetization: false, challenge_engine: false, marketing: false, merch: false, multi_platform: false },
+    note: "Free broadcasting. No growth tools.",
   },
   {
     name: "Streamlabs",
     price: "$27/mo",
     type: "Creator Suite",
-    features: { broadcasting: true, overlays: true, multistream: true, ai_coaching: false, scheduling: false, analytics: "partial", promo: false, monetization: "partial", challenge_engine: false },
-    note: "Production tools + sponsorships. No coaching or scheduling.",
+    features: { broadcasting: true, overlays: true, multistream: true, ai_coaching: false, scheduling: false, analytics: "partial", promo: false, monetization: "partial", challenge_engine: false, marketing: false, merch: "partial", multi_platform: true },
+    note: "Production tools + tips. No coaching, no AI.",
   },
   {
     name: "StreamYard",
     price: "$45-89/mo",
     type: "Studio",
-    features: { broadcasting: true, overlays: true, multistream: true, ai_coaching: false, scheduling: false, analytics: false, promo: false, monetization: false, challenge_engine: false },
-    note: "Browser-based studio. No creator growth features.",
+    features: { broadcasting: true, overlays: true, multistream: true, ai_coaching: false, scheduling: false, analytics: false, promo: false, monetization: false, challenge_engine: false, marketing: false, merch: false, multi_platform: true },
+    note: "Browser studio. No creator growth.",
   },
   {
     name: "Restream",
     price: "Free-Paid",
     type: "Multistream",
-    features: { broadcasting: true, overlays: false, multistream: true, ai_coaching: false, scheduling: false, analytics: "partial", promo: false, monetization: false, challenge_engine: false },
-    note: "Multistream routing. 2 channels free. No creator OS.",
+    features: { broadcasting: true, overlays: false, multistream: true, ai_coaching: false, scheduling: false, analytics: "partial", promo: false, monetization: false, challenge_engine: false, marketing: false, merch: false, multi_platform: true },
+    note: "Multistream routing only.",
+  },
+  {
+    name: "Twitch/TikTok/Kick",
+    price: "Free",
+    type: "Distribution",
+    features: { broadcasting: false, overlays: false, multistream: false, ai_coaching: false, scheduling: false, analytics: "partial", promo: false, monetization: true, challenge_engine: false, marketing: false, merch: false, multi_platform: false },
+    note: "Distribution only. Rent your audience.",
   },
   {
     name: "ALT CTRL",
-    price: "$19-49/mo",
-    type: "AI Creator OS",
-    features: { broadcasting: false, overlays: false, multistream: false, ai_coaching: true, scheduling: true, analytics: true, promo: true, monetization: true, challenge_engine: true },
-    note: "Growth, coaching, monetization, and AI-driven workflows. Not a broadcaster.",
+    price: "$19-149/mo",
+    type: "Full-Stack Creator Platform",
+    features: { broadcasting: "roadmap", overlays: "roadmap", multistream: "roadmap", ai_coaching: true, scheduling: true, analytics: true, promo: true, monetization: true, challenge_engine: true, marketing: true, merch: "roadmap", multi_platform: true },
+    note: "AI-powered full-stack: coaching → broadcasting → platform → commerce.",
     highlight: true,
   },
 ];
@@ -44,17 +51,21 @@ const FEATURES = [
   { key: "broadcasting", label: "Broadcasting" },
   { key: "overlays", label: "Overlays/Scenes" },
   { key: "multistream", label: "Multistream" },
+  { key: "multi_platform", label: "Multi-Platform" },
   { key: "ai_coaching", label: "AI Coaching" },
   { key: "scheduling", label: "Smart Scheduling" },
   { key: "analytics", label: "Deep Analytics" },
   { key: "promo", label: "Promo Generator" },
   { key: "monetization", label: "Monetization Tools" },
   { key: "challenge_engine", label: "Challenge Engine" },
+  { key: "marketing", label: "Marketing Suite" },
+  { key: "merch", label: "Merch / Commerce" },
 ];
 
 function FeatureIcon({ value }) {
   if (value === true) return <Check className="w-3.5 h-3.5 text-green-400" />;
   if (value === "partial") return <Minus className="w-3.5 h-3.5 text-yellow-400" />;
+  if (value === "roadmap") return <span className="text-[8px] font-mono text-cyan-400/60 uppercase">Soon</span>;
   return <X className="w-3.5 h-3.5 text-slate-700" />;
 }
 
@@ -62,7 +73,7 @@ export default function CompetitiveLandscape() {
   return (
     <section className="py-20 px-4 border-t border-cyan-900/20">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader tag="D" title="Competitive Landscape" subtitle="Existing tools sell broadcasting. ALT CTRL sells growth outcomes." />
+        <SectionHeader tag="E" title="Competitive Landscape" subtitle="Everyone else sells one slice. ALT CTRL owns the entire stack." />
 
         <div className="mt-12 overflow-x-auto">
           <table className="w-full min-w-[700px]">
@@ -93,12 +104,12 @@ export default function CompetitiveLandscape() {
         </div>
 
         <div className="mt-8 bg-gradient-to-r from-cyan-950/20 to-[#060d1f] border border-cyan-500/15 rounded-xl p-6">
-          <h3 className="text-sm font-black uppercase text-cyan-400 mb-2">Key Insight</h3>
+          <h3 className="text-sm font-black uppercase text-cyan-400 mb-2">Why Full-Stack Wins</h3>
           <p className="text-sm text-slate-300 leading-relaxed">
-            OBS is free, so ALT CTRL cannot win by selling "cheaper broadcasting." The strongest case is <span className="text-white font-bold">better revenue outcomes, better retention, better schedule discipline, and better live decision-making</span> — powered by AI that understands the creator's data.
+            Today a creator needs 5-7 separate tools: OBS for broadcasting, Streamlabs for overlays, Restream for multistream, TikTok/Twitch for distribution, Fourthwall for merch, and spreadsheets for everything else. <span className="text-white font-bold">ALT CTRL collapses this entire stack into one AI-powered platform.</span>
           </p>
           <p className="text-xs text-slate-500 mt-3">
-            Existing tools anchor willingness-to-pay at $27–$45/mo for production tools alone. ALT CTRL's growth stack justifies $19–$49/mo pricing with higher value density.
+            Phase 1 (now): win on coaching + growth intelligence. Phase 2: add broadcasting to replace OBS/Streamlabs. Phase 3: become the distribution platform and own the viewer relationship entirely.
           </p>
         </div>
       </div>

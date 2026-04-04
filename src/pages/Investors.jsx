@@ -2,6 +2,7 @@ import InvestorHero from "../components/investors/InvestorHero";
 import MarketOpportunity from "../components/investors/MarketOpportunity";
 import LivestreamExplosion from "../components/investors/LivestreamExplosion";
 import TikTokMomentum from "../components/investors/TikTokMomentum";
+import VisionRoadmap from "../components/investors/VisionRoadmap";
 import CompetitiveLandscape from "../components/investors/CompetitiveLandscape";
 import UnitEconomics from "../components/investors/UnitEconomics";
 import TAMModel from "../components/investors/TAMModel";
@@ -17,6 +18,7 @@ export default function Investors() {
       <MarketOpportunity />
       <LivestreamExplosion />
       <TikTokMomentum />
+      <VisionRoadmap />
       <CompetitiveLandscape />
       <UnitEconomics />
       <TAMModel />

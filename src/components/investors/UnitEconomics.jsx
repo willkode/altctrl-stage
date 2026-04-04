@@ -24,7 +24,7 @@ export default function UnitEconomics() {
   return (
     <section className="py-20 px-4 border-t border-cyan-900/20">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader tag="E" title="Unit Economics" subtitle="SaaS-native model with strong LTV/CAC fundamentals." />
+        <SectionHeader tag="F" title="Unit Economics" subtitle="Phase 1 SaaS-native model with strong LTV/CAC fundamentals. ARPU expands with each phase." />
 
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           {/* Pricing stack */}

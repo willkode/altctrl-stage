@@ -24,10 +24,18 @@ const NUMBERS = [
     { label: "OBS", value: "Free", source: "OBS Project" },
   ]},
   { category: "ALT CTRL Model", items: [
-    { label: "Blended ARPU", value: "$33/mo", source: "Model assumption" },
+    { label: "Phase 1 ARPU", value: "$33/mo", source: "Model assumption" },
+    { label: "Phase 2+ ARPU", value: "$65-100/mo", source: "Model assumption" },
     { label: "LTV/CAC ratio", value: "6.2×", source: "Model assumption" },
-    { label: "10K paid users ARR", value: "~$4.0M", source: "Model assumption" },
+    { label: "10K users ARR", value: "~$4.0M", source: "Phase 1" },
+    { label: "100K users ARR", value: "~$102M", source: "Phase 2-3" },
     { label: "Gross margin target", value: "78-84%", source: "Model assumption" },
+  ]},
+  { category: "5-Year Vision", items: [
+    { label: "Phase 1", value: "AI Creator OS", source: "TikTok beachhead" },
+    { label: "Phase 2", value: "Replace OBS/Streamlabs", source: "Multi-platform broadcasting" },
+    { label: "Phase 3", value: "Own the platform", source: "Replace Twitch/TikTok/Kick" },
+    { label: "Expanded TAM", value: "$50B+", source: "SaaS + Broadcasting + Commerce" },
   ]},
 ];
 
@@ -35,7 +43,7 @@ export default function KeyNumbers() {
   return (
     <section className="py-20 px-4 border-t border-cyan-900/20">
       <div className="max-w-6xl mx-auto">
-        <SectionHeader tag="I" title="Quick Reference Numbers" subtitle="The strongest sourced and modeled numbers in one place." />
+        <SectionHeader tag="J" title="Quick Reference Numbers" subtitle="The strongest sourced and modeled numbers in one place." />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
           {NUMBERS.map(group => (
