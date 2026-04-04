@@ -17,9 +17,6 @@ const navItems = [
   { path: "/app/promo", label: "Promo", icon: Radio },
   { path: "/app/analytics", label: "Analytics", icon: TrendingUp },
   { path: "/app/coach", label: "Coach", icon: Brain },
-];
-
-const moreNavItems = [
   { path: "/app/strategy", label: "Strategy", icon: Crosshair },
   { path: "/app/golive", label: "Go Live", icon: PlayCircle },
   { path: "/app/debrief", label: "Debrief", icon: ClipboardList },
@@ -154,21 +151,7 @@ export default function AppLayout() {
             })}
           </nav>
 
-          <div className="px-3 pb-2">
-            <div className="text-[9px] font-mono uppercase tracking-widest text-slate-700 mb-2 px-1">More</div>
-            {moreNavItems.map(({ path, label, icon: Icon }) => {
-              const active = location.pathname === path;
-              return (
-                <Link key={path} to={path}
-                  className={`flex items-center gap-3 px-3 py-2 rounded text-xs font-mono uppercase tracking-widest transition-all mb-0.5 ${
-                    active ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30" : "text-slate-600 hover:text-white hover:bg-white/5 border border-transparent"
-                  }`}>
-                  <Icon className={`w-3.5 h-3.5 shrink-0 ${active ? "text-cyan-400" : ""}`} />
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
+
           <div className="px-3 pb-6 mt-2">
             <div className="border border-cyan-900/30 rounded p-3 text-xs font-mono text-slate-600">
               <div className="flex items-center gap-1.5 mb-1">
