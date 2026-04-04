@@ -210,6 +210,11 @@ export default function TikTokConnectionCard() {
           {/* Actions */}
           <div className="flex gap-2 flex-wrap">
             <button onClick={handleSync} disabled={syncing}
+              className="flex items-center gap-1.5 text-xs font-mono uppercase px-3 py-2 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all disabled:opacity-40">
+              <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
+              {syncing ? "Syncing…" : "Sync Now"}
+            </button>
+            <button onClick={handleConnect}
               className="flex items-center gap-1.5 text-xs font-mono uppercase px-3 py-2 rounded border border-cyan-900/30 text-slate-500 hover:text-slate-300 transition-all">
               <ExternalLink className="w-3.5 h-3.5" /> Reconnect
             </button>
