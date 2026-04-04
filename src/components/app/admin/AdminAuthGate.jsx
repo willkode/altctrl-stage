@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { AlertTriangle } from "lucide-react";
 
@@ -48,5 +49,5 @@ export default function AdminAuthGate({ children }) {
     );
   }
 
-  return children;
+  return <Outlet />;
 }
