@@ -44,6 +44,7 @@ export default function TikTokAccountStats() {
   const [snapshots, setSnapshots] = useState([]);
   const [account, setAccount] = useState(null);
   const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
@@ -76,10 +77,22 @@ export default function TikTokAccountStats() {
   async function handleSync() {
     if (!account || account.connection_status !== "connected") return;
     setSyncing(true);
+    setSyncError(null);
     try {
-      await base44.functions.invoke("runTikTokFullSync", {});
-      await loadData();
-    } catch {}
+      const res = await base44.functions.invoke("runTikTokFullSync", {});
+      if (res.data?.status === "failed" || res.data?.errors?.length) {
+        const errs = res.data.errors || [];
+        if (errs.some(e => e.includes("403"))) {
+          setSyncError("TikTok token expired. Please reconnect TikTok in Settings.");
+        } else {
+          setSyncError(errs[0] || "Sync failed");
+        }
+      } else {
+        await loadData();
+      }
+    } catch (e) {
+      setSyncError(e.message || "Sync failed");
+    }
     setSyncing(false);
   }
 
@@ -156,6 +169,9 @@ export default function TikTokAccountStats() {
         <div className="text-xs font-mono uppercase tracking-widest text-pink-400">// TIKTOK ACCOUNT</div>
         <div className="flex items-center gap-3">
           <span className="text-[10px] font-mono text-slate-600">Synced: {lastSynced}</span>
+          {syncError && (
+            <span className="text-[10px] font-mono text-red-400 max-w-[200px] truncate" title={syncError}>{syncError}</span>
+          )}
           <button
             onClick={handleSync}
             disabled={syncing}
