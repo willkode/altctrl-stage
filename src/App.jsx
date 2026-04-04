@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { base44 } from '@/api/base44Client';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import AppLayout from './components/AppLayout';
@@ -80,7 +81,7 @@ const AuthenticatedApp = () => {
         </Routes>
       );
     }
-    navigateToLogin();
+    base44.auth.redirectToLogin('/app/dashboard');
     return null;
   }
   }
