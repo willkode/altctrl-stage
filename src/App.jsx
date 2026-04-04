@@ -57,6 +57,7 @@ import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
 import ExtensionAuth from './pages/ExtensionAuth';
 import OGCreators from './pages/OGCreators';
+import Investors from './pages/Investors';
 
 const HomeRedirect = () => <Navigate to="/app/dashboard" replace />;
 
@@ -78,7 +79,7 @@ const AuthenticatedApp = () => {
     return <UserNotRegisteredError />;
   } else if (authError.type === 'auth_required') {
     // Allow TikTok callback page to load without auth — it will handle login redirect itself
-    if (['/tiktok-callback', '/desktop/auth', '/desktop/callback', '/extension-auth'].includes(window.location.pathname)) {
+    if (['/tiktok-callback', '/desktop/auth', '/desktop/callback', '/extension-auth', '/investors'].includes(window.location.pathname)) {
       return (
         <Routes>
           <Route path="/tiktok-callback" element={<TikTokCallback />} />
@@ -86,6 +87,7 @@ const AuthenticatedApp = () => {
           <Route path="/desktop/callback" element={<DesktopCallback />} />
           <Route path="/extension-auth" element={<ExtensionAuth />} />
           <Route path="/og-creators" element={<OGCreators />} />
+          <Route path="/investors" element={<Investors />} />
           <Route path="*" element={null} />
         </Routes>
       );
@@ -148,6 +150,7 @@ const AuthenticatedApp = () => {
         <Route path="/desktop/auth" element={<DesktopAuth />} />
         <Route path="/desktop/callback" element={<DesktopCallback />} />
         <Route path="/og-creators" element={<OGCreators />} />
+        <Route path="/investors" element={<Investors />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
