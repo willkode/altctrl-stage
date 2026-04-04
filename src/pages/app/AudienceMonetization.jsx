@@ -21,7 +21,7 @@ export default function AudienceMonetization() {
   async function loadData() {
     setLoading(true);
     const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 100);
+    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100);
     setSessions(all);
     setFilteredSessions(all);
 

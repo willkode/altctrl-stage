@@ -22,7 +22,7 @@ function generateExternalSessionKey(session) {
   const date = session.date || "unknown";
   const start = session.start_time || "00:00";
   const duration = session.duration_minutes || 0;
-  const peak = session.peak_concurrent_viewers || session.peak_viewers || 0;
+  const peak = session.peak_viewers || 0;
   const str = `${date}|${start}|${duration}|${peak}`;
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -42,25 +42,52 @@ function validateDate(date) {
   return { valid: true };
 }
 
-// Map extension fields → LiveSession entity fields
+/**
+ * Maps the extension's payload fields → LiveSession entity fields.
+ *
+ * EXTENSION FORMAT (v2):
+ * {
+ *   date: "2026-03-24",              // required, YYYY-MM-DD
+ *   start_time: "2026-03-24T17:56:00.000Z",  // ISO string or null
+ *   end_time: "2026-03-24T19:30:00.000Z",    // ISO string or null
+ *   duration_minutes: 103,            // number
+ *   game: "Dead By Daylight",         // string — game/category name
+ *   stream_type: "solo",              // solo | duo | squad | collab | other
+ *   avg_viewers: 5,                   // number
+ *   peak_viewers: 12,                 // number
+ *   new_followers: 3,                 // number
+ *   likes: 45,                        // number
+ *   comments: 20,                     // number
+ *   shares: 2,                        // number
+ *   gifters: 1,                       // number
+ *   diamonds: 5,                      // number
+ *   views: 62,                        // number (total views)
+ *   unique_viewers: 30,               // number
+ *   notes: "...",                      // string
+ * }
+ */
 function mapSessionFields(sess, email) {
   const d = new Date(sess.date);
   const now = new Date().toISOString();
   const externalKey = generateExternalSessionKey(sess);
 
+  // Map stream_type: extension sends "solo"/"duo"/"squad" etc
+  const typeMap = { solo: "ranked", duo: "collab", squad: "viewer_games" };
+  const streamType = typeMap[sess.stream_type] || sess.stream_type || "other";
+
   return {
-    created_by: email,
-    game: sess.content_category || "",
-    stream_type: sess.session_type || "ranked",
+    owner_email: email,
+    game: sess.game || sess.content_category || "",
+    stream_type: streamType,
     stream_date: sess.date,
     start_time: sess.start_time || "",
     end_time: sess.end_time || "",
     duration_minutes: sess.duration_minutes || null,
-    avg_viewers: sess.avg_concurrent_viewers || sess.avg_viewers || null,
-    peak_viewers: sess.peak_concurrent_viewers || sess.peak_viewers || null,
+    avg_viewers: sess.avg_viewers || sess.avg_concurrent_viewers || null,
+    peak_viewers: sess.peak_viewers || sess.peak_concurrent_viewers || null,
     followers_gained: sess.new_followers || sess.followers_gained || 0,
     likes_received: sess.likes || sess.likes_received || 0,
-    comments: sess.comments_count || sess.comments || 0,
+    comments: sess.comments || sess.comments_count || 0,
     shares: sess.shares || 0,
     gifters: sess.gifters || 0,
     diamonds: sess.diamonds || 0,
@@ -150,9 +177,9 @@ Deno.serve(async (req) => {
       validated.push({ ...s, _index: i });
     }
 
-    // ── Load existing sessions for dedup ──
+    // ── Load existing sessions for dedup (by owner_email) ──
     const existing = await base44.asServiceRole.entities.LiveSession.filter(
-      { created_by: userEmail }, "-stream_date", 500
+      { owner_email: userEmail }, "-stream_date", 500
     );
 
     let created = 0, updated = 0, skipped = 0, manual_review = 0;
@@ -160,19 +187,15 @@ Deno.serve(async (req) => {
 
     for (const sess of validated) {
       const incomingKey = generateExternalSessionKey(sess);
-
-      // Find existing match by external_session_key
       const match = existing.find(e => e.external_session_key === incomingKey);
 
       if (!match) {
-        // Create new
         const record = mapSessionFields(sess, userEmail);
         const created_sess = await base44.asServiceRole.entities.LiveSession.create(record);
         createdIds.push(created_sess.id);
         created++;
         results.push({ index: sess._index, status: "created", session_id: created_sess.id });
       } else {
-        // Check if there's new data to fill in
         const mapped = mapSessionFields(sess, userEmail);
         const safeUpdate = {};
         let hasChanges = false;
@@ -208,7 +231,7 @@ Deno.serve(async (req) => {
     if (created > 0) {
       try {
         const allSessions = await base44.asServiceRole.entities.LiveSession.filter(
-          { created_by: userEmail }, "-stream_date", 500
+          { owner_email: userEmail }, "-stream_date", 500
         );
         const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: userEmail });
         if (profiles[0] && allSessions.length > 0) {

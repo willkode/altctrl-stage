@@ -34,7 +34,7 @@ export default function Experiments() {
     const user = await base44.auth.me();
     const [exps, sess] = await Promise.all([
       base44.entities.Experiment.filter({ created_by: user.email }, "-created_date", 50),
-      base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 100),
+      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100),
     ]);
     setExperiments(exps);
     setSessions(sess);

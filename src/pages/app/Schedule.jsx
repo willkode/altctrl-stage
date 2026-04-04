@@ -55,7 +55,7 @@ export default function Schedule() {
     const user = await base44.auth.me();
     const [allStreams, allSessions, profiles] = await Promise.all([
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      base44.entities.LiveSession.filter({ created_by: user.email }),
+      base44.entities.LiveSession.filter({ owner_email: user.email }),
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
     ]);
 

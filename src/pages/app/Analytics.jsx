@@ -35,7 +35,7 @@ export default function Analytics() {
     setLoading(true);
     const user = await base44.auth.me();
     const all = await base44.entities.LiveSession.filter(
-      { created_by: user.email },
+      { owner_email: user.email },
       "-stream_date",
       200
     );

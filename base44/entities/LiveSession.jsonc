@@ -2,6 +2,10 @@
   "name": "LiveSession",
   "type": "object",
   "properties": {
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    },
     "scheduled_stream_id": {
       "type": "string",
       "title": "Linked Scheduled Stream ID"

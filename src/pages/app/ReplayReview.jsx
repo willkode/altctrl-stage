@@ -23,7 +23,7 @@ export default function ReplayReview() {
   async function load() {
     setLoading(true);
     const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 30);
+    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 30);
     setSessions(all);
     setLoading(false);
   }

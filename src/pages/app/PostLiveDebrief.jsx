@@ -44,7 +44,7 @@ export default function PostLiveDebrief() {
   async function load() {
     setLoading(true);
     const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 20);
+    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 20);
     setSessions(all);
     const games = [...new Set(all.map(s => s.game).filter(Boolean))];
     setGameSuggestions(games);

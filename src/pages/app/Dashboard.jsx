@@ -52,7 +52,7 @@ export default function Dashboard() {
     const [profiles, streams, sessions, recs, goalsList, alertsList, plans] = await Promise.all([
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 10),
+      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 10),
       base44.entities.DailyRecommendation.filter({ created_by: user.email, date: TODAY_STR }),
       base44.entities.GrowthGoal.filter({ created_by: user.email, status: "active" }),
       base44.entities.PerformanceAlert.filter({ created_by: user.email, read: false, dismissed: false }),

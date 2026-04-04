@@ -62,7 +62,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
     // Load game suggestions + upcoming streams
     base44.auth.me().then(user => {
       Promise.all([
-        base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 50),
+        base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
         base44.entities.ScheduledStream.filter({ created_by: user.email }),
       ]).then(([sessions, streams]) => {
         const games = [...new Set(sessions.map(s => s.game).filter(Boolean))];
@@ -83,8 +83,10 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
     if (!form.game?.trim() || !form.stream_date) return;
     setSaving(true);
     const d = new Date(form.stream_date);
+    const user = await base44.auth.me();
     const data = {
       ...form,
+      owner_email: user.email,
       avg_viewers: form.avg_viewers === "" ? null : +form.avg_viewers,
       peak_viewers: form.peak_viewers === "" ? null : +form.peak_viewers,
       followers_gained: form.followers_gained === "" ? 0 : +form.followers_gained,
