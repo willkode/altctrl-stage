@@ -21,8 +21,10 @@ export default function InvestorHero() {
           <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// INVESTOR OVERVIEW</span>
         </div>
 
-        <GlitchText text="THE ENTIRE STREAMING" className="text-4xl md:text-6xl font-black uppercase text-white block mb-1" tag="h1" />
-        <GlitchText text="CAREER ECOSYSTEM" className="text-4xl md:text-6xl font-black uppercase text-cyan-400 block mb-4" tag="h2" />
+        <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4">
+          <GlitchText text="THE ENTIRE STREAMING" className="block" tag="span" />
+          <GlitchText text="CAREER ECOSYSTEM" className="block text-cyan-400" tag="span" />
+        </h1>
         <p className="text-lg text-slate-400 font-mono max-w-3xl mx-auto mb-6 leading-relaxed">
           ALT CTRL is building the AI-powered platform that replaces every tool a streaming creator needs — from broadcasting to promotion to monetization to merch.
         </p>
