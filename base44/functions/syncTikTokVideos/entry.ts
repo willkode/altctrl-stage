@@ -99,29 +99,31 @@ Deno.serve(async (req) => {
       }
 
       const videos = data.data?.videos || [];
+      const newRecords = [];
       for (const v of videos) {
-        const record = {
-          created_by: user.email,
-          connected_account_id: connection.id,
-          tiktok_video_id: v.id,
-          title: v.title || null,
-          video_description: v.video_description || null,
-          create_time: v.create_time || null,
-          duration: v.duration || null,
-          cover_image_url: v.cover_image_url || null,
-          share_url: v.share_url || null,
-          embed_html: v.embed_html || null,
-          raw_payload_json: JSON.stringify(v),
-          last_seen_at: now,
-        };
-
         if (existingMap[v.id]) {
-          await base44.asServiceRole.entities.TikTokVideo.update(existingMap[v.id], record);
+          // Skip update to avoid rate limits — video metadata rarely changes
           updated++;
         } else {
-          await base44.asServiceRole.entities.TikTokVideo.create(record);
-          created++;
+          newRecords.push({
+            created_by: user.email,
+            connected_account_id: connection.id,
+            tiktok_video_id: v.id,
+            title: v.title || null,
+            video_description: v.video_description || null,
+            create_time: v.create_time || null,
+            duration: v.duration || null,
+            cover_image_url: v.cover_image_url || null,
+            share_url: v.share_url || null,
+            embed_html: v.embed_html || null,
+            raw_payload_json: JSON.stringify(v),
+            last_seen_at: now,
+          });
         }
+      }
+      if (newRecords.length > 0) {
+        await base44.asServiceRole.entities.TikTokVideo.bulkCreate(newRecords);
+        created += newRecords.length;
       }
 
       hasMore = data.data?.has_more ?? false;
