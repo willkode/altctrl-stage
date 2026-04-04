@@ -1,0 +1,38 @@
+{
+  "name": "ErrorLog",
+  "type": "object",
+  "properties": {
+    "error_type": {
+      "type": "string",
+      "title": "Error Type",
+      "enum": [
+        "unhandled_error",
+        "unhandled_rejection",
+        "manual"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "title": "Error Message"
+    },
+    "stack": {
+      "type": "string",
+      "title": "Stack Trace"
+    },
+    "url": {
+      "type": "string",
+      "title": "Page URL"
+    },
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "extra": {
+      "type": "string",
+      "title": "Extra Context (JSON)"
+    }
+  },
+  "required": [
+    "message"
+  ]
+}

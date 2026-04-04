@@ -5,6 +5,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { base44 } from '@/api/base44Client';
+import { initGlobalErrorLogging } from '@/lib/errorLogger';
+
+// Init once at module load
+initGlobalErrorLogging();
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import AppLayout from './components/AppLayout';
@@ -143,7 +147,6 @@ const AuthenticatedApp = () => {
 
 
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
