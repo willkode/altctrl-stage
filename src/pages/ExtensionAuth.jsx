@@ -25,7 +25,8 @@ export default function ExtensionAuth() {
       try {
         const isAuthed = await base44.auth.isAuthenticated();
         if (!isAuthed) {
-          base44.auth.redirectToLogin("/extension-auth");
+          sessionStorage.setItem("post_login_redirect", "/extension-auth");
+          base44.auth.redirectToLogin("/app/dashboard");
           return;
         }
 

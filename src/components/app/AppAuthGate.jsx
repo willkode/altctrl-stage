@@ -7,6 +7,13 @@ export default function AppAuthGate() {
   const [status, setStatus] = useState("loading"); // loading | approved | pending
 
   useEffect(() => {
+    // Handle post-login redirects (e.g. extension-auth flow)
+    const redirect = sessionStorage.getItem("post_login_redirect");
+    if (redirect) {
+      sessionStorage.removeItem("post_login_redirect");
+      window.location.replace(redirect);
+      return;
+    }
     base44.auth.me().then(user => {
       if (user?.role === "admin" || user?.approved === true) {
         setStatus("approved");
