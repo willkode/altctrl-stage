@@ -50,13 +50,8 @@ export default function TikTokAccountStats() {
 
   async function loadData() {
     setLoading(true);
-    const user = await base44.auth.me();
-    // Use tiktokAuth to get connection status
-    const [statusRes, snaps] = await Promise.all([
-      base44.functions.invoke("tiktokAuth", { action: "get_status" }),
-      base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, "-captured_at", 30),
-    ]);
-    // Map to account-like object
+    // Get connection status first
+    const statusRes = await base44.functions.invoke("tiktokAuth", { action: "get_status" });
     const status = statusRes.data;
     if (status.connected) {
       setAccount({
@@ -67,10 +62,17 @@ export default function TikTokAccountStats() {
         last_sync_at: status.last_sync_at,
         last_sync_status: status.last_sync_status,
       });
+      // Filter by connected_account_id (snapshots saved via service role)
+      const snaps = await base44.entities.TikTokProfileSnapshot.filter(
+        { connected_account_id: status.connection_id },
+        "-captured_at",
+        30
+      );
+      setSnapshots(snaps);
     } else {
       setAccount(null);
+      setSnapshots([]);
     }
-    setSnapshots(snaps);
     setLoading(false);
   }
 

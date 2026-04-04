@@ -120,6 +120,7 @@ Deno.serve(async (req) => {
 
     return Response.json({
       connected: true,
+      connection_id: conn.id,
       open_id: conn.open_id,
       display_name: conn.display_name,
       username: conn.username,
