@@ -47,6 +47,7 @@ export default function TikTokVideoStats() {
   }
 
   async function handleSync() {
+    if (!videos.length) return; // only sync if already connected/loaded
     setSyncing(true);
     try {
       await base44.functions.invoke("runTikTokFullSync", {});

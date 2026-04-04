@@ -74,6 +74,7 @@ export default function TikTokAccountStats() {
   }
 
   async function handleSync() {
+    if (!account || account.connection_status !== "connected") return;
     setSyncing(true);
     try {
       await base44.functions.invoke("runTikTokFullSync", {});
