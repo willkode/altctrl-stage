@@ -148,16 +148,10 @@ export default function Analytics() {
         </div>
       )}
 
-      {/* TikTok Account Stats + Video Stats — always shown */}
-      <TikTokAccountStats />
-      <div className="mt-6">
-        <TikTokVideoStats />
-      </div>
-
       {loading ? (
         <LoadingState message="Loading performance data..." />
       ) : sessions.length === 0 ? (
-        <div className="mt-6 bg-[#060d1f] border border-cyan-900/30 rounded-lg p-8 text-center">
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-8 text-center">
           <div className="text-sm font-black uppercase text-slate-400 mb-1">No live sessions logged yet</div>
           <p className="text-xs font-mono text-slate-600 mb-4">Log your first stream session to unlock performance analytics.</p>
           <button
@@ -166,9 +160,15 @@ export default function Analytics() {
           >
             <Plus className="w-3.5 h-3.5" /> Log Your First Session
           </button>
+
+          {/* TikTok stats still visible even without sessions */}
+          <div className="mt-8 text-left space-y-6">
+            <TikTokAccountStats />
+            <TikTokVideoStats />
+          </div>
         </div>
       ) : sessions.length < 3 ? (
-        <div className="mt-6">
+        <div className="space-y-6">
           <DataProgressBanner
             current={sessions.length}
             required={3}
@@ -177,11 +177,12 @@ export default function Analytics() {
             actionLabel="Log a session"
             actionLink="/app/analytics"
           />
-          {/* Show session history even with minimal data */}
           <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
+          <TikTokAccountStats />
+          <TikTokVideoStats />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center mt-6">
+        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-lg p-12 text-center">
           <div className="text-sm font-black uppercase text-slate-400 mb-2">No sessions match filters</div>
           <p className="text-xs font-mono text-slate-600 mb-4">Try adjusting your filters to see data.</p>
           <button
@@ -192,14 +193,27 @@ export default function Analytics() {
           </button>
         </div>
       ) : (
-        <div className="space-y-6 mt-6">
+        <div className="space-y-6">
+          {/* 1. Stream performance overview */}
           <SummaryStats sessions={filtered} />
+
+          {/* 2. Trend chart */}
           <PerformanceChart sessions={filtered} />
+
+          {/* 3. Game breakdown + Promo impact */}
           <div className="grid md:grid-cols-2 gap-6">
             <GameBreakdown sessions={filtered} />
             <PromoImpact sessions={filtered} />
           </div>
+
+          {/* 4. Time heatmap */}
           <TimeHeatmap sessions={filtered} />
+
+          {/* 5. TikTok account & video stats */}
+          <TikTokAccountStats />
+          <TikTokVideoStats />
+
+          {/* 6. Session history table */}
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} />
         </div>
       )}
