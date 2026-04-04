@@ -91,6 +91,37 @@
     "live_session_id": {
       "type": "string",
       "title": "Linked Live Session ID"
+    },
+    "challenge_mode": {
+      "type": "string",
+      "title": "Challenge Mode",
+      "enum": [
+        "none",
+        "solo",
+        "viewer_bet",
+        "community_vote",
+        "speedrun",
+        "restriction",
+        "custom"
+      ],
+      "default": "none"
+    },
+    "challenge_style": {
+      "type": "string",
+      "title": "Challenge Style",
+      "enum": [
+        "hardcore",
+        "funny",
+        "competitive",
+        "chill_but_spicy",
+        "viewer_driven",
+        "custom"
+      ],
+      "default": "competitive"
+    },
+    "ai_game_context_snapshot": {
+      "type": "string",
+      "title": "AI Game Context Snapshot (JSON)"
     }
   },
   "required": [

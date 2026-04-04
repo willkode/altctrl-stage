@@ -1,0 +1,75 @@
+{
+  "name": "GameChallenge",
+  "type": "object",
+  "properties": {
+    "scheduled_stream_id": {
+      "type": "string",
+      "title": "Scheduled Stream ID"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "challenge_mode": {
+      "type": "string",
+      "title": "Challenge Mode"
+    },
+    "challenge_style": {
+      "type": "string",
+      "title": "Challenge Style"
+    },
+    "challenge_title": {
+      "type": "string",
+      "title": "Challenge Title"
+    },
+    "challenge_rules": {
+      "type": "string",
+      "title": "Challenge Rules"
+    },
+    "win_condition": {
+      "type": "string",
+      "title": "Win Condition"
+    },
+    "fail_condition": {
+      "type": "string",
+      "title": "Fail Condition"
+    },
+    "streamer_intro_line": {
+      "type": "string",
+      "title": "Streamer Intro Line"
+    },
+    "promo_hook": {
+      "type": "string",
+      "title": "Promo Hook"
+    },
+    "viewer_interaction_idea": {
+      "type": "string",
+      "title": "Viewer Interaction Idea"
+    },
+    "game_fit_reason": {
+      "type": "string",
+      "title": "Why This Challenge Fits the Game"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "generated",
+        "selected",
+        "used",
+        "skipped"
+      ],
+      "default": "generated"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Generated At"
+    }
+  },
+  "required": [
+    "scheduled_stream_id",
+    "game",
+    "challenge_title"
+  ]
+}

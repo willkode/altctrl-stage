@@ -5,6 +5,7 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import StreamSelector from "../../components/app/strategy/StreamSelector";
 import StrategyCard from "../../components/app/strategy/StrategyCard";
+import ChallengeGenerator from "../../components/app/strategy/ChallengeGenerator";
 import { Brain, Loader2, RefreshCw, Calendar, Sparkles, AlertCircle, Play } from "lucide-react";
 
 export default function Strategy() {
@@ -180,6 +181,9 @@ export default function Strategy() {
 
               {/* Strategy content */}
               {hasStrategy && !generating && <StrategyCard strategy={activeStrategy} />}
+
+              {/* Game Challenges */}
+              <ChallengeGenerator stream={selected} />
             </>
           )}
 
