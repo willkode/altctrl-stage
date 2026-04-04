@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
-import AppBadge from "../../components/app/AppBadge";
-import EmptyState from "../../components/app/EmptyState";
 import LoadingState from "../../components/app/LoadingState";
 import PromoPackDisplay from "../../components/app/promo/PromoPackDisplay";
 import PromoPackCard from "../../components/app/promo/PromoPackCard";
@@ -133,27 +131,20 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
     if (viewKit?.id === kit.id) setViewKit(k => ({ ...k, ...updated }));
   }
 
-  // Group packs by stream, most recent version first
   const groupedPacks = (() => {
     const filtered = packs.filter(k => {
       const q = search.toLowerCase();
-      const matchSearch = !q ||
-        k.game?.toLowerCase().includes(q) ||
-        k.stream_date?.includes(q) ||
-        k.caption?.toLowerCase().includes(q);
+      const matchSearch = !q || k.game?.toLowerCase().includes(q) || k.stream_date?.includes(q) || k.caption?.toLowerCase().includes(q);
       const matchStatus = filterStatus === "all" || k.status === filterStatus;
       return matchSearch && matchStatus;
     });
-
     const groups = [];
     const seen = new Set();
     filtered.forEach(kit => {
       const key = kit.scheduled_stream_id || `standalone-${kit.id}`;
       if (!seen.has(key)) {
         seen.add(key);
-        const versions = filtered.filter(k =>
-          (k.scheduled_stream_id || `standalone-${k.id}`) === key
-        );
+        const versions = filtered.filter(k => (k.scheduled_stream_id || `standalone-${k.id}`) === key);
         groups.push({ key, versions, latest: versions[0] });
       }
     });
@@ -168,37 +159,22 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
     <PageContainer>
       {/* Header */}
       <div className="mb-6">
-        <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-1">// PILLAR_02 — PROMOTION</div>
-        <h1 className="text-2xl font-black uppercase text-white">Promo</h1>
-        <p className="text-sm text-slate-500 mt-0.5 font-mono">Generate your pre-stream promo pack in seconds.</p>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-pink-400/60 mb-1">Promotion</p>
+        <h1 className="text-2xl font-black uppercase text-white">Promo Center</h1>
+        <p className="text-xs font-mono text-slate-600 mt-1">Generate pre-stream promo packs in seconds.</p>
       </div>
 
-      {/* ── Upcoming Streams ── */}
+      {/* Upcoming Streams */}
       <div className="mb-6">
-        <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// UPCOMING STREAMS</div>
+        <p className="text-[10px] font-mono uppercase tracking-widest text-pink-400/60 mb-3">Upcoming Streams</p>
 
         {upcomingStreams.length === 0 ? (
-          <div className="bg-gradient-to-br from-pink-500/5 to-pink-400/3 border border-pink-900/30 rounded-xl p-6">
-            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// NO STREAMS SCHEDULED</div>
-            <p className="text-sm font-black uppercase text-white mb-1">Schedule a stream first</p>
-            <p className="text-xs font-mono text-slate-500 mb-4 leading-relaxed">
-              Promo packs are tied to scheduled streams. Add a stream to your calendar and you'll be able to generate a kit instantly — hook, caption, hashtags, and title options.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-2 mb-5">
-              {[
-                { icon: "01", label: "Go to Schedule", sub: "Add a stream with game, date, and time." },
-                { icon: "02", label: "Come back here", sub: "Your stream will appear above — hit Generate." },
-              ].map(s => (
-                <div key={s.icon} className="bg-[#02040f] border border-pink-900/20 rounded-lg p-3">
-                  <div className="text-[10px] font-mono text-pink-400/50 mb-1">{s.icon}</div>
-                  <div className="text-sm font-bold text-white mb-0.5">{s.label}</div>
-                  <div className="text-xs font-mono text-slate-600">{s.sub}</div>
-                </div>
-              ))}
-            </div>
+          <div className="bg-gradient-to-br from-pink-950/15 to-[#060d1f] border border-pink-900/20 rounded-xl p-6 text-center">
+            <p className="text-sm font-bold text-slate-400 mb-1">No streams scheduled</p>
+            <p className="text-xs font-mono text-slate-600 mb-4">Schedule a stream first, then come back to generate promo.</p>
             <Link to="/app/schedule"
-              className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-4 py-2.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30 hover:bg-pink-500/20 transition-all">
-              <Calendar className="w-3.5 h-3.5" /> Schedule a Stream →
+              className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-4 py-2.5 rounded-lg bg-pink-500/10 text-pink-400 border border-pink-500/20 hover:bg-pink-500/15 transition-all">
+              <Calendar className="w-3.5 h-3.5" /> Schedule →
             </Link>
           </div>
         ) : (
@@ -212,37 +188,36 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
                 : new Date(stream.scheduled_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
               return (
-                <div key={stream.id} className={`bg-[#060d1f] border rounded-xl px-4 py-3 flex items-center gap-3 transition-all ${
-                  stream.scheduled_date === TODAY ? "border-pink-500/40" : "border-pink-900/20"
+                <div key={stream.id} className={`bg-[#060d1f]/80 border rounded-xl px-4 py-3.5 flex items-center gap-3 transition-all ${
+                  stream.scheduled_date === TODAY ? "border-pink-500/30" : "border-pink-900/15"
                 }`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-black uppercase text-white">{stream.game}</span>
-                      {stream.stream_type && <AppBadge label={stream.stream_type} accent="pink" />}
-                      {hasPosted
-                        ? <AppBadge label="Posted ✓" accent="green" dot />
-                        : streamPacks.length > 0
-                          ? <AppBadge label={`${streamPacks.length} pack${streamPacks.length > 1 ? "s" : ""}`} accent="cyan" />
-                          : <AppBadge label="No promo yet" accent="slate" />
-                      }
+                      <span className="text-sm font-bold text-white">{stream.game}</span>
+                      {stream.stream_type && (
+                        <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-pink-500/10 text-pink-400/60">{stream.stream_type.replace("_", " ")}</span>
+                      )}
+                      {hasPosted ? (
+                        <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">Posted ✓</span>
+                      ) : streamPacks.length > 0 ? (
+                        <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400/60">{streamPacks.length} pack{streamPacks.length > 1 ? "s" : ""}</span>
+                      ) : null}
                     </div>
-                    <div className="flex items-center gap-3 mt-0.5">
-                      <span className={`text-xs font-mono ${stream.scheduled_date === TODAY ? "text-pink-400" : "text-slate-600"}`}>{dateLabel}</span>
-                      {stream.start_time && <span className="text-xs font-mono text-slate-700">· {stream.start_time}</span>}
-                    </div>
+                    <span className={`text-[10px] font-mono ${stream.scheduled_date === TODAY ? "text-pink-400/60" : "text-slate-600"}`}>
+                      {dateLabel}{stream.start_time ? ` · ${stream.start_time}` : ""}
+                    </span>
                   </div>
                   <button
                     onClick={() => generatePack(stream)}
                     disabled={!!generating}
-                    className={`flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-3 py-2 rounded border transition-all disabled:opacity-40 shrink-0 ${
+                    className={`flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-3 py-2 rounded-lg border transition-all disabled:opacity-40 shrink-0 ${
                       streamPacks.length > 0
-                        ? "border-cyan-900/40 text-slate-500 hover:text-cyan-400 hover:border-cyan-500/30"
-                        : "bg-pink-500/10 border-pink-500/30 text-pink-400 hover:bg-pink-500/20"
+                        ? "border-cyan-900/30 text-slate-500 hover:text-cyan-400"
+                        : "bg-pink-500/10 border-pink-500/20 text-pink-400 hover:bg-pink-500/15"
                     }`}>
                     {isGenerating
                       ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Generating…</>
-                      : <><Zap className="w-3.5 h-3.5" /> {streamPacks.length > 0 ? "New Version" : "Generate"}</>
-                    }
+                      : <><Zap className="w-3.5 h-3.5" /> {streamPacks.length > 0 ? "New Version" : "Generate"}</>}
                   </button>
                 </div>
               );
@@ -251,32 +226,31 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         )}
       </div>
 
-      {/* ── Generation loading ── */}
+      {/* Loading state */}
       {generating && (
-        <div className="mb-6 bg-[#060d1f] border border-pink-500/20 rounded-xl p-8 text-center"
-          style={{ boxShadow: "0 0 30px rgba(255,0,128,0.04)" }}>
-          <div className="w-10 h-10 border-2 border-pink-500/30 border-t-pink-500 rounded-full animate-spin mx-auto mb-4" />
-          <div className="text-sm font-black uppercase text-white mb-1">Generating Promo Pack</div>
-          <p className="text-xs font-mono text-slate-600">Writing your hook, caption, hashtags and title options…</p>
+        <div className="mb-6 bg-[#060d1f]/80 border border-pink-500/15 rounded-xl p-8 text-center">
+          <div className="w-8 h-8 border-2 border-pink-500/20 border-t-pink-400 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm font-bold text-white mb-0.5">Generating Promo Pack</p>
+          <p className="text-[10px] font-mono text-slate-600">Hook, caption, hashtags, and titles…</p>
         </div>
       )}
 
-      {/* ── Generation error ── */}
+      {/* Error */}
       {genError && (
-        <div className="mb-6 bg-red-500/5 border border-red-500/20 rounded-lg p-4 flex items-start gap-3">
+        <div className="mb-6 bg-red-500/5 border border-red-500/15 rounded-lg p-4 flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-xs font-mono text-red-400 mb-2">{genError}</p>
-            <button onClick={() => setGenError(null)} className="text-[10px] font-mono uppercase text-red-400/60 hover:text-red-400 transition-colors">Dismiss</button>
+            <p className="text-xs font-mono text-red-400 mb-1">{genError}</p>
+            <button onClick={() => setGenError(null)} className="text-[10px] font-mono text-red-400/50 hover:text-red-400 transition-colors">Dismiss</button>
           </div>
         </div>
       )}
 
-      {/* ── Latest generated pack ── */}
+      {/* Latest generated */}
       {generatedKit && !generating && (
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <div className="text-xs font-mono uppercase tracking-widest text-pink-400">// JUST GENERATED</div>
+            <p className="text-[10px] font-mono uppercase tracking-widest text-pink-400/60">Just Generated</p>
             <span className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse" />
           </div>
           <PromoPackDisplay
@@ -291,27 +265,25 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         </div>
       )}
 
-      {/* ── Promo Library ── */}
+      {/* Promo Library */}
       <div>
-        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-          <div className="text-xs font-mono uppercase tracking-widest text-pink-400">// PROMO LIBRARY</div>
-          <span className="text-xs font-mono text-slate-600">{packs.length} packs</span>
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <p className="text-[10px] font-mono uppercase tracking-widest text-pink-400/60">Library</p>
+          <span className="text-[10px] font-mono text-slate-700">{packs.length} packs</span>
         </div>
 
         {packs.length > 0 && (
           <div className="flex gap-2 mb-4 flex-wrap">
             <div className="relative flex-1 min-w-[160px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-600" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-700" />
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search by game, date…"
-                className="w-full bg-[#060d1f] border border-cyan-900/30 text-white placeholder-slate-700 rounded pl-9 pr-4 py-2 text-xs font-mono outline-none focus:border-cyan-500/30 transition-all" />
+                placeholder="Search..."
+                className="w-full bg-[#060d1f]/80 border border-cyan-900/20 text-white placeholder-slate-700 rounded-lg pl-9 pr-4 py-2 text-xs font-mono outline-none focus:border-cyan-500/20 transition-all" />
             </div>
             {["all", "saved", "posted"].map(f => (
               <button key={f} onClick={() => setFilterStatus(f)}
-                className={`text-xs font-mono uppercase px-3 py-2 rounded border transition-all ${
-                  filterStatus === f
-                    ? "bg-pink-500/10 border-pink-500/30 text-pink-400"
-                    : "border-cyan-900/30 text-slate-600 hover:text-slate-300"
+                className={`text-[10px] font-mono uppercase px-3 py-2 rounded-lg border transition-all ${
+                  filterStatus === f ? "bg-pink-500/10 border-pink-500/20 text-pink-400" : "border-cyan-900/20 text-slate-600 hover:text-slate-400"
                 }`}>
                 {f}
               </button>
@@ -320,50 +292,27 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         )}
 
         {groupedPacks.length === 0 ? (
-          packs.length === 0 ? (
-            <div className="bg-[#060d1f] border border-pink-900/20 rounded-xl p-8 text-center">
-              <Radio className="w-8 h-8 text-slate-800 mx-auto mb-3" />
-              <p className="text-sm font-black uppercase text-slate-300 mb-1">Your promo library is empty</p>
-              <p className="text-xs font-mono text-slate-600 leading-relaxed max-w-xs mx-auto">
-                Generate your first pack from an upcoming stream above. Each kit includes a hook, caption, hashtags, and stream title options — ready to post in seconds.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-[#060d1f] border border-cyan-900/20 rounded-xl p-6 text-center">
-              <p className="text-xs font-mono text-slate-600">No packs match this filter. Try clearing the search or switching to "all".</p>
-            </div>
-          )
+          <div className="bg-[#060d1f]/80 border border-pink-900/15 rounded-xl p-8 text-center">
+            <Radio className="w-6 h-6 text-slate-800 mx-auto mb-2" />
+            <p className="text-sm font-bold text-slate-500 mb-1">{packs.length ? "No matches" : "Library empty"}</p>
+            <p className="text-xs font-mono text-slate-700">{packs.length ? "Adjust your filters." : "Generate your first pack above."}</p>
+          </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {groupedPacks.map(({ key, versions, latest }) => (
               <div key={key}>
-                {/* Latest version always shown */}
-                <PromoPackCard
-                  kit={latest}
-                  versionLabel={versions.length > 1 ? `v${versions.length} (latest)` : null}
-                  onView={setViewKit}
-                  onTogglePosted={markPosted}
-                />
-
-                {/* Older versions collapsed */}
+                <PromoPackCard kit={latest} versionLabel={versions.length > 1 ? `v${versions.length}` : null} onView={setViewKit} onTogglePosted={markPosted} />
                 {versions.length > 1 && (
-                  <div className="mt-1 pl-3 border-l-2 border-pink-900/20">
-                    <button
-                      onClick={() => toggleVersions(key)}
-                      className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-slate-600 hover:text-slate-400 py-1.5 transition-colors">
+                  <div className="mt-1 pl-3 border-l border-pink-900/15">
+                    <button onClick={() => toggleVersions(key)}
+                      className="flex items-center gap-1.5 text-[9px] font-mono uppercase text-slate-700 hover:text-slate-500 py-1 transition-colors">
                       {expandedVersions[key] ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                      {expandedVersions[key] ? "Hide" : "Show"} {versions.length - 1} older version{versions.length - 1 > 1 ? "s" : ""}
+                      {versions.length - 1} older
                     </button>
                     {expandedVersions[key] && (
                       <div className="space-y-1.5 pb-1">
                         {versions.slice(1).map((kit, i) => (
-                          <PromoPackCard
-                            key={kit.id}
-                            kit={kit}
-                            versionLabel={`v${versions.length - 1 - i}`}
-                            onView={setViewKit}
-                            onTogglePosted={markPosted}
-                          />
+                          <PromoPackCard key={kit.id} kit={kit} versionLabel={`v${versions.length - 1 - i}`} onView={setViewKit} onTogglePosted={markPosted} />
                         ))}
                       </div>
                     )}
@@ -375,16 +324,8 @@ Write like a creator, not a marketer. Match TikTok LIVE gaming culture.`,
         )}
       </div>
 
-      {/* View drawer */}
-      <PromoPackDrawer
-        open={!!viewKit}
-        onClose={() => setViewKit(null)}
-        kit={viewKit}
-        onMarkedPosted={() => {
-          if (viewKit) markPosted(viewKit);
-          setViewKit(null);
-        }}
-      />
+      <PromoPackDrawer open={!!viewKit} onClose={() => setViewKit(null)} kit={viewKit}
+        onMarkedPosted={() => { if (viewKit) markPosted(viewKit); setViewKit(null); }} />
     </PageContainer>
   );
 }
