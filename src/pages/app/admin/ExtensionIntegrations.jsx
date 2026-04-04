@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import AdminLayout from "../../../components/app/admin/AdminLayout";
+import LiveSyncFeed from "../../../components/app/admin/LiveSyncFeed";
 import { Search, Eye, Trash2, RotateCw } from "lucide-react";
 
 export default function ExtensionIntegrations() {
@@ -189,6 +190,9 @@ export default function ExtensionIntegrations() {
         <p className="text-xs text-muted-foreground font-mono">
           Showing {filtered.length} of {tokens.length} extensions
         </p>
+
+        {/* Live Sync Feed */}
+        <LiveSyncFeed profiles={profiles} />
       </div>
     </AdminLayout>
   );
