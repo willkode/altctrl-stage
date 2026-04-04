@@ -1,4 +1,4 @@
-import { Zap, TrendingUp, Users, Clock, Flame, Radio } from "lucide-react";
+import { Zap, TrendingUp, Users, Clock, Flame, Radio, MessageCircle, Gift } from "lucide-react";
 import { buildSummaryStats } from "../../../utils/analyticsCalc";
 
 function StatBox({ label, value, sub, icon: IconComponent, accent = "cyan", glow = false }) {
@@ -26,6 +26,9 @@ function StatBox({ label, value, sub, icon: IconComponent, accent = "cyan", glow
 
 export default function SummaryStats({ sessions }) {
   const { total, last30Count, avgViewers, peakViewers, totalMinutes, totalFollowers, promoRate } = buildSummaryStats(sessions);
+  const totalComments = sessions.reduce((s, r) => s + (r.comments || 0), 0);
+  const totalGifters = sessions.reduce((s, r) => s + (r.gifters || 0), 0);
+  const totalDiamonds = sessions.reduce((s, r) => s + (r.diamonds || 0), 0);
   const totalHours = totalMinutes >= 60 ? `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m` : `${totalMinutes}m`;
 
   return (
@@ -39,10 +42,32 @@ export default function SummaryStats({ sessions }) {
         <StatBox label="Stream Time" value={total > 0 ? totalHours : "—"} sub="total logged" icon={Clock} accent="cyan" />
         <StatBox label="Promo Rate" value={`${promoRate}%`} sub="sessions w/ promo" icon={Flame} accent={promoRate >= 60 ? "green" : "pink"} />
       </div>
-      {total > 0 && totalFollowers > 0 && (
-        <div className="mt-3 bg-[#060d1f] border border-cyan-900/30 rounded-xl px-4 py-3 flex items-center gap-3">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600">Total Followers Gained</div>
-          <div className="text-lg font-black text-cyan-400 ml-auto">+{totalFollowers.toLocaleString()}</div>
+      {total > 0 && (totalFollowers > 0 || totalComments > 0 || totalDiamonds > 0) && (
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {totalFollowers > 0 && (
+            <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 flex-1">Followers Gained</div>
+              <div className="text-base font-black text-cyan-400">+{totalFollowers.toLocaleString()}</div>
+            </div>
+          )}
+          {totalComments > 0 && (
+            <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 flex-1">Comments</div>
+              <div className="text-base font-black text-yellow-400">{totalComments.toLocaleString()}</div>
+            </div>
+          )}
+          {totalGifters > 0 && (
+            <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 flex-1">Gifters</div>
+              <div className="text-base font-black text-pink-400">{totalGifters.toLocaleString()}</div>
+            </div>
+          )}
+          {totalDiamonds > 0 && (
+            <div className="bg-[#060d1f] border border-yellow-900/30 rounded-xl px-4 py-3 flex items-center gap-3">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 flex-1">Diamonds</div>
+              <div className="text-base font-black text-yellow-400">{totalDiamonds.toLocaleString()}</div>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -6,7 +6,7 @@ import AppBadge from "../AppBadge";
 import EmptyState from "../EmptyState";
 
 const ENERGY_COLOR = { low: "slate", medium: "cyan", high: "yellow" };
-const SORT_KEYS = ["stream_date", "avg_viewers", "peak_viewers", "duration_minutes", "followers_gained"];
+const SORT_KEYS = ["stream_date", "avg_viewers", "peak_viewers", "duration_minutes", "followers_gained", "comments", "gifters", "diamonds"];
 
 export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
   const [search, setSearch] = useState("");
@@ -113,8 +113,10 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                   <th className={thCls("peak_viewers")} onClick={() => handleSort("peak_viewers")}>Peak <SortIcon k="peak_viewers" /></th>
                   <th className={thCls("duration_minutes")} onClick={() => handleSort("duration_minutes")}>Duration <SortIcon k="duration_minutes" /></th>
                   <th className={thCls("followers_gained")} onClick={() => handleSort("followers_gained")}>Follows <SortIcon k="followers_gained" /></th>
+                  <th className={thCls("comments")} onClick={() => handleSort("comments")}>Comments <SortIcon k="comments" /></th>
+                  <th className={thCls("gifters")} onClick={() => handleSort("gifters")}>Gifters <SortIcon k="gifters" /></th>
+                  <th className={thCls("diamonds")} onClick={() => handleSort("diamonds")}>Diamonds <SortIcon k="diamonds" /></th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Promo</th>
-                  <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Energy</th>
                   <th className="text-left text-[9px] font-mono uppercase tracking-widest py-2 px-3 text-slate-600">Source</th>
                   </tr>
                   </thead>
@@ -132,13 +134,13 @@ export default function SessionHistory({ sessions, onLogSession, onRefresh }) {
                     <td className="py-2.5 px-3 text-sm font-black text-pink-400">{s.peak_viewers ?? "—"}</td>
                     <td className="py-2.5 px-3 text-xs font-mono text-slate-500">{s.duration_minutes ? `${s.duration_minutes}m` : "—"}</td>
                     <td className="py-2.5 px-3 text-xs font-mono text-yellow-400">{s.followers_gained > 0 ? `+${s.followers_gained}` : "—"}</td>
+                    <td className="py-2.5 px-3 text-xs font-mono text-slate-400">{s.comments > 0 ? s.comments.toLocaleString() : "—"}</td>
+                    <td className="py-2.5 px-3 text-xs font-mono text-pink-400">{s.gifters > 0 ? s.gifters.toLocaleString() : "—"}</td>
+                    <td className="py-2.5 px-3 text-xs font-mono text-yellow-400">{s.diamonds > 0 ? s.diamonds.toLocaleString() : "—"}</td>
                     <td className="py-2.5 px-3">
                       <span className={`text-[10px] font-mono uppercase ${s.promo_posted ? "text-green-400" : "text-slate-700"}`}>
                         {s.promo_posted ? "✓" : "✕"}
                       </span>
-                    </td>
-                    <td className="py-2.5 px-3">
-                      {s.energy_level && <AppBadge label={s.energy_level} accent={ENERGY_COLOR[s.energy_level] || "slate"} />}
                     </td>
                     <td className="py-2.5 px-3">
                       {s.source && <SourceBadge source={s.source} size="sm" />}

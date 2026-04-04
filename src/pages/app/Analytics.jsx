@@ -13,6 +13,7 @@ import SessionHistory from "../../components/app/analytics/SessionHistory";
 import { Plus, X } from "lucide-react";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import TikTokAccountStats from "../../components/app/analytics/TikTokAccountStats";
+import TikTokVideoStats from "../../components/app/analytics/TikTokVideoStats";
 
 export default function Analytics() {
   const [loading, setLoading] = useState(true);
@@ -149,6 +150,11 @@ export default function Analytics() {
 
       {/* TikTok Account Stats — always shown if connected */}
       <TikTokAccountStats />
+
+      {/* TikTok Video Performance — always shown if connected */}
+      <div className="mt-6">
+        <TikTokVideoStats />
+      </div>
 
       {loading ? (
         <LoadingState message="Loading performance data..." />
