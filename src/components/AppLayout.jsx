@@ -75,7 +75,7 @@ export default function AppLayout() {
   }
 
   if (profile && !profile.onboarding_completed) {
-    return <Onboarding onComplete={async (data) => { await completeOnboarding(data); navigate("/app/dashboard"); }} />;
+    return <Onboarding onComplete={async () => { await completeOnboarding(); navigate("/app/dashboard"); }} />;
   }
 
   return (

@@ -53,11 +53,11 @@ export function useCreatorBootstrap() {
   }
 
   async function completeOnboarding(updates) {
-    const updated = await base44.entities.CreatorProfile.update(profile.id, {
-      ...updates,
-      onboarding_completed: true,
-    });
-    setProfile(updated);
+    // Onboarding now saves via onboardingAI backend function
+    // Just refresh the profile
+    const user = await base44.auth.me();
+    const profiles = await base44.entities.CreatorProfile.filter({ created_by: user.email });
+    if (profiles[0]) setProfile(profiles[0]);
   }
 
   return { profile, prefs, loading, error, completeOnboarding, setProfile };
