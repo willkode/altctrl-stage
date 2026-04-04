@@ -1,225 +1,244 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { Link } from "react-router-dom";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import ImportedMetricsDisplay from "../../components/app/debrief/ImportedMetricsDisplay";
-import CreatorDebrief from "../../components/app/debrief/CreatorDebrief";
-import SessionTags from "../../components/app/debrief/SessionTags";
-import { Zap, Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5";
-const STREAM_TYPES = ["ranked","chill","viewer_games","challenge","collab","special","other"];
-
-function getISOWeek(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-const empty = () => ({
-  game: "", stream_type: "ranked", stream_date: new Date().toISOString().split("T")[0],
-  start_time: "", end_time: "", duration_minutes: null, avg_viewers: null, peak_viewers: null,
-  followers_gained: null, comments: null, shares: null, gifters: null, diamonds: null,
-  fan_club_joins: null, promo_posted: false, went_as_planned: true, would_repeat: true,
-  energy_level: "medium", best_moment: "", weakest_moment: "", spike_reason: "", drop_off_reason: "",
-  notes: "", monetization_notes: "", test_next_time: "", session_tags: [],
-  source: "manual", source_confidence: "high",
-});
+import AutoDebriefCard from "../../components/app/debrief/AutoDebriefCard";
+import SessionMetricsSummary from "../../components/app/debrief/SessionMetricsSummary";
+import SourceBadge from "../../components/app/SourceBadge";
+import { Brain, ChevronDown, Loader2, Sparkles, RefreshCw, ExternalLink, Check, AlertCircle } from "lucide-react";
 
 export default function PostLiveDebrief() {
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState([]);
-  const [selectedId, setSelectedId] = useState("__new__");
-  const [form, setForm] = useState(empty());
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [gameSuggestions, setGameSuggestions] = useState([]);
-  const navigate = useNavigate();
+  const [selectedSession, setSelectedSession] = useState(null);
+  const [review, setReview] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState(null);
+  const [reviews, setReviews] = useState({});
+  const [selectorOpen, setSelectorOpen] = useState(false);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { loadSessions(); }, []);
 
-  async function load() {
+  async function loadSessions() {
     setLoading(true);
     const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 20);
-    setSessions(all);
-    const games = [...new Set(all.map(s => s.game).filter(Boolean))];
-    setGameSuggestions(games);
+    const [allSessions, allReviews] = await Promise.all([
+      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
+      base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 100),
+    ]);
+    setSessions(allSessions);
+    const reviewMap = {};
+    allReviews.forEach(r => { reviewMap[r.live_session_id] = r; });
+    setReviews(reviewMap);
+    if (allSessions.length > 0) {
+      const latest = allSessions[0];
+      setSelectedSession(latest);
+      if (reviewMap[latest.id]) setReview(reviewMap[latest.id]);
+    }
     setLoading(false);
   }
 
-  function selectSession(id) {
-    setSelectedId(id);
-    if (id === "__new__") { setForm(empty()); return; }
-    const s = sessions.find(x => x.id === id);
-    if (!s) return;
-    setForm({
-      game: s.game || "", stream_type: s.stream_type || "ranked", stream_date: s.stream_date || "",
-      start_time: s.start_time || "", end_time: s.end_time || "", duration_minutes: s.duration_minutes ?? null,
-      avg_viewers: s.avg_viewers ?? null, peak_viewers: s.peak_viewers ?? null,
-      followers_gained: s.followers_gained ?? null, comments: s.comments ?? null,
-      shares: s.shares ?? null, gifters: s.gifters ?? null, diamonds: s.diamonds ?? null,
-      fan_club_joins: s.fan_club_joins ?? null, promo_posted: !!s.promo_posted,
-      went_as_planned: s.went_as_planned !== false, would_repeat: s.would_repeat !== false,
-      energy_level: s.energy_level || "medium", best_moment: s.best_moment || "",
-      weakest_moment: s.weakest_moment || "", spike_reason: s.spike_reason || "",
-      drop_off_reason: s.drop_off_reason || "", notes: s.notes || "",
-      monetization_notes: s.monetization_notes || "", test_next_time: s.test_next_time || "",
-      session_tags: s.session_tags || [], source: s.source || "manual", source_confidence: s.source_confidence || "high",
-    });
+  function selectSession(session) {
+    setSelectedSession(session);
+    setReview(reviews[session.id] || null);
+    setError(null);
+    setSelectorOpen(false);
   }
 
-  async function handleSave() {
-    if (!form.game || !form.stream_date) return;
-    setSaving(true);
-    const d = new Date(form.stream_date);
-    const data = { ...form, week_number: getISOWeek(d), year: d.getFullYear() };
-    if (selectedId === "__new__") {
-      await base44.entities.LiveSession.create(data);
-    } else {
-      await base44.entities.LiveSession.update(selectedId, data);
+  async function generateDebrief(forceNew = false) {
+    if (!selectedSession) return;
+    setGenerating(true);
+    setError(null);
+    if (forceNew && reviews[selectedSession.id]) {
+      await base44.entities.ReplayReview.delete(reviews[selectedSession.id].id);
+      setReviews(prev => { const next = { ...prev }; delete next[selectedSession.id]; return next; });
     }
-    setSaved(true); setSaving(false);
-    await load();
-    setTimeout(() => setSaved(false), 2000);
+    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id });
+    if (res.data?.error) {
+      setError(res.data.error);
+    } else if (res.data?.review) {
+      setReview(res.data.review);
+      setReviews(prev => ({ ...prev, [selectedSession.id]: res.data.review }));
+    }
+    setGenerating(false);
   }
 
   if (loading) return <PageContainer><LoadingState message="Loading sessions..." /></PageContainer>;
 
-  const isNew = selectedId === "__new__";
+  const hasReview = !!review;
+  const sessionDate = selectedSession?.stream_date
+    ? new Date(selectedSession.stream_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", year: "numeric" })
+    : "";
 
   return (
     <PageContainer>
       <div className="mb-6">
-        <div className="text-xs font-mono uppercase tracking-widest text-yellow-400 mb-1">// POST_LIVE_DEBRIEF</div>
-        <h1 className="text-2xl font-black uppercase text-white">Post-Live Debrief</h1>
-        <p className="text-sm text-slate-500 mt-0.5 font-mono">Interpret your stream. Imported metrics stay read-only.</p>
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-yellow-400/60 mb-1">Post-Stream</p>
+        <h1 className="text-2xl font-black uppercase text-white">Debrief</h1>
+        <p className="text-xs font-mono text-slate-600 mt-1">AI analyzes your session — what happened, what went right, what went wrong, and what to improve.</p>
       </div>
 
-      {/* Session selector */}
-      <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-4 mb-4">
-        <label className={lbl}>Session</label>
-        <select value={selectedId} onChange={e => selectSession(e.target.value)} className={inp + " appearance-none"}>
-          <option value="__new__">+ New Debrief</option>
-          {sessions.map(s => <option key={s.id} value={s.id}>{s.stream_date} · {s.game}</option>)}
-        </select>
-      </div>
-
-      <div className="space-y-4">
-        {/* Imported metrics (if available) */}
-        {form.source !== "manual" && <ImportedMetricsDisplay session={form} />}
-
-        {/* Core info */}
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-4">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 mb-1">// Stream Info</div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={lbl}>Game *</label>
-              <input value={form.game} onChange={e => setForm(f => ({ ...f, game: e.target.value }))}
-                list="game-suggestions" placeholder="Fortnite, Warzone…" className={inp} />
-              <datalist id="game-suggestions">{gameSuggestions.map(g => <option key={g} value={g} />)}</datalist>
-            </div>
-            <div>
-              <label className={lbl}>Date *</label>
-              <input type="date" value={form.stream_date} onChange={e => setForm(f => ({ ...f, stream_date: e.target.value }))} className={inp} />
-            </div>
-          </div>
-          <div>
-            <label className={lbl}>Stream Type</label>
-            <div className="grid grid-cols-4 gap-1">
-              {STREAM_TYPES.map(t => (
-                <button key={t} onClick={() => setForm(f => ({ ...f, stream_type: t }))}
-                  className={`py-2.5 rounded border text-[10px] font-mono uppercase transition-all ${form.stream_type === t ? "bg-yellow-400/10 border-yellow-400/30 text-yellow-400" : "bg-[#02040f] border-cyan-900/30 text-slate-600 hover:text-slate-300"}`}>
-                  {t.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </div>
+      {sessions.length === 0 ? (
+        <div className="bg-[#060d1f]/80 border border-cyan-900/20 rounded-xl p-8 text-center">
+          <Brain className="w-8 h-8 text-slate-700 mx-auto mb-3" />
+          <p className="text-sm font-bold text-slate-400 mb-1">No sessions to debrief</p>
+          <p className="text-xs font-mono text-slate-600 mb-4">Log or sync a session first, then come back for an AI review.</p>
+          <Link to="/app/analytics" className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest px-4 py-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/15 transition-all">
+            Log Session →
+          </Link>
         </div>
+      ) : (
+        <div className="space-y-5">
+          {/* Session selector */}
+          <div className="relative">
+            <button onClick={() => setSelectorOpen(!selectorOpen)}
+              className="w-full bg-[#060d1f]/80 border border-cyan-900/20 rounded-xl px-5 py-4 flex items-center gap-4 hover:border-cyan-500/20 transition-all text-left">
+              <div className="flex-1 min-w-0">
+                {selectedSession ? (
+                  <>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-base font-black text-white">{selectedSession.game}</span>
+                      <SourceBadge source={selectedSession.source} size="sm" />
+                      {reviews[selectedSession.id] && (
+                        <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-green-500/10 text-green-400">Debriefed ✓</span>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-mono text-slate-500">{sessionDate} · {selectedSession.stream_type?.replace("_", " ")}</span>
+                  </>
+                ) : (
+                  <span className="text-sm text-slate-500">Select a session…</span>
+                )}
+              </div>
+              <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform ${selectorOpen ? "rotate-180" : ""}`} />
+            </button>
 
-        {/* Session flags */}
-        <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
-          <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-2">// Session Flags</div>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { field: "promo_posted", label: "Promo Posted" },
-              { field: "went_as_planned", label: "Went as Planned" },
-              { field: "would_repeat", label: "Would Repeat Format" },
-            ].map(({ field, label }) => (
-              <button key={field} onClick={() => setForm(f => ({ ...f, [field]: !f[field] }))}
-                className={`flex items-center gap-2 py-3 px-4 rounded border text-xs font-mono uppercase transition-all ${
-                  form[field] ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-[#02040f] border-cyan-900/30 text-slate-600"}`}>
-                <span className={`w-4 h-4 rounded border flex items-center justify-center ${form[field] ? "bg-green-500 border-green-500" : "border-cyan-900/50"}`}>
-                  {form[field] && <Check className="w-2.5 h-2.5 text-white" />}
-                </span>
-                {label}
-              </button>
-            ))}
-          </div>
-          <div>
-            <label className={lbl}>Energy Level</label>
-            <div className="flex gap-2">
-              {["low", "medium", "high"].map(e => {
-                const ENERGY_STYLE = { low: "bg-slate-500/10 border-slate-500/30 text-slate-400", medium: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400", high: "bg-yellow-400/10 border-yellow-400/30 text-yellow-400" };
-                return (
-                  <button key={e} onClick={() => setForm(f => ({ ...f, energy_level: e }))}
-                    className={`flex-1 py-2.5 rounded border text-xs font-mono uppercase transition-all ${form.energy_level === e ? ENERGY_STYLE[e] : "bg-[#02040f] border-cyan-900/30 text-slate-600"}`}>
-                    {e}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Creator debrief */}
-        <CreatorDebrief session={form} onChange={setForm} />
-
-        {/* Session tags */}
-        <SessionTags session={form} onChange={setForm} />
-
-        {/* Manual metrics for new/manual streams */}
-        {form.source === "manual" && (
-          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-5 space-y-3">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// Viewer Metrics</span>
-              <span className="text-[9px] font-mono text-slate-700 bg-[#02040f] border border-cyan-900/20 px-2 py-0.5 rounded">Manual entry only</span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {[
-                { field: "avg_viewers", label: "Avg Viewers" },
-                { field: "peak_viewers", label: "Peak Viewers" },
-                { field: "duration_minutes", label: "Duration (min)" },
-                { field: "followers_gained", label: "Followers Gained" },
-                { field: "comments", label: "Comments" },
-                { field: "shares", label: "Shares" },
-                { field: "gifters", label: "Gifters" },
-                { field: "diamonds", label: "Diamonds" },
-                { field: "fan_club_joins", label: "Fan Club Joins" },
-              ].map(({ field, label }) => (
-                <div key={field}>
-                  <label className={lbl}>{label}</label>
-                  <input type="number" inputMode="numeric" min={0}
-                    value={form[field] === null || form[field] === undefined ? "" : form[field]}
-                    onChange={e => setForm(f => ({ ...f, [field]: e.target.value === "" ? null : Number(e.target.value) }))}
-                    placeholder="0" className={inp} />
+            {selectorOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setSelectorOpen(false)} />
+                <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-[#060d1f] border border-cyan-900/30 rounded-xl overflow-hidden shadow-2xl max-h-[320px] overflow-y-auto">
+                  {sessions.map(s => (
+                    <button key={s.id} onClick={() => selectSession(s)}
+                      className={`w-full text-left px-5 py-3 flex items-center gap-3 hover:bg-cyan-500/5 transition-all border-b border-white/[0.02] ${
+                        selectedSession?.id === s.id ? "bg-cyan-500/5" : ""
+                      }`}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-white">{s.game}</span>
+                          {reviews[s.id] && <Check className="w-3 h-3 text-green-400" />}
+                        </div>
+                        <span className="text-[10px] font-mono text-slate-600">{s.stream_date} · {s.stream_type?.replace("_", " ")}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        {s.avg_viewers != null && <p className="text-xs font-black text-cyan-400">{s.avg_viewers} avg</p>}
+                      </div>
+                    </button>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
-        )}
 
-        {/* Save */}
-        <button onClick={handleSave} disabled={saving || !form.game || !form.stream_date}
-          className={`w-full flex items-center justify-center gap-2 font-black uppercase tracking-widest py-4 rounded text-sm transition-all disabled:opacity-40 ${
-            saved ? "bg-green-400 text-[#02040f]" : "bg-yellow-400 text-[#02040f] hover:bg-yellow-300"
-          }`}>
-          {saved ? <><Check className="w-4 h-4" /> Saved!</> : saving ? "Saving…" : <><Zap className="w-4 h-4" /> {isNew ? "Save Debrief" : "Update Debrief"}</>}
-        </button>
-      </div>
+          {selectedSession && (
+            <div className="grid md:grid-cols-[1fr_300px] gap-5">
+              {/* Main content */}
+              <div className="space-y-5">
+                {/* Generate / status bar */}
+                {!hasReview && !generating ? (
+                  <div className="bg-gradient-to-r from-yellow-950/20 to-[#060d1f] border border-yellow-900/20 rounded-xl p-5">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="w-5 h-5 text-yellow-400/60 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-white mb-1">Generate AI Debrief</p>
+                        <p className="text-xs font-mono text-slate-500 leading-relaxed mb-4">
+                          The AI will analyze this session against your baselines and timeline data to tell you exactly what happened, what worked, what didn't, and what to do differently next time.
+                        </p>
+                        <button onClick={() => generateDebrief(false)} disabled={generating}
+                          className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest px-5 py-3 rounded-lg bg-yellow-400 text-[#02040f] font-black hover:bg-yellow-300 transition-all disabled:opacity-50">
+                          <Brain className="w-3.5 h-3.5" /> Generate Debrief
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : hasReview && !generating ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-green-400/60">
+                        Debriefed {review.reviewed_at ? new Date(review.reviewed_at).toLocaleDateString() : ""}
+                      </span>
+                    </div>
+                    <button onClick={() => generateDebrief(true)} disabled={generating}
+                      className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-3 py-2 rounded-lg border border-yellow-900/20 text-yellow-400/60 hover:text-yellow-400 hover:border-yellow-400/30 transition-all disabled:opacity-50">
+                      <RefreshCw className="w-3 h-3" /> Regenerate
+                    </button>
+                  </div>
+                ) : null}
+
+                {/* Error */}
+                {error && (
+                  <div className="bg-red-500/5 border border-red-500/15 rounded-lg p-4 flex items-start gap-3">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-mono text-red-400">{error}</p>
+                      <button onClick={() => setError(null)} className="text-[10px] font-mono text-red-400/50 hover:text-red-400 mt-1 transition-colors">Dismiss</button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Generating state */}
+                {generating && (
+                  <div className="bg-[#060d1f]/80 border border-yellow-900/15 rounded-xl p-12 text-center">
+                    <div className="w-10 h-10 border-2 border-yellow-400/20 border-t-yellow-400 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-sm font-bold text-white mb-1">Analyzing Session</p>
+                    <p className="text-[10px] font-mono text-slate-600">Comparing metrics vs baselines, scanning timeline, identifying patterns…</p>
+                  </div>
+                )}
+
+                {/* The debrief content */}
+                {hasReview && !generating && <AutoDebriefCard review={review} />}
+
+                {/* Link to TikTok Live Center */}
+                {hasReview && !generating && (
+                  <a href="https://livecenter.tiktok.com/analytics/live_video" target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-4 py-2.5 rounded-lg border border-pink-900/20 text-pink-400/60 hover:text-pink-400 hover:border-pink-500/20 transition-all">
+                    <ExternalLink className="w-3 h-3" /> Review on TikTok Live Center
+                  </a>
+                )}
+              </div>
+
+              {/* Sidebar — session metrics + creator notes */}
+              <div className="space-y-4">
+                <SessionMetricsSummary session={selectedSession} />
+
+                {(selectedSession.best_moment || selectedSession.weakest_moment || selectedSession.notes) && (
+                  <div className="bg-[#060d1f]/80 border border-cyan-900/20 rounded-xl p-4 space-y-3">
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-400/60">Creator Notes</p>
+                    {selectedSession.best_moment && (
+                      <div>
+                        <p className="text-[9px] font-mono uppercase text-slate-700 mb-0.5">Best Moment</p>
+                        <p className="text-xs text-slate-400">{selectedSession.best_moment}</p>
+                      </div>
+                    )}
+                    {selectedSession.weakest_moment && (
+                      <div>
+                        <p className="text-[9px] font-mono uppercase text-slate-700 mb-0.5">Weakest Moment</p>
+                        <p className="text-xs text-slate-400">{selectedSession.weakest_moment}</p>
+                      </div>
+                    )}
+                    {selectedSession.notes && (
+                      <div>
+                        <p className="text-[9px] font-mono uppercase text-slate-700 mb-0.5">Notes</p>
+                        <p className="text-xs text-slate-400">{selectedSession.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </PageContainer>
   );
 }
