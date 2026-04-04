@@ -1,0 +1,102 @@
+{
+  "name": "StreamStrategy",
+  "type": "object",
+  "properties": {
+    "scheduled_stream_id": {
+      "type": "string",
+      "title": "Scheduled Stream ID"
+    },
+    "stream_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Stream Date"
+    },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
+    "stream_type": {
+      "type": "string",
+      "title": "Stream Type"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "draft",
+        "ready",
+        "active",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "opening_strategy": {
+      "type": "string",
+      "title": "Opening Strategy (first 5-10 min)"
+    },
+    "peak_strategy": {
+      "type": "string",
+      "title": "Peak Engagement Strategy"
+    },
+    "recovery_plays": {
+      "type": "string",
+      "title": "Recovery Plays (when viewers drop)"
+    },
+    "closing_strategy": {
+      "type": "string",
+      "title": "Closing Strategy (last 10 min)"
+    },
+    "monetization_windows": {
+      "type": "string",
+      "title": "Monetization Windows"
+    },
+    "engagement_prompts": {
+      "type": "string",
+      "title": "Engagement Prompts (JSON array)"
+    },
+    "milestones": {
+      "type": "string",
+      "title": "Time-Based Milestones (JSON array)"
+    },
+    "key_talking_points": {
+      "type": "string",
+      "title": "Key Talking Points"
+    },
+    "avoid_list": {
+      "type": "string",
+      "title": "Things to Avoid"
+    },
+    "experiment_note": {
+      "type": "string",
+      "title": "Active Experiment Note"
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Strategy Confidence",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "default": "medium"
+    },
+    "data_summary": {
+      "type": "string",
+      "title": "Data Summary (what informed this strategy)"
+    },
+    "overall_objective": {
+      "type": "string",
+      "title": "Overall Session Objective"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Generated At"
+    }
+  },
+  "required": [
+    "scheduled_stream_id",
+    "stream_date",
+    "game"
+  ]
+}

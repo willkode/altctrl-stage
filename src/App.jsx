@@ -36,6 +36,7 @@ import GoLive from './pages/app/GoLive';
 import PostLiveDebrief from './pages/app/PostLiveDebrief';
 import ReplayReviewPage from './pages/app/ReplayReview';
 import AutoDebrief from './pages/app/AutoDebrief';
+import Strategy from './pages/app/Strategy';
 import AudienceMonetization from './pages/app/AudienceMonetization';
 import Experiments from './pages/app/Experiments';
 import Profile from './pages/app/Profile';
@@ -110,6 +111,7 @@ const AuthenticatedApp = () => {
           <Route path="debrief" element={<PostLiveDebrief />} />
           <Route path="replay" element={<ReplayReviewPage />} />
           <Route path="auto-debrief" element={<AutoDebrief />} />
+          <Route path="strategy" element={<Strategy />} />
           <Route path="audience" element={<AudienceMonetization />} />
           <Route path="experiments" element={<Experiments />} />
         </Route>
