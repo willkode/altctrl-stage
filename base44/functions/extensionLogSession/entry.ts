@@ -258,11 +258,25 @@ Deno.serve(async (req) => {
     
     if (!payload.token) return Response.json(ERROR('MISSING_FIELD', 'token required', 400), { status: 400 });
 
-    const user = await base44.auth.me();
-    if (!user) return Response.json(ERROR('AUTH_FAILED', 'Authentication failed', 401), { status: 401 });
+    // Decode token to extract userId WITHOUT needing a session cookie
+    let decodedUserId;
+    try {
+      const decoded = atob(payload.token);
+      const parts = decoded.split(':');
+      if (parts.length !== 4) return Response.json(ERROR('INVALID_TOKEN', 'Malformed token', 401), { status: 401 });
+      decodedUserId = parts[0];
+    } catch {
+      return Response.json(ERROR('INVALID_TOKEN', 'Malformed token', 401), { status: 401 });
+    }
 
+    // Look up user via service role (no session required)
+    const users = await base44.asServiceRole.entities.User.filter({ id: decodedUserId });
+    const user = users[0];
+    if (!user) return Response.json(ERROR('AUTH_FAILED', 'User not found', 401), { status: 401 });
+
+    // Now verify token signature using user's email as the secret
     const validation = await verifyToken(payload.token, user.email);
-    if (!validation.valid) return Response.json(ERROR('INVALID_TOKEN', 'Token invalid', 401), { status: 401 });
+    if (!validation.valid) return Response.json(ERROR('INVALID_TOKEN', 'Token invalid or expired', 401), { status: 401 });
 
     // Parse sessions
     let sessions = [];
