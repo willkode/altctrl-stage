@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AppModal from "../AppModal";
 import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
-import { RefreshCw, Trash2, ChevronDown } from "lucide-react";
+import { RefreshCw, Trash2, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 
 const STREAM_TYPES = ["ranked", "chill", "viewer_games", "challenge", "collab", "special", "other"];
 const STATUSES = ["planned", "live", "completed", "skipped", "cancelled"];
@@ -28,6 +28,7 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [gameSuggestions, setGameSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [generatingTitle, setGeneratingTitle] = useState(false);
   const gameRef = useRef(null);
   const toast = useAppToast();
   const isEdit = !!stream?.id;
@@ -157,7 +158,25 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
 
         {/* Title */}
         <div>
-          <label className={lbl}>Stream Title <span className="text-slate-700 normal-case tracking-normal">(optional)</span></label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className={lbl + " mb-0"}>Stream Title <span className="text-slate-700 normal-case tracking-normal">(optional)</span></label>
+            <button
+              onClick={async () => {
+                if (!form.game?.trim() || generatingTitle) return;
+                setGeneratingTitle(true);
+                const res = await base44.integrations.Core.InvokeLLM({
+                  prompt: `Generate a short, catchy TikTok LIVE stream title for a gaming stream. Game: ${form.game}. Stream type: ${form.stream_type}. Keep it under 60 characters, engaging, and hype. Return ONLY the title text, nothing else.`,
+                });
+                set("title", res.trim());
+                setGeneratingTitle(false);
+              }}
+              disabled={!form.game?.trim() || generatingTitle}
+              className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest px-2 py-1 rounded bg-pink-500/10 border border-pink-500/30 text-pink-400 hover:bg-pink-500/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              {generatingTitle ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              {generatingTitle ? "Generating…" : "AI Generate"}
+            </button>
+          </div>
           <input value={form.title} onChange={e => set("title", e.target.value)}
             placeholder="Custom stream title" className={inp} />
         </div>
