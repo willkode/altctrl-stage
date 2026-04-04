@@ -39,7 +39,7 @@ export default function GlitchText({ text, className = "", tag: Tag = "span", st
   const shiftX2 = (phase > 0.5 ? -1 : 1) * (Math.floor(phase * 8) + 3);
 
   return (
-    <Tag className={`relative inline-block ${className}`} style={style}>
+    <Tag className={`relative ${className}`} style={style}>
       {text}
       {glitching && (
         <>
