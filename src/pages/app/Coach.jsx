@@ -7,6 +7,7 @@ import WeeklyGamePlan from "../../components/app/coach/WeeklyGamePlan";
 import GoalsTracker from "../../components/app/coach/GoalsTracker";
 import WeeklyRecapPreview from "../../components/app/coach/WeeklyRecapPreview";
 import AlertsFeed from "../../components/app/coach/AlertsFeed";
+import LiveCoachPanel from "../../components/app/coach/LiveCoachPanel";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import { Brain, Sparkles, Loader2 } from "lucide-react";
 
@@ -183,6 +184,9 @@ export default function Coach() {
 
           {/* Weekly recap */}
           <WeeklyRecapPreview recap={weeklyRecap} previousRecap={null} onRefresh={loadData} />
+
+          {/* Live Coach Feed */}
+          <LiveCoachPanel />
 
           {/* Alerts feed */}
           <AlertsFeed alerts={alerts} onRefresh={loadData} />
