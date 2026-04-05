@@ -23,37 +23,10 @@ export default function PostLiveDebrief() {
   async function loadSessions() {
     setLoading(true);
     const user = await base44.auth.me();
-    const [liveSessions, desktopSessions, allReviews] = await Promise.all([
+    const [allSessions, allReviews] = await Promise.all([
       base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
-      base44.entities.DesktopSession.filter({ user_id: user.id }, "-started_at", 50),
       base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 100),
     ]);
-
-    // Convert desktop sessions to a common display format
-    const desktopAsSession = desktopSessions.map(ds => ({
-      ...ds,
-      game: ds.title || "Desktop Session",
-      stream_date: ds.started_at ? ds.started_at.split("T")[0] : "",
-      stream_type: "desktop",
-      avg_viewers: ds.avg_viewers,
-      peak_viewers: ds.peak_viewers,
-      duration_minutes: ds.duration_min,
-      followers_gained: ds.total_follows || 0,
-      shares: ds.total_shares || 0,
-      source: "desktop",
-      _isDesktop: true,
-    }));
-
-    // Dedupe: skip desktop sessions whose date already has a live session
-    const liveDates = new Set(liveSessions.map(s => s.stream_date));
-    const uniqueDesktop = desktopAsSession.filter(ds => !liveDates.has(ds.stream_date));
-
-    const allSessions = [...liveSessions, ...uniqueDesktop].sort((a, b) => {
-      const dateA = a.stream_date || "";
-      const dateB = b.stream_date || "";
-      return dateB.localeCompare(dateA);
-    });
-
     setSessions(allSessions);
     const reviewMap = {};
     allReviews.forEach(r => { reviewMap[r.live_session_id] = r; });
@@ -81,7 +54,7 @@ export default function PostLiveDebrief() {
       await base44.entities.ReplayReview.delete(reviews[selectedSession.id].id);
       setReviews(prev => { const next = { ...prev }; delete next[selectedSession.id]; return next; });
     }
-    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id, is_desktop: !!selectedSession._isDesktop });
+    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id });
     if (res.data?.error) {
       setError(res.data.error);
     } else if (res.data?.review) {
