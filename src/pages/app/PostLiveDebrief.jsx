@@ -76,7 +76,7 @@ export default function PostLiveDebrief() {
       await base44.entities.ReplayReview.delete(reviews[selectedSession.id].id);
       setReviews(prev => { const next = { ...prev }; delete next[selectedSession.id]; return next; });
     }
-    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id });
+    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id, is_desktop: !!selectedSession._isDesktop });
     if (res.data?.error) {
       setError(res.data.error);
     } else if (res.data?.review) {
