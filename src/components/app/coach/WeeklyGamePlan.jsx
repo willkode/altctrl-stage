@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Calendar, CheckCircle, Clock, AlertTriangle, RefreshCw, Zap } from "lucide-react";
+import { Calendar, CheckCircle, Clock, AlertTriangle, RefreshCw, Zap, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AppBadge from "../AppBadge";
 import ProgressBar from "../ProgressBar";
@@ -95,6 +95,25 @@ export default function WeeklyGamePlan({ plan, streams, sessions, profile, onRef
           <p className="text-xs text-slate-400 leading-relaxed">{plan.ai_brief}</p>
         </div>
       )}
+
+      {plan?.bottleneck_1 && (
+        <div className="mt-3 pt-3 border-t border-white/5">
+          <div className="text-[10px] font-mono uppercase text-red-400/60 mb-2">#1 Bottleneck:</div>
+          <div className="flex items-start gap-2">
+            <TrendingUp className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-bold text-white">{plan.bottleneck_1}</p>
+              {plan.bottleneck_1_upside && <p className="text-[10px] font-mono text-green-400 mt-0.5">{plan.bottleneck_1_upside}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-3 pt-3 border-t border-white/5">
+        <Link to="/app/strategy" className="text-[10px] font-mono uppercase tracking-widest text-cyan-400/60 hover:text-cyan-400 transition-colors">
+          Full strategy → /app/strategy
+        </Link>
+      </div>
     </div>
   );
 }
