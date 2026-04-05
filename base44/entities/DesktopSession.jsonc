@@ -14,9 +14,17 @@
       "type": "string",
       "title": "Title"
     },
+    "game": {
+      "type": "string",
+      "title": "Game"
+    },
     "platform": {
       "type": "string",
       "title": "Platform"
+    },
+    "strategy_pack_id": {
+      "type": "string",
+      "title": "Strategy Pack ID"
     },
     "started_at": {
       "type": "string",
@@ -44,9 +52,34 @@
       "type": "number",
       "title": "Average Viewers"
     },
+    "total_unique_viewers": {
+      "type": "number",
+      "title": "Total Unique Viewers",
+      "default": 0
+    },
+    "return_viewers": {
+      "type": "number",
+      "title": "Return Viewers",
+      "default": 0
+    },
+    "estimated_avg_watch_sec": {
+      "type": "number",
+      "title": "Estimated Avg Watch Time (seconds)",
+      "default": 0
+    },
+    "first_minute_drop_rate": {
+      "type": "number",
+      "title": "First Minute Drop Rate (0-1)",
+      "default": 0
+    },
     "total_gifts": {
       "type": "number",
       "title": "Total Gifts",
+      "default": 0
+    },
+    "total_diamonds": {
+      "type": "number",
+      "title": "Total Diamonds",
       "default": 0
     },
     "total_follows": {
@@ -59,6 +92,36 @@
       "title": "Total Shares",
       "default": 0
     },
+    "unique_chatters": {
+      "type": "number",
+      "title": "Unique Chatters",
+      "default": 0
+    },
+    "unique_gifters": {
+      "type": "number",
+      "title": "Unique Gifters",
+      "default": 0
+    },
+    "repeat_gifters": {
+      "type": "number",
+      "title": "Repeat Gifters",
+      "default": 0
+    },
+    "follow_conversion_rate": {
+      "type": "number",
+      "title": "Follow Conversion Rate",
+      "default": 0
+    },
+    "share_conversion_rate": {
+      "type": "number",
+      "title": "Share Conversion Rate",
+      "default": 0
+    },
+    "gift_conversion_rate": {
+      "type": "number",
+      "title": "Gift Conversion Rate",
+      "default": 0
+    },
     "alerts_fired": {
       "type": "number",
       "title": "Alerts Fired",
@@ -69,9 +132,37 @@
       "title": "Alerts Marked Helpful",
       "default": 0
     },
-    "timeline": {
+    "supporter_concentration": {
       "type": "string",
-      "title": "Timeline (JSON array)"
+      "title": "Supporter Concentration (JSON)"
+    },
+    "viewer_snapshots": {
+      "type": "string",
+      "title": "Viewer Snapshots (JSON array)"
+    },
+    "top_gifters": {
+      "type": "string",
+      "title": "Top Gifters (JSON array)"
+    },
+    "peak_moments": {
+      "type": "string",
+      "title": "Peak Moments (JSON array)"
+    },
+    "drop_moments": {
+      "type": "string",
+      "title": "Drop Moments (JSON array)"
+    },
+    "top_support_moments": {
+      "type": "string",
+      "title": "Top Support Moments (JSON array)"
+    },
+    "viewer_log": {
+      "type": "string",
+      "title": "Viewer Log (JSON array)"
+    },
+    "activity_log": {
+      "type": "string",
+      "title": "Activity Log (JSON array)"
     },
     "notes": {
       "type": "string",
