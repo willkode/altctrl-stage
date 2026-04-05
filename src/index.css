@@ -61,9 +61,45 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    font-size: 1rem;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
   }
+}
+
+/* Global minimum font size enforcement: no text smaller than 1rem (16px) */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Override all Tailwind classes that render text below 16px */
+.text-xs,
+.text-sm,
+.text-\[8px\],
+.text-\[9px\],
+.text-\[10px\],
+.text-\[11px\],
+.text-\[12px\],
+.text-\[13px\],
+.text-\[14px\],
+.text-\[15px\],
+.text-\[0\.5rem\],
+.text-\[0\.625rem\],
+.text-\[0\.6875rem\],
+.text-\[0\.75rem\],
+.text-\[0\.8125rem\],
+.text-\[0\.875rem\] {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Catch prose and nested small text */
+.prose-sm,
+.prose .text-sm,
+.prose .text-xs {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
 }
