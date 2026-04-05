@@ -23,32 +23,10 @@ export default function PostLiveDebrief() {
   async function loadSessions() {
     setLoading(true);
     const user = await base44.auth.me();
-    const [liveSessions, desktopSessions, allReviews] = await Promise.all([
+    const [allSessions, allReviews] = await Promise.all([
       base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
-      base44.entities.DesktopSession.filter({ user_id: user.email }, "-started_at", 50),
       base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 100),
     ]);
-
-    const normalizedDesktop = desktopSessions.map(d => ({
-      id: d.id,
-      game: d.game || "",
-      stream_date: d.started_at ? d.started_at.split('T')[0] : null,
-      stream_type: null,
-      avg_viewers: d.avg_viewers ?? 0,
-      peak_viewers: d.peak_viewers ?? 0,
-      duration_minutes: d.duration_min ?? 0,
-      followers_gained: d.total_follows ?? 0,
-      diamonds: d.total_diamonds ?? 0,
-      unique_gifters: d.unique_gifters ?? 0,
-      title: d.title || "",
-      source: "desktop_sync",
-      _isDesktop: true,
-    }));
-
-    const allSessions = [...liveSessions, ...normalizedDesktop].sort((a, b) =>
-      (b.stream_date || "").localeCompare(a.stream_date || "")
-    );
-
     setSessions(allSessions);
     const reviewMap = {};
     allReviews.forEach(r => { reviewMap[r.live_session_id] = r; });
@@ -76,7 +54,7 @@ export default function PostLiveDebrief() {
       await base44.entities.ReplayReview.delete(reviews[selectedSession.id].id);
       setReviews(prev => { const next = { ...prev }; delete next[selectedSession.id]; return next; });
     }
-    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id, is_desktop: !!selectedSession._isDesktop });
+    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: selectedSession.id });
     if (res.data?.error) {
       setError(res.data.error);
     } else if (res.data?.review) {
@@ -149,8 +127,7 @@ export default function PostLiveDebrief() {
                           <span className="text-sm font-bold text-white">{s.game}</span>
                           {reviews[s.id] && <Check className="w-3 h-3 text-green-400" />}
                         </div>
-                          <span className="text-[10px] font-mono text-slate-600">{s.stream_date}{s.stream_type ? ` · ${s.stream_type.replace("_", " ")}` : ""}</span>
-                        <SourceBadge source={s.source} size="sm" />
+                        <span className="text-[10px] font-mono text-slate-600">{s.stream_date} · {s.stream_type?.replace("_", " ")}</span>
                       </div>
                       <div className="text-right shrink-0">
                         {s.avg_viewers != null && <p className="text-xs font-black text-cyan-400">{s.avg_viewers} avg</p>}
