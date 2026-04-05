@@ -15,29 +15,25 @@ export default function PreStreamChecklist({ stream }) {
   async function generate() {
     setLoading(true);
     const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a livestream coach. Generate a pre-stream checklist for this upcoming stream:
+      prompt: `Generate a practical pre-stream checklist for a TikTok live stream.
 Game: ${stream.game}
 Stream Type: ${stream.stream_type || "general"}
 Date: ${stream.scheduled_date}
-Start Time: ${stream.start_time || "Not set"}
-Duration Target: ${stream.target_duration_minutes || 60} minutes
-Challenge Mode: ${stream.challenge_mode_enabled ? "Yes - " + (stream.challenge_brief || "") : "No"}
-Notes: ${stream.notes || "None"}
+Start Time: ${stream.start_time || "TBD"}
+Duration: ${stream.target_duration_minutes || 60} minutes
 
 Return a JSON object with:
-- "before_stream" (array of 5-7 checklist items to do 30-60 min before going live)
-- "right_before" (array of 3-5 items to do in the last 5 minutes before going live)
-- "opening_moves" (array of 3-4 things to do in the first 5 minutes of the stream)
-- "tip" (one short motivational or strategic tip for this specific stream)
+- "before_stream" (array of 5-6 practical tasks to do 2+ hours before — e.g. create & post promo content, charge devices, plan game setup)
+- "right_before" (array of 4-5 tasks to do 15-30 min before — e.g. launch OBS/software, test audio/video, check internet, clear notifications, set phone to DND)
+- "opening_moves" (array of 3-4 things to do in the first 3 minutes live — e.g. greet chat, introduce the stream, call out the challenge or goal)
 
-Each checklist item should be a short, actionable string.`,
+Keep each item short, direct, and actionable. No fluff. Real streamer tasks only.`,
       response_json_schema: {
         type: "object",
         properties: {
           before_stream: { type: "array", items: { type: "string" } },
           right_before: { type: "array", items: { type: "string" } },
           opening_moves: { type: "array", items: { type: "string" } },
-          tip: { type: "string" },
         },
       },
     });
