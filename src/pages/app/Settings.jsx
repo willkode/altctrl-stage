@@ -6,6 +6,7 @@ import { Check, Zap, AlertTriangle, Download } from "lucide-react";
 import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";
+import DesktopSettingsPanel from "../../components/app/tiktok/DesktopSettingsPanel";
 import { useAppToast } from "../../hooks/useAppToast";
 
 const PROMO_TONES = ["hype","chill","competitive","funny","serious","community"];
@@ -313,6 +314,11 @@ export default function Settings() {
         {/* Extension Settings Panel */}
         <Section title="// Chrome Extension" accent="yellow">
           <ExtensionSettingsPanel />
+        </Section>
+
+        {/* Desktop App */}
+        <Section title="// Desktop App" accent="yellow">
+          <DesktopSettingsPanel />
         </Section>
 
         {/* Import Sync Debugging */}
