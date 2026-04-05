@@ -4,11 +4,15 @@
   "properties": {
     "session_id": {
       "type": "string",
-      "title": "Session ID"
+      "title": "Session ID (LiveSession or DesktopSession)"
     },
     "pulse_id": {
       "type": "string",
-      "title": "Pulse ID (LivePulse reference)"
+      "title": "Pulse ID (LivePulse reference that triggered this)"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
     },
     "action_type": {
       "type": "string",
@@ -23,40 +27,99 @@
         "closing_move",
         "opening_reminder",
         "experiment_reminder",
+        "monetization_window",
+        "segment_transition",
+        "dead_zone_alert",
+        "drop_risk_alert",
         "general_tip"
       ]
     },
     "message": {
       "type": "string",
-      "title": "Message"
+      "title": "Creator-Facing Message (what to do/say)"
     },
     "reason": {
       "type": "string",
-      "title": "Reason / Context"
+      "title": "Why This Action Was Suggested"
+    },
+    "fallback": {
+      "type": "string",
+      "title": "Fallback Action If No Response in 2 Minutes"
+    },
+    "priority": {
+      "type": "number",
+      "title": "Priority (1 = critical, 5 = low)",
+      "default": 3
     },
     "confidence": {
       "type": "number",
-      "title": "Confidence (0-1)"
+      "title": "AI Confidence Score (0.0 - 1.0)",
+      "default": 0
     },
     "stream_state_at_fire": {
       "type": "string",
-      "title": "Stream State When Fired",
+      "title": "Detected Stream State When Fired",
       "enum": [
-        "warmup",
+        "warming_up",
         "settling",
         "stable",
         "rising",
         "high_momentum",
+        "viewer_spike",
+        "chat_cooling",
         "monetization_window",
+        "retention_dip",
+        "dead_zone",
         "drop_risk",
-        "fatigue_risk",
-        "closing_window"
+        "closing_window",
+        "unknown"
       ]
+    },
+    "state_duration_minutes": {
+      "type": "number",
+      "title": "How Long in This State Before Firing (minutes)"
+    },
+    "metrics_snapshot_before": {
+      "type": "string",
+      "title": "Metrics Snapshot Before Action (JSON: viewers, chat_rate, gifts_rate, momentum)"
+    },
+    "metrics_snapshot_after": {
+      "type": "string",
+      "title": "Metrics Snapshot 2-3 min After Action (JSON)"
+    },
+    "result": {
+      "type": "string",
+      "title": "Outcome",
+      "enum": [
+        "pending",
+        "worked",
+        "partial",
+        "failed",
+        "too_early",
+        "too_late",
+        "no_data"
+      ],
+      "default": "pending"
+    },
+    "result_scored_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "When Result Was Auto-Scored"
     },
     "sent_at": {
       "type": "string",
       "format": "date-time",
       "title": "Sent At"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Expires At (prompt no longer relevant after this)"
+    },
+    "cooldown_until": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Cooldown Until (no new prompts before this time)"
     },
     "dismissed": {
       "type": "boolean",
@@ -65,12 +128,39 @@
     },
     "helpful": {
       "type": "boolean",
-      "title": "Marked Helpful",
-      "default": false
+      "title": "Marked Helpful by Creator"
     },
-    "outcome_note": {
+    "creator_feedback": {
       "type": "string",
-      "title": "Outcome Note"
+      "title": "Creator Feedback Label",
+      "enum": [
+        "helpful",
+        "not_helpful",
+        "too_late",
+        "already_doing_it",
+        "wrong_timing",
+        null
+      ]
+    },
+    "insight_raw": {
+      "type": "string",
+      "title": "Raw Insight Object Before Wording (JSON: what/why/action)"
+    },
+    "triggered_by": {
+      "type": "string",
+      "title": "What Triggered This",
+      "enum": [
+        "state_change",
+        "rules_engine",
+        "manual",
+        "recovery",
+        "cooldown_override"
+      ],
+      "default": "state_change"
+    },
+    "minute_live_at_fire": {
+      "type": "number",
+      "title": "Minute Into Stream When Fired"
     }
   },
   "required": [

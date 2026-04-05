@@ -2,6 +2,15 @@
   "name": "WeeklyPlan",
   "type": "object",
   "properties": {
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    },
+    "week_start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Week Start Date"
+    },
     "week_number": {
       "type": "number",
       "title": "ISO Week Number"
@@ -10,65 +19,162 @@
       "type": "number",
       "title": "Year"
     },
-    "week_start_date": {
-      "type": "string",
-      "format": "date",
-      "title": "Week Start Date (Monday)"
-    },
-    "week_end_date": {
-      "type": "string",
-      "format": "date",
-      "title": "Week End Date (Sunday)"
-    },
-    "stream_target": {
-      "type": "number",
-      "title": "Stream Target for Week",
-      "default": 3
-    },
-    "primary_game": {
-      "type": "string",
-      "title": "Primary Game This Week"
-    },
-    "secondary_games": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "title": "Secondary Games"
-    },
-    "focus_note": {
-      "type": "string",
-      "title": "Focus Note / Intention"
-    },
     "status": {
       "type": "string",
-      "title": "Status",
+      "title": "Plan Status",
       "enum": [
         "draft",
         "active",
         "completed",
-        "missed"
+        "archived"
       ],
       "default": "draft"
     },
-    "streams_completed": {
+    "primary_goal": {
+      "type": "string",
+      "title": "Primary Goal This Week",
+      "enum": [
+        "grow_followers",
+        "increase_viewers",
+        "improve_consistency",
+        "build_community",
+        "monetize",
+        "retention",
+        "custom"
+      ],
+      "default": "grow_followers"
+    },
+    "primary_goal_context": {
+      "type": "string",
+      "title": "Why This Goal Was Selected"
+    },
+    "recommended_days": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommended Stream Days (e.g. mon, wed, fri)"
+    },
+    "recommended_start_times": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommended Start Times per Day (HH:MM)"
+    },
+    "recommended_games": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommended Games for the Week"
+    },
+    "recommended_stream_types": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Recommended Stream Types (e.g. challenge, chill, ranked)"
+    },
+    "target_duration_minutes": {
       "type": "number",
-      "title": "Streams Completed",
+      "title": "Recommended Stream Duration (minutes)",
+      "default": 60
+    },
+    "opener_strategy": {
+      "type": "string",
+      "title": "Recommended Opener Strategy (first 2-3 min)"
+    },
+    "engagement_strategy": {
+      "type": "string",
+      "title": "Core Engagement Strategy for the Week"
+    },
+    "monetization_strategy": {
+      "type": "string",
+      "title": "Monetization Approach for the Week"
+    },
+    "streams_plan": {
+      "type": "string",
+      "title": "Per-Stream Breakdown (JSON array of stream plan objects)"
+    },
+    "bottleneck_1": {
+      "type": "string",
+      "title": "Top Growth Bottleneck"
+    },
+    "bottleneck_1_evidence": {
+      "type": "string",
+      "title": "Evidence for Bottleneck 1"
+    },
+    "bottleneck_1_upside": {
+      "type": "string",
+      "title": "Expected Upside if Bottleneck 1 is Fixed"
+    },
+    "bottleneck_2": {
+      "type": "string",
+      "title": "Second Growth Bottleneck"
+    },
+    "bottleneck_2_evidence": {
+      "type": "string",
+      "title": "Evidence for Bottleneck 2"
+    },
+    "bottleneck_2_upside": {
+      "type": "string",
+      "title": "Expected Upside if Bottleneck 2 is Fixed"
+    },
+    "bottleneck_3": {
+      "type": "string",
+      "title": "Third Growth Bottleneck"
+    },
+    "bottleneck_3_evidence": {
+      "type": "string",
+      "title": "Evidence for Bottleneck 3"
+    },
+    "bottleneck_3_upside": {
+      "type": "string",
+      "title": "Expected Upside if Bottleneck 3 is Fixed"
+    },
+    "experiment_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Linked Experiment IDs to Run This Week"
+    },
+    "experiment_focus": {
+      "type": "string",
+      "title": "What to Experiment On This Week"
+    },
+    "confidence_score": {
+      "type": "number",
+      "title": "AI Confidence Score (0.0 - 1.0)",
       "default": 0
     },
-    "promo_posted_count": {
+    "data_sessions_analyzed": {
       "type": "number",
-      "title": "Promo Posted Count",
+      "title": "Number of Sessions Analyzed",
       "default": 0
     },
     "ai_brief": {
       "type": "string",
-      "title": "AI Weekly Brief"
+      "title": "Short AI Summary for Dashboard Display"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Generated At"
+    },
+    "generated_by": {
+      "type": "string",
+      "title": "Generated By",
+      "enum": [
+        "ai",
+        "manual"
+      ],
+      "default": "ai"
     }
   },
   "required": [
-    "week_number",
-    "year",
+    "owner_email",
     "week_start_date"
   ]
 }
