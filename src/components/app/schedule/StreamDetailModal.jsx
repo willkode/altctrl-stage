@@ -4,12 +4,14 @@ import AppModal from "../AppModal";
 import StreamDetailInfo from "./StreamDetailInfo";
 import PreStreamChecklist from "./PreStreamChecklist";
 import PromoGenerator from "./PromoGenerator";
-import { Info, CheckSquare, Radio } from "lucide-react";
+import StreamStrategyTab from "./StreamStrategyTab";
+import { Info, CheckSquare, Radio, Crosshair } from "lucide-react";
 
 const TABS = [
   { key: "details", label: "Details", icon: Info },
   { key: "checklist", label: "Checklist", icon: CheckSquare },
   { key: "promo", label: "Promo", icon: Radio },
+  { key: "strategy", label: "Strategy", icon: Crosshair },
 ];
 
 export default function StreamDetailModal({ stream, open, onClose }) {
@@ -36,6 +38,7 @@ export default function StreamDetailModal({ stream, open, onClose }) {
       {tab === "details" && <StreamDetailInfo stream={stream} />}
       {tab === "checklist" && <PreStreamChecklist stream={stream} />}
       {tab === "promo" && <PromoGenerator stream={stream} />}
+      {tab === "strategy" && <StreamStrategyTab stream={stream} />}
     </AppModal>
   );
 }

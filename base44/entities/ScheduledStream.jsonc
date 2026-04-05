@@ -169,6 +169,10 @@
     "saved_promo": {
       "type": "string",
       "title": "Saved Promo Content (JSON)"
+    },
+    "saved_strategy": {
+      "type": "string",
+      "title": "Saved Stream Strategy (JSON)"
     }
   },
   "required": [
