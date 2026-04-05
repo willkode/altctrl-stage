@@ -1,6 +1,7 @@
 import { Clock, Gamepad2, Play, RefreshCw, MoreVertical, Pencil, Trash2, CheckCircle } from "lucide-react";
 import AppBadge from "../AppBadge";
 import { useState } from "react";
+import StreamDetailModal from "./StreamDetailModal";
 
 const TYPE_ACCENT = {
   ranked: "cyan", chill: "slate", viewer_games: "pink",
@@ -13,12 +14,15 @@ const STATUS_ACCENT = {
 
 export default function StreamSlotCard({ stream, onEdit, onDelete }) {
   const [menu, setMenu] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const accent = TYPE_ACCENT[stream.stream_type] || "cyan";
 
   return (
-    <div className={`relative bg-[#060d1f] border rounded-lg p-3 transition-all group ${
+    <>
+    <div className={`relative bg-[#060d1f] border rounded-lg p-3 transition-all group cursor-pointer ${
       stream.status === "completed" ? "border-cyan-900/30 opacity-75" : "border-cyan-500/30 hover:border-cyan-400/50"
     }`}
+      onClick={() => setModalOpen(true)}
       style={stream.status !== "completed" ? { boxShadow: "0 0 12px rgba(0,245,255,0.04)" } : {}}>
 
       {/* Status glow bar */}
@@ -33,7 +37,7 @@ export default function StreamSlotCard({ stream, onEdit, onDelete }) {
         <div className="flex items-center gap-1.5 shrink-0">
           <AppBadge label={stream.status} accent={STATUS_ACCENT[stream.status] || "cyan"} dot />
           <div className="relative">
-            <button onClick={() => setMenu(m => !m)}
+            <button onClick={(e) => { e.stopPropagation(); setMenu(m => !m); }}
               className="w-6 h-6 flex items-center justify-center rounded text-slate-600 hover:text-slate-300 transition-colors">
               <MoreVertical className="w-3.5 h-3.5" />
             </button>
@@ -85,5 +89,7 @@ export default function StreamSlotCard({ stream, onEdit, onDelete }) {
         )}
       </div>
     </div>
+    <StreamDetailModal stream={stream} open={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   );
 }
