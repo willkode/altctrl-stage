@@ -25,6 +25,15 @@ const navItems = [
   { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
 ];
 
+// Mobile bottom nav — limited to 5 core items to meet 44px tap target minimum
+const MOBILE_NAV_ITEMS = [
+  { path: "/app/dashboard", label: "Home", icon: LayoutDashboard },
+  { path: "/app/schedule", label: "Schedule", icon: Calendar },
+  { path: "/app/golive", label: "Go Live", icon: PlayCircle },
+  { path: "/app/analytics", label: "Stats", icon: TrendingUp },
+  { path: "/app/coach", label: "Coach", icon: Brain },
+];
+
 const pageTitles = {
   "/app/dashboard": "DASHBOARD",
   "/app/schedule": "SCHEDULE",
@@ -107,12 +116,14 @@ export default function AppLayout() {
         <div className="flex items-center gap-3">
           {isAdmin && (
             <Link to="/app/admin/dashboard"
+              aria-label="Admin Panel"
               className="w-9 h-9 flex items-center justify-center rounded border border-red-900/40 hover:border-red-500/40 text-red-500 hover:text-red-400 transition-all"
               title="Admin Panel">
               <ShieldAlert className="w-4 h-4" />
             </Link>
           )}
           <Link to="/app/notifications"
+            aria-label="Notifications"
             className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
@@ -120,10 +131,12 @@ export default function AppLayout() {
             )}
           </Link>
           <Link to="/app/profile"
+            aria-label="Profile"
             className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <User className="w-4 h-4" />
           </Link>
           <Link to="/app/settings"
+            aria-label="Settings"
             className="hidden md:flex w-9 h-9 items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Settings2Icon className="w-4 h-4" />
           </Link>
@@ -192,17 +205,18 @@ export default function AppLayout() {
         </main>
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-cyan-900/40 bg-[#02040f]/95 backdrop-blur-sm flex">
-        {navItems.map(({ path, label, icon: Icon }) => {
+      {/* Mobile Bottom Nav — 5 core items only to maintain 44px+ tap targets */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-cyan-900/40 bg-[#02040f]/95 backdrop-blur-sm flex" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+        {MOBILE_NAV_ITEMS.map(({ path, label, icon: Icon }) => {
           const active = location.pathname === path;
           return (
             <Link key={path} to={path}
-              className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-mono uppercase transition-all ${
+              aria-label={label}
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 min-h-[56px] text-xs font-mono uppercase transition-all relative ${
                 active ? "text-cyan-400" : "text-slate-600 hover:text-slate-400"
               }`}>
               <Icon className="w-5 h-5" />
-              <span className="text-[10px] tracking-widest">{label}</span>
+              <span className="text-[9px] tracking-widest">{label}</span>
               {active && <span className="absolute bottom-1 w-1 h-1 rounded-full bg-cyan-400" />}
             </Link>
           );
