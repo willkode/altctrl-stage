@@ -25,67 +25,64 @@ export default function StreamSlotCard({ stream, onEdit, onDelete }) {
       onClick={() => setModalOpen(true)}
       style={stream.status !== "completed" ? { boxShadow: "0 0 12px rgba(0,245,255,0.04)" } : {}}>
 
-      {/* Status glow bar */}
       {stream.status === "live" && (
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500 to-transparent animate-pulse" />
       )}
 
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-black uppercase text-white truncate">{stream.title || stream.game}</div>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
-          <AppBadge label={stream.status} accent={STATUS_ACCENT[stream.status] || "cyan"} dot />
-          <div className="relative">
-            <button onClick={(e) => { e.stopPropagation(); setMenu(m => !m); }}
-              className="w-6 h-6 flex items-center justify-center rounded text-slate-600 hover:text-slate-300 transition-colors">
-              <MoreVertical className="w-3.5 h-3.5" />
-            </button>
-            {menu && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenu(false)} />
-                <div className="absolute right-0 top-7 z-20 bg-[#060d1f] border border-cyan-900/40 rounded-lg py-1 min-w-[120px] shadow-xl">
-                  <button onClick={() => { setMenu(false); onEdit?.(stream); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono text-slate-300 hover:text-cyan-400 hover:bg-cyan-500/5 transition-all">
-                    <Pencil className="w-3 h-3" /> Edit
-                  </button>
-                  <button onClick={() => { setMenu(false); onDelete?.(stream); }}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono text-slate-300 hover:text-red-400 hover:bg-red-500/5 transition-all">
-                    <Trash2 className="w-3 h-3" /> Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+      {/* Header: game title + menu */}
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <p className="text-sm font-black uppercase text-white truncate flex-1 min-w-0">{stream.title || stream.game}</p>
+        <div className="relative shrink-0">
+          <button onClick={(e) => { e.stopPropagation(); setMenu(m => !m); }}
+            className="w-6 h-6 flex items-center justify-center rounded text-slate-600 hover:text-slate-300 transition-colors">
+            <MoreVertical className="w-3.5 h-3.5" />
+          </button>
+          {menu && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setMenu(false)} />
+              <div className="absolute right-0 top-7 z-20 bg-[#060d1f] border border-cyan-900/40 rounded-lg py-1 min-w-[120px] shadow-xl">
+                <button onClick={() => { setMenu(false); onEdit?.(stream); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono text-slate-300 hover:text-cyan-400 hover:bg-cyan-500/5 transition-all">
+                  <Pencil className="w-3 h-3" /> Edit
+                </button>
+                <button onClick={() => { setMenu(false); onDelete?.(stream); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-xs font-mono text-slate-300 hover:text-red-400 hover:bg-red-500/5 transition-all">
+                  <Trash2 className="w-3 h-3" /> Delete
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="space-y-1">
+      {/* Meta row: time · duration · type — all inline */}
+      <div className="flex items-center gap-2 text-xs font-mono text-slate-400 flex-wrap">
         {stream.start_time && (
-          <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
-            <Clock className="w-3 h-3 text-cyan-400" /> {stream.start_time}
-            {stream.target_duration_minutes && <span className="text-slate-600">· {stream.target_duration_minutes}min</span>}
-          </div>
+          <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-400/60" />{stream.start_time}</span>
         )}
-        <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
-          <Gamepad2 className="w-3 h-3 text-cyan-400" /> {stream.game}
-        </div>
+        {stream.target_duration_minutes && (
+          <span className="text-slate-600">{stream.target_duration_minutes}m</span>
+        )}
         {stream.stream_type && (
-          <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
-            <Play className="w-3 h-3 text-slate-600" /> {stream.stream_type}
-          </div>
+          <span className="text-slate-500">{stream.stream_type.replace("_", " ")}</span>
         )}
       </div>
 
-      <div className="flex items-center gap-2 mt-2 pt-2 border-t border-white/5 flex-wrap">
+      {/* Game (only if title is set and different from game) */}
+      {stream.title && stream.title !== stream.game && (
+        <div className="flex items-center gap-1.5 text-xs font-mono text-slate-500 mt-1">
+          <Gamepad2 className="w-3 h-3 text-cyan-400/40" /> {stream.game}
+        </div>
+      )}
+
+      {/* Footer tags */}
+      <div className="flex items-center gap-2 mt-2 pt-1.5 border-t border-white/5 flex-wrap">
+        <AppBadge label={stream.status} accent={STATUS_ACCENT[stream.status] || "cyan"} dot />
         {stream.recurring && (
-          <span className="flex items-center gap-1 text-[10px] font-mono text-slate-600 uppercase tracking-widest">
-            <RefreshCw className="w-2.5 h-2.5" /> Recurring
-          </span>
+          <span className="flex items-center gap-1 text-[10px] font-mono text-slate-600"><RefreshCw className="w-2.5 h-2.5" />rec</span>
         )}
-        {stream.status === "completed" && <CheckCircle className="w-3 h-3 text-cyan-400" />}
-        {stream.notes && (
-          <span className="text-[10px] font-mono text-slate-700 truncate">{stream.notes}</span>
+        {stream.challenge_mode_enabled && (
+          <span className="text-[10px] font-mono text-yellow-400/60">⚡ challenge</span>
         )}
       </div>
     </div>
