@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import AppModal from "../AppModal";
 import StreamDetailInfo from "./StreamDetailInfo";
@@ -16,11 +16,20 @@ const TABS = [
 
 export default function StreamDetailModal({ stream, open, onClose }) {
   const [tab, setTab] = useState("details");
+  const [liveStream, setLiveStream] = useState(stream);
+
+  useEffect(() => {
+    if (open && stream?.id) {
+      base44.entities.ScheduledStream.filter({ id: stream.id }).then(res => {
+        if (res?.[0]) setLiveStream(res[0]);
+      });
+    }
+  }, [open, stream?.id]);
 
   if (!stream) return null;
 
   return (
-    <AppModal open={open} onClose={onClose} title={stream.title || stream.game} wide>
+    <AppModal open={open} onClose={onClose} title={liveStream.title || liveStream.game} wide>
       {/* Tab bar */}
       <div className="flex gap-1 mb-5 border-b border-cyan-900/20 pb-3">
         {TABS.map(({ key, label, icon: Icon }) => (
@@ -35,10 +44,10 @@ export default function StreamDetailModal({ stream, open, onClose }) {
         ))}
       </div>
 
-      {tab === "details" && <StreamDetailInfo stream={stream} />}
-      {tab === "checklist" && <PreStreamChecklist stream={stream} />}
-      {tab === "promo" && <PromoGenerator stream={stream} />}
-      {tab === "strategy" && <StreamStrategyTab stream={stream} />}
+      {tab === "details" && <StreamDetailInfo stream={liveStream} />}
+      {tab === "checklist" && <PreStreamChecklist stream={liveStream} />}
+      {tab === "promo" && <PromoGenerator stream={liveStream} />}
+      {tab === "strategy" && <StreamStrategyTab stream={liveStream} />}
     </AppModal>
   );
 }
