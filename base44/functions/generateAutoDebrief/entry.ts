@@ -7,12 +7,40 @@ Deno.serve(async (req) => {
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { session_id } = await req.json();
+  const { session_id, is_desktop } = await req.json();
   if (!session_id) return Response.json({ error: "session_id required" }, { status: 400 });
 
-  // Fetch the target session
-  const session = await base44.asServiceRole.entities.LiveSession.get(session_id);
-  if (!session) return Response.json({ error: "Session not found" }, { status: 404 });
+  // Fetch the target session from the appropriate entity
+  let session;
+  if (is_desktop) {
+    const ds = await base44.asServiceRole.entities.DesktopSession.get(session_id);
+    if (!ds) return Response.json({ error: "Desktop session not found" }, { status: 404 });
+    // Normalize desktop session to match LiveSession field names
+    session = {
+      ...ds,
+      game: ds.title || "Desktop Session",
+      stream_date: ds.started_at ? ds.started_at.split("T")[0] : "",
+      stream_type: "desktop",
+      duration_minutes: ds.duration_min,
+      followers_gained: ds.total_follows || 0,
+      shares: ds.total_shares || 0,
+      gifters: 0,
+      diamonds: 0,
+      comments: 0,
+      likes_received: 0,
+      energy_level: "medium",
+      promo_posted: false,
+      went_as_planned: true,
+      notes: ds.notes || "",
+      best_moment: null,
+      weakest_moment: null,
+      spike_reason: null,
+      drop_off_reason: null,
+    };
+  } else {
+    session = await base44.asServiceRole.entities.LiveSession.get(session_id);
+    if (!session) return Response.json({ error: "Session not found" }, { status: 404 });
+  }
 
   // Check for existing review
   const existing = await base44.asServiceRole.entities.ReplayReview.filter({
@@ -147,8 +175,10 @@ Be concise, tactical, and specific. No generic filler. Reference actual numbers.
     reviewed: true,
   });
 
-  // Mark session as replay_reviewed
-  await base44.asServiceRole.entities.LiveSession.update(session_id, { replay_reviewed: true });
+  // Mark session as replay_reviewed (only for LiveSession)
+  if (!is_desktop) {
+    await base44.asServiceRole.entities.LiveSession.update(session_id, { replay_reviewed: true });
+  }
 
   return Response.json({ review, already_existed: false });
 });
