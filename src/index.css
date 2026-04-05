@@ -69,47 +69,32 @@
   }
 }
 
-/* Global minimum font size enforcement: no text smaller than 1rem (16px) */
+/* Accessibility: enforce a minimum readable size for explicitly tiny text only.
+   text-xs (12px) and text-sm (14px) are intentional design choices — leave them alone.
+   Only catch sub-12px hardcoded sizes. */
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
 
-/* Override all Tailwind classes that render text below 16px */
-.text-xs,
-.text-sm,
 .text-\[8px\],
 .text-\[9px\],
 .text-\[10px\],
 .text-\[11px\],
-.text-\[12px\],
-.text-\[13px\],
-.text-\[14px\],
-.text-\[15px\],
 .text-\[0\.5rem\],
 .text-\[0\.625rem\],
-.text-\[0\.6875rem\],
-.text-\[0\.75rem\],
-.text-\[0\.8125rem\],
-.text-\[0\.875rem\] {
-  font-size: 1rem !important;
-  line-height: 1.5 !important;
+.text-\[0\.6875rem\] {
+  font-size: 0.75rem !important;
+  line-height: 1.4 !important;
 }
 
-/* Catch prose and nested small text */
-.prose-sm,
-.prose .text-sm,
-.prose .text-xs {
-  font-size: 1rem !important;
-  line-height: 1.5 !important;
-}
-
-/* Override slate-600 text to slate-300 for better readability */
+/* Boost slate-600 contrast on dark backgrounds — slate-600 (#475569) is near-invisible on #02040f.
+   Nudge to slate-400 to maintain hierarchy while staying readable. */
 .text-slate-600 {
-  color: rgb(203 213 225) !important; /* slate-300 */
+  color: rgb(148 163 184) !important; /* slate-400 */
 }
 .text-slate-600\/60,
 .text-slate-600\/50,
 .text-slate-600\/40 {
-  color: rgb(203 213 225 / var(--tw-text-opacity, 0.5)) !important;
+  color: rgb(148 163 184 / var(--tw-text-opacity, 0.5)) !important;
 }

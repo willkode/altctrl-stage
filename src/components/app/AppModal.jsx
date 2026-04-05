@@ -16,7 +16,7 @@ export default function AppModal({ open, onClose, title, children, accent = "cya
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative w-full ${wide ? "sm:max-w-2xl" : "sm:max-w-lg"} bg-[#060d1f] border ${borderColor} rounded-t-2xl sm:rounded-xl overflow-hidden flex flex-col`}
+      <div className={`relative w-full ${wide ? "sm:max-w-2xl lg:max-w-3xl" : "sm:max-w-lg lg:max-w-xl"} bg-[#060d1f] border ${borderColor} rounded-t-2xl sm:rounded-xl overflow-hidden flex flex-col`}
         style={{ maxHeight: "92dvh" }}>
         {/* Drag handle — mobile only */}
         <div className="sm:hidden flex justify-center pt-3 pb-1 shrink-0">

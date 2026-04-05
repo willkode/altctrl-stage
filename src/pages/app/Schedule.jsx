@@ -141,45 +141,47 @@ export default function Schedule() {
       {loading ? <LoadingState message="Loading schedule..." /> : (
         <>
           {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-1 mb-1.5">
-            {DAY_LABELS.map((d, i) => {
-              const date = weekDates[i];
-              const dateStr = date.toISOString().split("T")[0];
-              const isToday = dateStr === TODAY_STR;
-              const isPref = prefDays.includes(d.toLowerCase().slice(0, 3));
-              return (
-                <div key={i} className="text-center pb-1">
-                  <div className={`text-[9px] font-mono uppercase mb-0.5 ${isToday ? "text-cyan-400" : isPref ? "text-pink-400/50" : "text-slate-700"}`}>{d}</div>
-                  <div className={`text-xs font-black ${isToday ? "text-cyan-400" : "text-slate-500"}`}>{date.getDate()}</div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="grid grid-cols-7 gap-1 mb-6">
-            {weekDates.map((date, i) => {
-              const dateStr = date.toISOString().split("T")[0];
-              const isToday = dateStr === TODAY_STR;
-              const dayStreams = streams.filter(s => s.scheduled_date === dateStr)
-                .sort((a, b) => (a.start_time || "").localeCompare(b.start_time || ""));
-
-              return (
-                <div key={i} className={`min-h-[120px] bg-[#060d1f]/80 rounded-lg border transition-all ${
-                  isToday ? "border-cyan-500/30 bg-cyan-950/10" : "border-cyan-900/15"
-                }`}>
-                  <div className="p-1.5 space-y-1.5">
-                    {dayStreams.map(s => (
-                      <StreamSlotCard key={s.id} stream={s} onEdit={openEdit} onDelete={handleDelete} />
-                    ))}
-                    <button onClick={() => { setEditStream({ scheduled_date: dateStr }); setDrawerOpen(true); }}
-                      className="w-full py-2 flex items-center justify-center text-slate-800 hover:text-slate-600 hover:bg-cyan-500/5 rounded border border-dashed border-cyan-900/15 hover:border-cyan-900/30 transition-all">
-                      <Plus className="w-3 h-3" />
-                    </button>
+          <div className="overflow-x-auto -mx-2 px-2">
+            {/* Day header labels */}
+            <div className="grid grid-cols-7 gap-1 mb-1.5 min-w-[640px]">
+              {DAY_LABELS.map((d, i) => {
+                const date = weekDates[i];
+                const dateStr = date.toISOString().split("T")[0];
+                const isToday = dateStr === TODAY_STR;
+                const isPref = prefDays.includes(d.toLowerCase().slice(0, 3));
+                return (
+                  <div key={i} className="text-center pb-1">
+                    <div className={`text-[9px] font-mono uppercase mb-0.5 ${isToday ? "text-cyan-400" : isPref ? "text-pink-400/50" : "text-slate-700"}`}>{d}</div>
+                    <div className={`text-xs font-black ${isToday ? "text-cyan-400" : "text-slate-500"}`}>{date.getDate()}</div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+            {/* Day cells */}
+            <div className="grid grid-cols-7 gap-1 mb-6 min-w-[640px]">
+              {weekDates.map((date, i) => {
+                const dateStr = date.toISOString().split("T")[0];
+                const isToday = dateStr === TODAY_STR;
+                const dayStreams = streams.filter(s => s.scheduled_date === dateStr)
+                  .sort((a, b) => (a.start_time || "").localeCompare(b.start_time || ""));
+                return (
+                  <div key={i} className={`min-h-[120px] bg-[#060d1f]/80 rounded-lg border transition-all ${
+                    isToday ? "border-cyan-500/30 bg-cyan-950/10" : "border-cyan-900/15"
+                  }`}>
+                    <div className="p-1.5 space-y-1.5">
+                      {dayStreams.map(s => (
+                        <StreamSlotCard key={s.id} stream={s} onEdit={openEdit} onDelete={handleDelete} />
+                      ))}
+                      <button onClick={() => { setEditStream({ scheduled_date: dateStr }); setDrawerOpen(true); }}
+                        className="w-full py-2 flex items-center justify-center text-slate-800 hover:text-slate-600 hover:bg-cyan-500/5 rounded border border-dashed border-cyan-900/15 hover:border-cyan-900/30 transition-all">
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div> {/* end overflow-x-auto wrapper */}
 
           {/* Empty state */}
           {streams.length === 0 && currentWeek && (

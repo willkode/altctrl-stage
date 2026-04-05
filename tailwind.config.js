@@ -2,6 +2,9 @@
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+    safelist: [
+      "min-w-[640px]",
+    ],
   theme: {
   	extend: {
   		borderRadius: {

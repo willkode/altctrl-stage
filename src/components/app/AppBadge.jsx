@@ -13,7 +13,7 @@ export default function AppBadge({ label, accent = "cyan", dot = false }) {
   };
 
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest px-2.5 py-1 rounded border ${styles[accent] || styles.cyan}`}>
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest px-2 py-0.5 rounded border ${styles[accent] || styles.cyan}`}>
       {dot && <span className={`w-1.5 h-1.5 rounded-full ${dotColor[accent] || dotColor.cyan}`} />}
       {label}
     </span>

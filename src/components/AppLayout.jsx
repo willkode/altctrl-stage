@@ -86,7 +86,7 @@ export default function AppLayout() {
       }} />
 
       {/* Top Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-cyan-900/40 bg-[#02040f]/95 backdrop-blur-sm flex items-center px-4 gap-4">
+      <header className="fixed top-0 left-0 right-0 z-40 h-16 border-b border-cyan-900/40 bg-[#02040f]/95 backdrop-blur-sm flex items-center px-4 md:px-6 gap-4">
         {/* Mobile menu toggle */}
         <button className="md:hidden text-slate-400 hover:text-white transition-colors" onClick={() => setSidebarOpen(!sidebarOpen)}>
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -153,10 +153,10 @@ export default function AppLayout() {
 
 
           <div className="px-3 pb-6 mt-2">
-            <div className="border border-cyan-900/30 rounded p-3 text-xs font-mono text-slate-600">
+            <div className="border border-cyan-900/30 rounded p-3 text-xs font-mono text-slate-500">
               <div className="flex items-center gap-1.5 mb-1">
-                <Zap className="w-3 h-3 text-cyan-900" />
-                <span className="text-cyan-900 uppercase tracking-widest">Beta</span>
+                <Zap className="w-3 h-3 text-cyan-700" />
+                <span className="text-cyan-700 uppercase tracking-widest">Beta</span>
               </div>
               <span>Signal active. System nominal.</span>
             </div>
@@ -202,7 +202,7 @@ export default function AppLayout() {
                 active ? "text-cyan-400" : "text-slate-600 hover:text-slate-400"
               }`}>
               <Icon className="w-5 h-5" />
-              <span className="text-[9px] tracking-widest">{label}</span>
+              <span className="text-[10px] tracking-widest">{label}</span>
               {active && <span className="absolute bottom-1 w-1 h-1 rounded-full bg-cyan-400" />}
             </Link>
           );
