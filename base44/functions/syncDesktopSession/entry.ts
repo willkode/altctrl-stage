@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
 
     const record = {
       session_id: sessionId,
-      user_id: user.id,
+      user_id: user.email,
       title: session.title || body.title || "",
       game: session.game || body.game || "",
       platform: session.platform || body.platform || "TikTok",
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
     // Upsert by session_id + user_id
     const existing = await base44.asServiceRole.entities.DesktopSession.filter({
       session_id: sessionId,
-      user_id: user.id,
+      user_id: user.email,
     });
 
     let desktopSessionDbId;
