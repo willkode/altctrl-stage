@@ -13,7 +13,10 @@ export default function PromoGenerator({ stream }) {
     base44.auth.me().then(user =>
       base44.entities.CreatorProfile.filter({ created_by: user.email }).then(p => setProfile(p[0] || null))
     );
-  }, []);
+    if (stream.saved_promo) {
+      try { setPromo(JSON.parse(stream.saved_promo)); } catch {}
+    }
+  }, [stream.id]);
 
   async function generate() {
     setLoading(true);
@@ -48,6 +51,7 @@ Return a JSON object with:
       },
     });
     setPromo(res);
+    await base44.entities.ScheduledStream.update(stream.id, { saved_promo: JSON.stringify(res), promo_generated: true });
     setLoading(false);
   }
 

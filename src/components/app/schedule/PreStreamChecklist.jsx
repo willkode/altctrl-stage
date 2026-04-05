@@ -6,6 +6,12 @@ export default function PreStreamChecklist({ stream }) {
   const [checklist, setChecklist] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (stream.saved_checklist) {
+      try { setChecklist(JSON.parse(stream.saved_checklist)); } catch {}
+    }
+  }, [stream.id]);
+
   async function generate() {
     setLoading(true);
     const res = await base44.integrations.Core.InvokeLLM({
@@ -36,6 +42,7 @@ Each checklist item should be a short, actionable string.`,
       },
     });
     setChecklist(res);
+    await base44.entities.ScheduledStream.update(stream.id, { saved_checklist: JSON.stringify(res) });
     setLoading(false);
   }
 

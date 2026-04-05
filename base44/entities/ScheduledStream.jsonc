@@ -161,6 +161,14 @@
     "ai_challenge_output": {
       "type": "string",
       "title": "AI Challenge Output (JSON)"
+    },
+    "saved_checklist": {
+      "type": "string",
+      "title": "Saved Pre-Stream Checklist (JSON)"
+    },
+    "saved_promo": {
+      "type": "string",
+      "title": "Saved Promo Content (JSON)"
     }
   },
   "required": [
