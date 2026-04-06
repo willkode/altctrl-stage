@@ -27,12 +27,12 @@ export default function TikTokAppealHelper() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <button className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
+            <a href="https://appeal.altctrl.us" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
               Start Free <ArrowRight className="w-4 h-4" />
-            </button>
-            <button className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm border transition-all" style={{ borderColor: "rgba(255,0,128,0.6)", color: "#ff0080", background: "rgba(255,0,128,0.05)" }}>
+            </a>
+            <a href="https://appeal.altctrl.us" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm border transition-all" style={{ borderColor: "rgba(255,0,128,0.6)", color: "#ff0080", background: "rgba(255,0,128,0.05)" }}>
               Create a Case
-            </button>
+            </a>
           </div>
 
           <p className="text-xs font-mono text-slate-500">Not affiliated with TikTok. No guarantee of reinstatement.</p>
@@ -118,9 +118,9 @@ export default function TikTokAppealHelper() {
           </div>
 
           <div className="text-center">
-            <button className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
+            <a href="https://appeal.altctrl.us" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
               Start Your Case <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -299,12 +299,12 @@ export default function TikTokAppealHelper() {
           <p className="text-slate-300 mb-8">Get organized, collect your evidence, and create a better appeal without the chaos.</p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <button className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
+            <a href="https://appeal.altctrl.us" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all" style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
               Start Free <ArrowRight className="w-4 h-4" />
-            </button>
-            <button className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm border transition-all" style={{ borderColor: "rgba(255,0,128,0.6)", color: "#ff0080", background: "rgba(255,0,128,0.05)" }}>
+            </a>
+            <a href="https://appeal.altctrl.us" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm border transition-all" style={{ borderColor: "rgba(255,0,128,0.6)", color: "#ff0080", background: "rgba(255,0,128,0.05)" }}>
               Create a Case
-            </button>
+            </a>
           </div>
 
           <p className="text-sm font-mono text-slate-500">Simple. Clear. Built to help you respond better.</p>
