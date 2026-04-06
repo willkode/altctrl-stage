@@ -5,6 +5,7 @@ import NeonCard from "../components/NeonCard";
 import SeatCounter from "../components/SeatCounter";
 import SpeedLines from "../components/SpeedLines";
 import GeometricParticles from "../components/GeometricParticles";
+import TopGamesGrid from "../components/TopGamesGrid";
 
 const loopSteps = [
 {
@@ -402,6 +403,25 @@ export default function Home() {
               <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// THE SYSTEM BEHIND THE STREAM</div>
               <p className="text-slate-300 leading-relaxed text-sm">AltCtrl gives you the system behind the stream — not just for the creators who already have it figured out, but for the ones still building toward it.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TOP GAMES ────────────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-xs font-mono uppercase tracking-widest text-purple-400 mb-4">// POPULAR GAMES IN OUR LIBRARY</div>
+            <h2 className="text-3xl sm:text-4xl font-black uppercase text-white mb-3">What Are Creators<br /><span style={{ color: "#a855f7" }}>Streaming Right Now?</span></h2>
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto">See trending games and get AI insights on how they perform for creators like you.</p>
+          </div>
+          <TopGamesGrid />
+          <div className="text-center mt-10">
+            <Link to="/games-library"
+              className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95"
+              style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)", color: "white", boxShadow: "0 0 20px rgba(168,85,247,0.4)" }}>
+              VIEW FULL LIBRARY <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>

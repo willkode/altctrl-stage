@@ -59,6 +59,7 @@ import ILoveYouMegan from './pages/ILoveYouMegan';
 import ExtensionAuth from './pages/ExtensionAuth';
 import OGCreators from './pages/OGCreators';
 import Investors from './pages/Investors';
+import GamesLibrary from './pages/GamesLibrary';
 
 const HomeRedirect = () => {
   // This component will be wrapped in auth context later
@@ -138,6 +139,7 @@ const AuthenticatedApp = () => {
         <Route path="/desktop/callback" element={<DesktopCallback />} />
         <Route path="/og-creators" element={<OGCreators />} />
         <Route path="/investors" element={<Investors />} />
+        <Route path="/games-library" element={<GamesLibrary />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
