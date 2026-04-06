@@ -186,8 +186,6 @@ export default function Analytics() {
             <GameBreakdown sessions={filtered} />
             <PromoImpact sessions={filtered} />
           </div>
-          <TikTokAccountStats />
-          <TikTokVideoStats />
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
           <TimeHeatmap sessions={filtered} />
         </div>
