@@ -118,7 +118,11 @@ export default function GameLibraryAdmin() {
     setDeletingDupeGroup(group.title);
     
     for (const game of toDelete) {
-      await base44.entities.GameLibrary.delete(game.id);
+      try {
+        await base44.entities.GameLibrary.delete(game.id);
+      } catch (err) {
+        console.warn(`Failed to delete game ${game.id}:`, err);
+      }
     }
     
     setDeletingDupeGroup(null);
