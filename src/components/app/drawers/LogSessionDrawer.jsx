@@ -46,6 +46,7 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [gameSuggestions, setGameSuggestions] = useState([]);
+  const [allGames, setAllGames] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [upcomingStreams, setUpcomingStreams] = useState([]);
   const [saved, setSaved] = useState(false);
@@ -125,9 +126,9 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
     onClose();
   };
 
-  const filteredGames = gameSuggestions.filter(g =>
+  const filteredGames = (allGames.length > 0 ? allGames : gameSuggestions).filter(g =>
     form.game && g.toLowerCase().includes(form.game.toLowerCase()) && g.toLowerCase() !== form.game.toLowerCase()
-  );
+  ).slice(0, 8);
 
   return (
     <AppModal open={open} onClose={() => { setConfirmDelete(false); onClose(); }}
@@ -160,8 +161,8 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
             placeholder="Fortnite, Warzone…"
             className={inp} />
           {showSuggestions && filteredGames.length > 0 && (
-            <div className="absolute z-30 left-0 right-0 top-full mt-1 bg-[#060d1f] border border-cyan-900/40 rounded-lg overflow-hidden shadow-xl">
-              {filteredGames.slice(0, 5).map(g => (
+            <div className="absolute z-30 left-0 right-0 top-full mt-1 bg-[#060d1f] border border-cyan-900/40 rounded-lg overflow-hidden shadow-xl max-h-52 overflow-y-auto">
+              {filteredGames.map(g => (
                 <button key={g} onMouseDown={() => { set("game", g); setShowSuggestions(false); }}
                   className="w-full text-left px-4 py-2.5 text-sm font-mono text-slate-300 hover:bg-yellow-400/5 hover:text-yellow-400 transition-all">
                   {g}
