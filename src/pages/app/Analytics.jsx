@@ -12,8 +12,7 @@ import SessionHistory from "../../components/app/analytics/SessionHistory";
 import TopFollowersStats from "../../components/app/analytics/TopFollowersStats";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import EngagementTriggersAnalysis from "../../components/app/analytics/EngagementTriggersAnalysis";
-import TikTokAccountStats from "../../components/app/analytics/TikTokAccountStats";
-import TikTokVideoStats from "../../components/app/analytics/TikTokVideoStats";
+import ExternalPlatformStats from "../../components/app/analytics/ExternalPlatformStats";
 import { Plus, X, SlidersHorizontal } from "lucide-react";
 
 export default function Analytics() {
@@ -162,17 +161,15 @@ export default function Analytics() {
               <Plus className="w-3.5 h-3.5" /> Log First Session
             </button>
           </div>
-          <TikTokAccountStats />
-          <TikTokVideoStats />
+          <ExternalPlatformStats />
         </div>
       ) : sessions.length < 3 ? (
         <div className="space-y-6">
-          <TikTokAccountStats />
+          <ExternalPlatformStats />
           <DataProgressBanner current={sessions.length} required={3} featureName="Full Analytics"
             hint={`${sessions.length} session${sessions.length > 1 ? "s" : ""} logged. ${3 - sessions.length} more to unlock charts and breakdowns.`}
             actionLabel="Log a session" actionLink="/app/analytics" />
           <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
-          <TikTokVideoStats />
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-[#060d1f]/80 border border-cyan-900/20 rounded-xl p-12 text-center">
@@ -181,7 +178,7 @@ export default function Analytics() {
         </div>
       ) : (
         <div className="space-y-6">
-          <TikTokAccountStats />
+          <ExternalPlatformStats />
           <SummaryStats sessions={filtered} />
           <PerformanceChart sessions={filtered} />
           <div className="grid md:grid-cols-2 gap-5">
