@@ -165,11 +165,11 @@ export default function Analytics() {
         </div>
       ) : sessions.length < 3 ? (
         <div className="space-y-6">
+          <TikTokAccountStats />
           <DataProgressBanner current={sessions.length} required={3} featureName="Full Analytics"
             hint={`${sessions.length} session${sessions.length > 1 ? "s" : ""} logged. ${3 - sessions.length} more to unlock charts and breakdowns.`}
             actionLabel="Log a session" actionLink="/app/analytics" />
           <SessionHistory sessions={sessions} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
-          <TikTokAccountStats />
           <TikTokVideoStats />
         </div>
       ) : filtered.length === 0 ? (
@@ -179,6 +179,7 @@ export default function Analytics() {
         </div>
       ) : (
         <div className="space-y-6">
+          <TikTokAccountStats />
           <SummaryStats sessions={filtered} />
           <PerformanceChart sessions={filtered} />
           <div className="grid md:grid-cols-2 gap-5">
