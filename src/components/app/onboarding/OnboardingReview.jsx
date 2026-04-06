@@ -31,23 +31,11 @@ const CONNECTOR_ID = "69c7e25af1fbef3a6d3efd4d";
 
 export default function OnboardingReview({ profileData, games, topGameIds, onToggleTop, onUpdateProfile, onConfirm, onBack, saving }) {
   const [editField, setEditField] = useState(null);
-  const [tiktokConnected, setTiktokConnected] = useState(false);
-  const [connectingTikTok, setConnectingTikTok] = useState(false);
+
 
   const set = (key, value) => onUpdateProfile({ ...profileData, [key]: value });
 
-  const connectTikTok = async () => {
-    setConnectingTikTok(true);
-    const url = await base44.connectors.connectAppUser(CONNECTOR_ID);
-    const popup = window.open(url, "_blank");
-    const timer = setInterval(() => {
-      if (!popup || popup.closed) {
-        clearInterval(timer);
-        setConnectingTikTok(false);
-        base44.functions.invoke("syncTikTokProfile", {}).then(() => setTiktokConnected(true)).catch(() => setTiktokConnected(true));
-      }
-    }, 500);
-  };
+
 
   const chip = (active, label, onClick) => (
     <button onClick={onClick}
@@ -148,23 +136,11 @@ export default function OnboardingReview({ profileData, games, topGameIds, onTog
         <EditableField label="Preferred Time" value={profileData.preferred_stream_time} placeholder="19:00" onChange={v => set("preferred_stream_time", v)} type="time" />
       </Section>
 
-      {/* TikTok connect */}
-      <Section title="Connect TikTok (Optional)">
-        <p className="text-xs font-mono text-slate-500 leading-relaxed mb-3">
-          Imports your profile stats, follower count, and video library automatically.
+      {/* Platform connection hint */}
+      <Section title="Connect Platforms (Optional)">
+        <p className="text-xs font-mono text-slate-500 leading-relaxed">
+          After setup, go to Settings to connect your TikTok, Twitch, and YouTube accounts for automatic stat syncing.
         </p>
-        {tiktokConnected ? (
-          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 rounded-lg px-4 py-3">
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            <span className="text-sm font-mono text-green-400">TikTok connected!</span>
-          </div>
-        ) : (
-          <button onClick={connectTikTok} disabled={connectingTikTok}
-            className="w-full flex items-center justify-center gap-2 bg-pink-500/10 border border-pink-500/40 text-pink-400 font-black uppercase tracking-widest py-3 rounded-lg text-xs hover:bg-pink-500/20 transition-all disabled:opacity-50">
-            <ExternalLink className="w-4 h-4" />
-            {connectingTikTok ? "Connecting…" : "Connect TikTok"}
-          </button>
-        )}
       </Section>
 
       {/* Actions */}

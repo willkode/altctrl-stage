@@ -134,9 +134,9 @@ export default function Coach() {
                   </div>
                 )}
                 <div>
-                  <p className="text-[9px] font-mono uppercase text-slate-700 mb-1">TikTok</p>
-                  <p className={`text-[11px] font-mono ${context.connection_health?.tiktok_connected ? "text-green-400" : "text-slate-600"}`}>
-                    {context.connection_health?.tiktok_connected ? "Connected" : "Not connected"}
+                  <p className="text-[9px] font-mono uppercase text-slate-700 mb-1">Platforms</p>
+                  <p className="text-[11px] font-mono text-slate-400">
+                    {context.connection_health?.tiktok_connected ? "Connected" : "Check Settings"}
                     {context.connection_health?.stale && " (stale)"}
                   </p>
                 </div>

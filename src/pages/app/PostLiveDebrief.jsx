@@ -199,12 +199,7 @@ export default function PostLiveDebrief() {
                 {hasReview && !generating && <AutoDebriefCard review={review} />}
 
                 {/* Link to TikTok Live Center */}
-                {hasReview && !generating && (
-                  <a href="https://livecenter.tiktok.com/analytics/live_video" target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-4 py-2.5 rounded-lg border border-pink-900/20 text-pink-400/60 hover:text-pink-400 hover:border-pink-500/20 transition-all">
-                    <ExternalLink className="w-3 h-3" /> Review on TikTok Live Center
-                  </a>
-                )}
+
               </div>
 
               {/* Sidebar — session metrics + creator notes */}

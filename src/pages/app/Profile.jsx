@@ -59,7 +59,7 @@ export default function Profile() {
   const fileRef = useRef(null);
   const toast = useAppToast();
 
-  const [syncingTikTok, setSyncingTikTok] = useState(false);
+  const [syncingPlatforms, setSyncingPlatforms] = useState(false);
   const [form, setForm] = useState({
     display_name: "", tiktok_handle: "", avatar_url: "", bio: "",
     creator_niche: "variety", content_style: "entertainment",
@@ -115,16 +115,29 @@ export default function Profile() {
     set("languages", form.languages.filter(l => l !== lang));
   }
 
-  async function handleTikTokSync() {
-    setSyncingTikTok(true);
+  async function handlePlatformSync() {
+    setSyncingPlatforms(true);
     try {
-      await base44.functions.invoke("tiktokDirectSync", {});
+      const user = await base44.auth.me();
+      const conns = await base44.entities.ExternalPlatformConnection.filter({ created_by: user.email }, '-last_sync_at', 5);
+      if (conns.length === 0) {
+        toast.error("No platforms connected. Add them in Settings.");
+        setSyncingPlatforms(false);
+        return;
+      }
+      await Promise.all(conns.map(c => base44.functions.invoke("fetchExternalStats", { platform: c.platform, handle: c.handle, id: c.id })));
+      // Update follower count from highest connected platform
+      const reloaded = await base44.entities.ExternalPlatformConnection.filter({ created_by: user.email }, '-followers', 1);
+      if (reloaded[0]?.followers && profileId) {
+        await base44.entities.CreatorProfile.update(profileId, { follower_count: reloaded[0].followers, follower_count_source: "manual" });
+        setForm(f => ({ ...f, follower_count: reloaded[0].followers }));
+      }
       await loadProfile();
-      toast.saved("TikTok data synced!");
+      toast.saved("Platform stats synced!");
     } catch (err) {
-      toast.error("Sync failed. Try connecting TikTok again.");
+      toast.error("Sync failed. Check Settings for connection status.");
     } finally {
-      setSyncingTikTok(false);
+      setSyncingPlatforms(false);
     }
   }
 
@@ -265,7 +278,7 @@ export default function Profile() {
         <Section title="// Baseline Stats">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <p className="text-xs font-mono text-slate-600 mb-4">Used by the AI coach to calibrate recommendations. Syncs from TikTok on first connection.</p>
+              <p className="text-xs font-mono text-slate-600 mb-4">Used by the AI coach to calibrate recommendations. Syncs from your connected platforms.</p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className={lbl}>Average Viewers</label>
@@ -279,10 +292,10 @@ export default function Profile() {
                 </div>
               </div>
             </div>
-            <button onClick={handleTikTokSync} disabled={syncingTikTok}
+            <button onClick={handlePlatformSync} disabled={syncingPlatforms}
               className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2.5 rounded border border-pink-900/40 text-pink-400 hover:border-pink-500/40 hover:text-pink-300 transition-all shrink-0 disabled:opacity-50">
-              <RefreshCw className={`w-3.5 h-3.5 ${syncingTikTok ? "animate-spin" : ""}`} />
-              {syncingTikTok ? "Syncing…" : "Sync TikTok"}
+              <RefreshCw className={`w-3.5 h-3.5 ${syncingPlatforms ? "animate-spin" : ""}`} />
+              {syncingPlatforms ? "Syncing…" : "Sync Platforms"}
             </button>
           </div>
         </Section>

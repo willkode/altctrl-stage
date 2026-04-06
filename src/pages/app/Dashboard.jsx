@@ -11,7 +11,7 @@ import StreamDrawer from "../../components/app/drawers/StreamDrawer";
 import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import SummaryStats from "../../components/app/analytics/SummaryStats";
 import PerformanceChart from "../../components/app/analytics/PerformanceChart";
-import TikTokVideoStats from "../../components/app/analytics/TikTokVideoStats";
+import ExternalPlatformStats from "../../components/app/analytics/ExternalPlatformStats";
 import { Zap, CheckSquare, Sparkles } from "lucide-react";
 
 function getISOWeek(date) {
@@ -141,7 +141,7 @@ export default function Dashboard() {
           {last7Sessions.length > 0 && (
             <>
               <PerformanceChart sessions={last7Sessions} />
-              <TikTokVideoStats />
+              <ExternalPlatformStats />
             </>
           )}
         </div>

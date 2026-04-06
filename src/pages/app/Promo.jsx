@@ -59,7 +59,7 @@ export default function Promo() {
     const versionNum = packs.filter(k => k.scheduled_stream_id === stream.id).length + 1;
 
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a TikTok LIVE gaming creator assistant. Generate a high-energy, platform-native promo pack for a TikTok LIVE stream.
+      prompt: `You are a gaming creator assistant. Generate a high-energy, platform-native promo pack for a LIVE stream.
 
 Creator profile:
 - Name: ${creatorName || "the creator"}
