@@ -316,9 +316,9 @@ export default function Settings() {
           <TikTokConnectionCard />
         </Section>
 
-        {/* External Platforms (Twitch, YouTube) */}
+        {/* External Platforms (TikTok, Twitch, YouTube) */}
         <Section title="// External Platforms" accent="purple">
-          <p className="text-xs text-slate-500 font-mono mb-4">Sync your Twitch and YouTube profile stats. Stats are fetched automatically when you sync.</p>
+          <p className="text-xs text-slate-500 font-mono mb-4">Sync your TikTok, Twitch and YouTube profile stats. Stats are fetched automatically when you sync.</p>
           <ExternalPlatformCard />
         </Section>
 
