@@ -32,6 +32,7 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [gameSuggestions, setGameSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredGames, setFilteredGames] = useState([]);
   const [generatingTitle, setGeneratingTitle] = useState(false);
   const gameRef = useRef(null);
   const toast = useAppToast();
@@ -114,9 +115,23 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     onClose();
   };
 
-  const filteredSuggestions = gameSuggestions.filter(g =>
-    form.game && g.toLowerCase().includes(form.game.toLowerCase()) && g.toLowerCase() !== form.game.toLowerCase()
-  );
+  // Dynamic search across history + library
+  useEffect(() => {
+    if (!form.game.trim()) {
+      setFilteredGames([]);
+      return;
+    }
+    const q = form.game.toLowerCase();
+    const fromHistory = gameSuggestions.filter(g =>
+      g.toLowerCase().includes(q) && g.toLowerCase() !== q
+    );
+    const fromLibrary = gameLibrary
+      .filter(g => g.title.toLowerCase().includes(q) && g.title.toLowerCase() !== q)
+      .map(g => g.title);
+    // Combine, remove duplicates, limit to 12
+    const combined = [...new Set([...fromHistory, ...fromLibrary])].slice(0, 12);
+    setFilteredGames(combined);
+  }, [form.game, gameSuggestions, gameLibrary]);
 
   const dayLabel = form.scheduled_date
     ? new Date(form.scheduled_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
@@ -157,9 +172,9 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
             placeholder="e.g. Fortnite, Warzone…"
             className={`${inp} ${errors.game ? "border-red-500/60" : ""}`} />
           {errors.game && <p className={err}>{errors.game}</p>}
-          {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-30 left-0 right-0 top-full mt-1 bg-[#060d1f] border border-cyan-900/40 rounded-lg overflow-hidden shadow-xl">
-              {filteredSuggestions.slice(0, 6).map(g => (
+          {showSuggestions && filteredGames.length > 0 && (
+            <div className="absolute z-30 left-0 right-0 top-full mt-1 bg-[#060d1f] border border-cyan-900/40 rounded-lg overflow-hidden shadow-xl max-h-52 overflow-y-auto">
+              {filteredGames.map(g => (
                 <button key={g} onMouseDown={() => { set("game", g); setShowSuggestions(false); }}
                   className="w-full text-left px-4 py-2.5 text-sm font-mono text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all">
                   {g}
