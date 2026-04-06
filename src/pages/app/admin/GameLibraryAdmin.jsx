@@ -41,6 +41,7 @@ export default function GameLibraryAdmin() {
   const [checkingDupes, setCheckingDupes] = useState(false);
   const [dupeResults, setDupeResults] = useState(null);
   const [deletingDupeGroup, setDeletingDupeGroup] = useState(null);
+  const [deletingAllDupes, setDeletingAllDupes] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -126,6 +127,26 @@ export default function GameLibraryAdmin() {
     }
     
     setDeletingDupeGroup(null);
+    await load();
+    await checkDuplicates();
+  }
+
+  async function deleteAllDuplicates() {
+    if (!dupeResults?.duplicates?.length) return;
+    setDeletingAllDupes(true);
+    
+    for (const group of dupeResults.duplicates) {
+      const [keep, ...toDelete] = group.games;
+      for (const game of toDelete) {
+        try {
+          await base44.entities.GameLibrary.delete(game.id);
+        } catch (err) {
+          console.warn(`Failed to delete game ${game.id}:`, err);
+        }
+      }
+    }
+    
+    setDeletingAllDupes(false);
     await load();
     await checkDuplicates();
   }
@@ -383,7 +404,16 @@ Return as a JSON array of 5 games.`,
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-mono uppercase text-red-400">⚠️ {dupeResults.total} Duplicate Groups Found</span>
-              <button onClick={() => setDupeResults(null)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={deleteAllDuplicates}
+                  disabled={deletingAllDupes}
+                  className="text-[9px] font-mono uppercase px-2 py-1 rounded bg-red-500/30 border border-red-500/50 text-red-300 hover:bg-red-500/40 transition-all disabled:opacity-40"
+                >
+                  {deletingAllDupes ? 'Deleting All...' : 'Delete All Dupes'}
+                </button>
+                <button onClick={() => setDupeResults(null)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
+              </div>
             </div>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {dupeResults.duplicates.map((group, idx) => (
