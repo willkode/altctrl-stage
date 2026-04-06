@@ -47,12 +47,14 @@ export default function TikTokVideoStats() {
   }
 
   async function handleSync() {
-    if (!videos.length) return; // only sync if already connected/loaded
+    if (!videos.length) return;
     setSyncing(true);
     try {
       await base44.functions.invoke("runTikTokFullSync", {});
       await loadVideos();
-    } catch {}
+    } catch {
+      // TikTok sync unavailable — silently ignore
+    }
     setSyncing(false);
   }
 

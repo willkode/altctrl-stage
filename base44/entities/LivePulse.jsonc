@@ -87,46 +87,5 @@
     "user_id",
     "captured_at",
     "minute_live"
-  ],
-  "rls": {
-    "create": {
-      "user_id": "{{user.email}}"
-    },
-    "read": {
-      "$or": [
-        {
-          "user_id": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "update": {
-      "$or": [
-        {
-          "user_id": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
-    "delete": {
-      "$or": [
-        {
-          "user_id": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    }
-  }
+  ]
 }

@@ -104,25 +104,31 @@ export default function TikTokAccountStats() {
 
   async function loadData() {
     setLoading(true);
-    const statusRes = await base44.functions.invoke("tiktokAuth", { action: "get_status" });
-    const status = statusRes.data;
-    if (status.connected) {
-      setAccount({
-        connection_status: "connected",
-        display_name: status.display_name,
-        username: status.username,
-        avatar_url: status.avatar_url,
-        last_sync_at: status.last_sync_at,
-        last_sync_status: status.last_sync_status,
-        connection_id: status.connection_id,
-      });
-      const snaps = await base44.entities.TikTokProfileSnapshot.filter(
-        { connected_account_id: status.connection_id },
-        "-captured_at",
-        60
-      );
-      setSnapshots(snaps);
-    } else {
+    try {
+      const statusRes = await base44.functions.invoke("tiktokAuth", { action: "get_status" });
+      const status = statusRes.data;
+      if (status.connected) {
+        setAccount({
+          connection_status: "connected",
+          display_name: status.display_name,
+          username: status.username,
+          avatar_url: status.avatar_url,
+          last_sync_at: status.last_sync_at,
+          last_sync_status: status.last_sync_status,
+          connection_id: status.connection_id,
+        });
+        const snaps = await base44.entities.TikTokProfileSnapshot.filter(
+          { connected_account_id: status.connection_id },
+          "-captured_at",
+          60
+        );
+        setSnapshots(snaps);
+      } else {
+        setAccount(null);
+        setSnapshots([]);
+      }
+    } catch {
+      // TikTok API integration disabled — show disconnected state
       setAccount(null);
       setSnapshots([]);
     }
@@ -132,11 +138,15 @@ export default function TikTokAccountStats() {
   async function handleSync() {
     setSyncing(true);
     setSyncError(null);
-    const res = await base44.functions.invoke("runTikTokFullSync", {});
-    if (res.data?.status === "failed" || res.data?.errors?.length) {
-      setSyncError(res.data.errors?.[0] || "Sync failed");
-    } else {
-      await loadData();
+    try {
+      const res = await base44.functions.invoke("runTikTokFullSync", {});
+      if (res.data?.status === "failed" || res.data?.errors?.length) {
+        setSyncError(res.data.errors?.[0] || "Sync failed");
+      } else {
+        await loadData();
+      }
+    } catch {
+      setSyncError("TikTok sync is currently unavailable");
     }
     setSyncing(false);
   }
