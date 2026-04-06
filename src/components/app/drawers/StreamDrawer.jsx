@@ -115,7 +115,7 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     onClose();
   };
 
-  // Dynamic search across history + library
+  // Dynamic search across history + library with popularity scores
   useEffect(() => {
     if (!form.game.trim()) {
       setFilteredGames([]);
@@ -124,13 +124,20 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     const q = form.game.toLowerCase();
     const fromHistory = gameSuggestions.filter(g =>
       g.toLowerCase().includes(q) && g.toLowerCase() !== q
-    );
+    ).map(title => ({ title, score: null }));
     const fromLibrary = gameLibrary
       .filter(g => g.title.toLowerCase().includes(q) && g.title.toLowerCase() !== q)
-      .map(g => g.title);
-    // Combine, remove duplicates, limit to 12
-    const combined = [...new Set([...fromHistory, ...fromLibrary])].slice(0, 12);
-    setFilteredGames(combined);
+      .map(g => ({ title: g.title, score: g.sort_priority ? Math.max(0, Math.min(100, (100 - g.sort_priority))) : 50 }));
+    // Combine, remove duplicates by title, limit to 12
+    const combined = [];
+    const seen = new Set();
+    [...fromLibrary, ...fromHistory].forEach(item => {
+      if (!seen.has(item.title.toLowerCase())) {
+        combined.push(item);
+        seen.add(item.title.toLowerCase());
+      }
+    });
+    setFilteredGames(combined.slice(0, 12));
   }, [form.game, gameSuggestions, gameLibrary]);
 
   const dayLabel = form.scheduled_date
@@ -174,10 +181,11 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
           {errors.game && <p className={err}>{errors.game}</p>}
           {showSuggestions && filteredGames.length > 0 && (
             <div className="absolute z-30 left-0 right-0 top-full mt-1 bg-[#060d1f] border border-cyan-900/40 rounded-lg overflow-hidden shadow-xl max-h-52 overflow-y-auto">
-              {filteredGames.map(g => (
-                <button key={g} onMouseDown={() => { set("game", g); setShowSuggestions(false); }}
-                  className="w-full text-left px-4 py-2.5 text-sm font-mono text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all">
-                  {g}
+              {filteredGames.map(item => (
+                <button key={item.title} onMouseDown={() => { set("game", item.title); setShowSuggestions(false); }}
+                  className="w-full text-left px-4 py-2.5 text-sm font-mono text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400 transition-all flex items-center justify-between gap-2">
+                  <span>{item.title}</span>
+                  {item.score !== null && <span className="text-[10px] text-cyan-400/60 shrink-0">★ {item.score}</span>}
                 </button>
               ))}
             </div>
