@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Users, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 
 export default function TopFollowersStats({ sessions }) {
   const [followers, setFollowers] = useState([]);
@@ -12,13 +12,8 @@ export default function TopFollowersStats({ sessions }) {
 
   async function loadFollowers() {
     setLoading(true);
-    const user = await base44.auth.me();
-    const topFollowers = await base44.asServiceRole.entities.ViewerHistory.filter(
-      { creator_id: user.email, is_follower: true },
-      "-stream_count",
-      10
-    );
-    setFollowers(topFollowers);
+    const res = await base44.functions.invoke('getTopFollowers', {});
+    setFollowers(res.data?.followers || []);
     setLoading(false);
   }
 
