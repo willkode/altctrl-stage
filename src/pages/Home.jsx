@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Zap, Sparkles, Brain, TrendingUp } from "lucide-react";
 import GlitchText from "../components/GlitchText";
 import NeonCard from "../components/NeonCard";
 import SeatCounter from "../components/SeatCounter";
@@ -106,38 +106,69 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, #020408)" }} />
       </section>
 
-      {/* ── BUILT FOR THE CREATOR ─────────────────────────────── */}
+      {/* ── FEATURES GRID ────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// BUILT FOR THE CREATOR BEHIND THE STREAM</div>
-            <GlitchText text="YOU ALREADY KNOW HOW TO GO LIVE." className="text-4xl sm:text-5xl font-black uppercase text-white block mb-3" tag="h2" />
-            <p className="text-2xl font-black uppercase text-cyan-400">WHAT YOU NEED IS A BETTER SYSTEM AROUND IT.</p>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// WHAT WE BUILT FOR YOU</div>
+            <GlitchText text="EVERYTHING YOU NEED TO GROW" className="text-4xl sm:text-5xl font-black uppercase text-white block" tag="h2" />
           </div>
 
-          <div className="mb-10 rounded-lg overflow-hidden border border-cyan-900/40">
-            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/03c7c7659_generated_image.png" alt="Cyberpunk gaming setup" loading="lazy" className="w-full object-cover" style={{ maxHeight: '380px' }} />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4">
-              {[
-              "Build a real weekly stream schedule",
-              "Generate pre-stream promo in seconds",
-              "Log performance after every session",
-              "See which games, times, and habits actually grow your account",
-              "Get coaching that tells you what to do next"].
-              map((item, i) =>
-              <div key={i} className="flex items-start gap-3">
-                  <span className="text-cyan-400 font-mono font-bold text-sm mt-0.5">→</span>
-                  <span className="text-slate-300 text-base">{item}</span>
-                </div>
-              )}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Programming */}
+            <div className="bg-gradient-to-br from-cyan-900/30 to-cyan-900/10 border border-cyan-500/30 rounded-xl p-8 hover:border-cyan-400/50 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-4">
+                <Zap className="w-5 h-5 text-cyan-400" />
+              </div>
+              <h3 className="text-xl font-black uppercase text-cyan-400 mb-3">Programming</h3>
+              <p className="text-sm text-slate-400 mb-4">Strategic stream planning built on your data.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Weekly AI-generated plans</li>
+                <li>✓ Game & timing recommendations</li>
+                <li>✓ Growth bottleneck analysis</li>
+              </ul>
             </div>
-            <div className="bg-[#060d1f] border border-cyan-900/40 rounded-lg p-8">
-              <p className="text-slate-400 leading-relaxed text-sm">
-                No team. No manager. No guessing. Just a smarter way to run your stream.
-              </p>
+
+            {/* Promotion */}
+            <div className="bg-gradient-to-br from-pink-900/30 to-pink-900/10 border border-pink-500/30 rounded-xl p-8 hover:border-pink-400/50 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4">
+                <Sparkles className="w-5 h-5 text-pink-400" />
+              </div>
+              <h3 className="text-xl font-black uppercase text-pink-400 mb-3">Promotion</h3>
+              <p className="text-sm text-slate-400 mb-4">AI-generated promo kits ready to post.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Auto-generated hooks & captions</li>
+                <li>✓ Hashtag suggestions</li>
+                <li>✓ Multiple title options</li>
+              </ul>
+            </div>
+
+            {/* Coaching */}
+            <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-900/10 border border-yellow-500/30 rounded-xl p-8 hover:border-yellow-400/50 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center mb-4">
+                <Brain className="w-5 h-5 text-yellow-400" />
+              </div>
+              <h3 className="text-xl font-black uppercase text-yellow-400 mb-3">Coaching</h3>
+              <p className="text-sm text-slate-400 mb-4">Real-time AI guidance during your streams.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Live performance alerts</li>
+                <li>✓ Proactive action suggestions</li>
+                <li>✓ Daily coaching focus cards</li>
+              </ul>
+            </div>
+
+            {/* Analytics */}
+            <div className="bg-gradient-to-br from-purple-900/30 to-purple-900/10 border border-purple-500/30 rounded-xl p-8 hover:border-purple-400/50 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
+                <TrendingUp className="w-5 h-5 text-purple-400" />
+              </div>
+              <h3 className="text-xl font-black uppercase text-purple-400 mb-3">Analytics</h3>
+              <p className="text-sm text-slate-400 mb-4">Deep insights into your streaming patterns.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Session breakdowns & trends</li>
+                <li>✓ Viewer retention metrics</li>
+                <li>✓ Best & worst moment analysis</li>
+              </ul>
             </div>
           </div>
         </div>
