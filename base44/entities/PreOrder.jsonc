@@ -1,0 +1,54 @@
+{
+  "name": "PreOrder",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "tiktok_handle": {
+      "type": "string",
+      "title": "TikTok Handle"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "paid",
+        "canceled"
+      ],
+      "default": "pending"
+    },
+    "stripe_session_id": {
+      "type": "string",
+      "title": "Stripe Session ID"
+    }
+  },
+  "required": [
+    "email",
+    "name"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

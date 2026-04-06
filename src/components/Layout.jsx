@@ -72,8 +72,8 @@ export default function Layout() {
             <Link to="/founding-creators" className="text-xs font-mono uppercase tracking-widest text-pink-400 hover:text-pink-300 transition-colors border border-pink-500/40 hover:border-pink-400 px-4 py-2 rounded hover:shadow-[0_0_15px_rgba(255,0,128,0.2)] transition-all">
               Founding Creators
             </Link>
-            <Link to="/waitlist" className="text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2 rounded hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.4)] transition-all">
-              Join Waitlist
+            <Link to="/preorder" className="text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2 rounded hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.4)] transition-all">
+              Pre-Order Now
             </Link>
           </div>
 
@@ -84,7 +84,7 @@ export default function Layout() {
 
         {mobileOpen && (
           <div className="md:hidden border-t border-cyan-900/40 bg-[#02040f] px-4 py-4 space-y-3">
-            {[...navLinks, { label: "Founding Creators", path: "/founding-creators" }, { label: "Waitlist", path: "/waitlist" }].map(link => (
+            {[...navLinks, { label: "Founding Creators", path: "/founding-creators" }, { label: "Pre-Order", path: "/preorder" }].map(link => (
               <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
                 className={`block text-sm font-mono uppercase tracking-widest py-2 ${location.pathname === link.path ? "text-cyan-400" : "text-slate-400"}`}>
                 {link.label}
