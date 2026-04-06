@@ -1,19 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import GlitchText from "../../components/GlitchText";
+import PlatformSelector from "../../components/app/onboarding/PlatformSelector";
 import OnboardingChat from "../../components/app/onboarding/OnboardingChat";
 import OnboardingReview from "../../components/app/onboarding/OnboardingReview";
 import { Zap } from "lucide-react";
 
 export default function Onboarding({ onComplete }) {
-  const [phase, setPhase] = useState("chat"); // chat | review | connecting | done
+  const [phase, setPhase] = useState("platforms"); // platforms | chat | review | connecting | done
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [profileData, setProfileData] = useState({});
   const [resolvedGames, setResolvedGames] = useState([]);
   const [topGameIds, setTopGameIds] = useState([]);
   const [saving, setSaving] = useState(false);
 
+  const handlePlatformsSelect = (platforms) => {
+    setSelectedPlatforms(platforms);
+    setProfileData(prev => ({ ...prev, streaming_platforms: platforms }));
+    setPhase("chat");
+  };
+
   const handleChatComplete = (data, games) => {
-    setProfileData(data);
+    setProfileData({ ...data, streaming_platforms: selectedPlatforms });
     setResolvedGames(games);
     // Auto-mark first game as top if there's only one
     if (games.length === 1) setTopGameIds([games[0].id]);
@@ -61,11 +69,21 @@ export default function Onboarding({ onComplete }) {
           </div>
           <GlitchText text="WELCOME TO ALTCTRL" className="text-3xl font-black uppercase text-white block mb-1" tag="h1" />
           <p className="text-slate-500 text-sm font-mono">
-            {phase === "chat" ? "Tell me about yourself and I'll set everything up." :
+            {phase === "platforms" ? "Choose your streaming platforms." :
+             phase === "chat" ? "Tell me about yourself and I'll set everything up." :
              phase === "review" ? "Review your profile before we go live." :
              "Launching your command center..."}
           </p>
         </div>
+
+        {/* Phase: Platforms */}
+        {phase === "platforms" && (
+          <PlatformSelector
+            selectedPlatforms={selectedPlatforms}
+            onUpdate={setSelectedPlatforms}
+            onNext={() => handlePlatformsSelect(selectedPlatforms)}
+          />
+        )}
 
         {/* Phase: Chat */}
         {phase === "chat" && (
