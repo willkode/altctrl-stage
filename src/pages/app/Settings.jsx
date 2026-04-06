@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Check, Zap, AlertTriangle, Download } from "lucide-react";
+import { Check, Zap, AlertTriangle, Download, LogOut } from "lucide-react";
 import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";
@@ -206,6 +206,10 @@ export default function Settings() {
     toast.deleted("All sessions deleted");
   }
 
+  async function handleLogout() {
+    await base44.auth.logout("/");
+  }
+
   if (loading) return <PageContainer><LoadingState message="Loading settings..." /></PageContainer>;
 
   return (
@@ -342,15 +346,27 @@ export default function Settings() {
 
         {/* Danger Zone */}
         <Section title="// Danger Zone" accent="red">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-white font-mono">Delete all session data</p>
-              <p className="text-xs text-slate-600 font-mono mt-0.5">Permanently removes all logged sessions. Cannot be undone.</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-white font-mono">Delete all session data</p>
+                <p className="text-xs text-slate-600 font-mono mt-0.5">Permanently removes all logged sessions. Cannot be undone.</p>
+              </div>
+              <button onClick={handleDeleteAllSessions}
+                className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2 rounded bg-red-500/10 border border-red-900/40 text-red-500 hover:bg-red-500/20 hover:border-red-500/40 transition-all shrink-0">
+                <AlertTriangle className="w-3.5 h-3.5" /> Delete
+              </button>
             </div>
-            <button onClick={handleDeleteAllSessions}
-              className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2 rounded bg-red-500/10 border border-red-900/40 text-red-500 hover:bg-red-500/20 hover:border-red-500/40 transition-all shrink-0">
-              <AlertTriangle className="w-3.5 h-3.5" /> Delete
-            </button>
+            <div className="border-t border-red-900/20 pt-3 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm text-white font-mono">Logout</p>
+                <p className="text-xs text-slate-600 font-mono mt-0.5">Sign out of your account and return to home.</p>
+              </div>
+              <button onClick={handleLogout}
+                className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2 rounded bg-red-500/10 border border-red-900/40 text-red-500 hover:bg-red-500/20 hover:border-red-500/40 transition-all shrink-0">
+                <LogOut className="w-3.5 h-3.5" /> Logout
+              </button>
+            </div>
           </div>
         </Section>
       </div>
