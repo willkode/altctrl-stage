@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair, Swords } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair, Swords, HelpCircle } from "lucide-react";
+import SupportTicketModal from "./app/SupportTicketModal";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -62,6 +63,7 @@ export default function AppLayout() {
   const [activeDrawer, setActiveDrawer] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
     base44.auth.me().then(user => {
@@ -116,6 +118,15 @@ export default function AppLayout() {
 
         {/* Header actions */}
         <div className="flex items-center gap-3">
+          <button onClick={() => setSupportOpen(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all text-[10px] font-mono uppercase tracking-widest">
+            <HelpCircle className="w-3.5 h-3.5" /> Support
+          </button>
+          <button onClick={() => setSupportOpen(true)}
+            aria-label="Get Support"
+            className="sm:hidden w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+            <HelpCircle className="w-4 h-4" />
+          </button>
           {isAdmin && (
             <Link to="/app/admin/dashboard"
               aria-label="Admin Panel"
@@ -236,6 +247,7 @@ export default function AppLayout() {
       <AppToaster />
       <StreamDrawer open={activeDrawer === "stream"} onClose={() => setActiveDrawer(null)} />
       <LogSessionDrawer open={activeDrawer === "session"} onClose={() => setActiveDrawer(null)} />
+      <SupportTicketModal open={supportOpen} onClose={() => setSupportOpen(false)} />
     </div>
   );
 }

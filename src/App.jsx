@@ -49,6 +49,7 @@ import AdminReview from './pages/app/admin/ManualReviewQueue';
 import AdminSessions from './pages/app/admin/SessionInspection';
 import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
+import AdminSupportTickets from './pages/app/admin/SupportTickets';
 import AdminMessaging from './pages/app/admin/Messaging';
 import AdminGameLibrary from './pages/app/admin/GameLibraryAdmin';
 import AdminUsers from './pages/app/admin/Users';
@@ -117,7 +118,8 @@ const AuthenticatedApp = () => {
           <Route path="admin/errors" element={<AdminErrors />} />
           <Route path="admin/games" element={<AdminGameLibrary />} />
           <Route path="admin/users" element={<AdminUsers />} />
-          <Route path="admin/support" element={<AdminSupport />} />
+          <Route path="admin/support" element={<AdminSupportTickets />} />
+          <Route path="admin/creators" element={<AdminSupport />} />
           <Route path="admin/messaging" element={<AdminMessaging />} />
         </Route>
       </Route>

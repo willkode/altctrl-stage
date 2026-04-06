@@ -1,0 +1,99 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "title": "Subject"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "bug",
+        "feature_request",
+        "account_issue",
+        "extension_issue",
+        "billing",
+        "other"
+      ],
+      "default": "other"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "open",
+        "in_progress",
+        "resolved",
+        "closed"
+      ],
+      "default": "open"
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "creator_email": {
+      "type": "string",
+      "title": "Creator Email"
+    },
+    "creator_name": {
+      "type": "string",
+      "title": "Creator Display Name"
+    },
+    "messages": {
+      "type": "string",
+      "title": "Messages (JSON array)"
+    }
+  },
+  "required": [
+    "subject",
+    "description",
+    "creator_email"
+  ],
+  "rls": {
+    "create": {
+      "creator_email": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "creator_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "creator_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
