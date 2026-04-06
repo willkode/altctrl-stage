@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import AdminLayout from "../../../components/app/admin/AdminLayout";
 import GameDetailDrawer from "../../../components/app/games/GameDetailDrawer";
-import { Plus, Search, Upload, Loader2, Trash2, Edit, Swords, ToggleLeft, ToggleRight, Database } from "lucide-react";
+import { Plus, Search, Upload, Loader2, Trash2, Edit, Swords, ToggleLeft, ToggleRight, Database, Sparkles } from "lucide-react";
 import AppModal from "../../../components/app/AppModal";
 
 const inp = "w-full bg-[#02040f] border border-cyan-900/20 focus:border-cyan-500/20 text-white placeholder-slate-700 rounded-lg px-3 py-2.5 text-xs font-mono outline-none transition-all";
@@ -35,6 +35,8 @@ export default function GameLibraryAdmin() {
   const [seeding, setSeeding] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [enriching, setEnriching] = useState(false);
+  const [enrichProgress, setEnrichProgress] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -78,6 +80,28 @@ export default function GameLibraryAdmin() {
     if (!confirm(`Delete "${game.title}"?`)) return;
     await base44.entities.GameLibrary.delete(game.id);
     load();
+  }
+
+  async function enrichWithAI() {
+    setEnriching(true);
+    // Get stubs (games with empty genres or description containing 'pending')
+    const stubs = games.filter(g =>
+      !g.genres || g.genres.length === 0 || (g.description_short || '').includes('pending')
+    ).slice(0, 20);
+    if (stubs.length === 0) {
+      setEnriching(false);
+      setEnrichProgress('All games already enriched!');
+      return;
+    }
+    setEnrichProgress(`Enriching ${stubs.length} games...`);
+    const res = await base44.functions.invoke('enrichGameMetadata', {
+      game_ids: stubs.map(g => g.id),
+      limit: stubs.length,
+    });
+    await load();
+    setEnriching(false);
+    setEnrichProgress(`Done! ${res.data?.count || 0} games enriched.`);
+    setTimeout(() => setEnrichProgress(null), 5000);
   }
 
   async function bulkUploadGames(file) {
@@ -189,6 +213,11 @@ Return as a JSON array of 5 games.`,
             <p className="text-sm text-muted-foreground font-mono">{games.length} games in library</p>
           </div>
           <div className="flex gap-2">
+            <button onClick={enrichWithAI} disabled={enriching}
+              className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-yellow-900/30 text-slate-500 hover:text-yellow-400 transition-all disabled:opacity-50">
+              {enriching ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              {enriching ? `Enriching...` : "AI Enrich (20)"}
+            </button>
             <label className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-purple-900/30 text-slate-500 hover:text-purple-400 transition-all cursor-pointer disabled:opacity-50">
               <input
                 type="file"
@@ -215,6 +244,12 @@ Return as a JSON array of 5 games.`,
             </button>
           </div>
         </div>
+
+        {enrichProgress && (
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-xs font-mono text-yellow-400">
+            {enrichProgress}
+          </div>
+        )}
 
         {/* Search */}
         <div className="relative">

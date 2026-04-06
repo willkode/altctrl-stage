@@ -103,6 +103,11 @@ const SEED_GAMES = [
   { title: "Cities: Skylines II", slug: "cities-skylines-2", description_short: "City building and management simulator.", developer: "Colossal Order", publisher: "Paradox Interactive", multiplayer_type: "single_player", gameplay_pacing: "slow", session_style: "long_sessions", challenge_friendly: true, difficulty_style: "casual", camera_style: "isometric", genres: ["Simulation", "Management"], tags: ["simulation", "building", "management"], game_modes: ["freeplay", "scenario"], core_objective: "Build and manage thriving city.", win_conditions: "Achieve scenario goals.", fail_conditions: "City bankruptcy.", challenge_notes: "Specific building and budget challenges.", safety_notes: "Management simulation. Family-friendly.", sort_priority: 100 }
 ];
 
+// All remaining game titles to seed (will be AI-enriched after creation)
+const ADDITIONAL_GAME_TITLES = [
+  "Manor Lords","Planet Coaster 2","Planet Zoo","House Flipper 2","PowerWash Simulator","Schedule I","Supermarket Simulator","TCG Card Shop Simulator","Contraband Police","Drug Dealer Simulator","Drug Dealer Simulator 2","The Outlast Trials","Poppy Playtime","Slender: The Arrival","Fears to Fathom: Home Alone","Buckshot Roulette","R.E.P.O.","Goose Goose Duck","Garry's Mod","Left 4 Dead 2","PAYDAY 3","PAYDAY 2","Deep Rock Galactic","Abiotic Factor","Grounded","Once Human","Enshrouded","The Forest","MORDHAU","Chivalry 2","Battlefield 2042","Battlefield V","Battlefield 1","Call of Duty: Black Ops 6","Call of Duty: Modern Warfare III","Call of Duty: Black Ops III","Halo Infinite","Halo: The Master Chief Collection","XDefiant","Delta Force","Splitgate 2","Counter-Strike: Source","Tom Clancy's The Division 2","Insurgency: Sandstorm","Squad","Hell Let Loose","Arma 3","Foxhole","Gray Zone Warfare","SCUM","The Isle","V Rising","Core Keeper","Sunkenland","My Summer Car","CarX Drift Racing Online","Trackmania","Need for Speed Unbound","The Crew Motorfest","Wreckfest","Assetto Corsa Competizione","Automobilista 2","Microsoft Flight Simulator","DCS World","Warhammer 40,000: Space Marine 2","Warhammer 40,000: Darktide","Warhammer: Vermintide 2","The Lord of the Rings Online","Guild Wars 2","Final Fantasy XIV Online","The Elder Scrolls Online","Lost Ark","New World","Albion Online","MapleStory","Tibia","Palia","The First Descendant","Borderlands 3","Tiny Tina's Wonderlands","Tom Clancy's Ghost Recon Breakpoint","Tom Clancy's Ghost Recon Wildlands","Sniper Elite 5","Sniper Elite: Resistance","Remnant II","Risk of Rain 2","Gunfire Reborn","Roboquest","Hades II","Hades","Hollow Knight","Cuphead","Dead Cells","Blasphemous 2","Celeste","Ori and the Will of the Wisps","Prince of Persia: The Lost Crown","Lies of P","Black Myth: Wukong","Wo Long: Fallen Dynasty","Nioh 2","Dragon's Dogma 2","Kingdom Come: Deliverance II","Kingdom Come: Deliverance","Assassin's Creed Shadows","Assassin's Creed Mirage","Hitman World of Assassination","Watch Dogs 2","Sleeping Dogs: Definitive Edition","Mafia: Definitive Edition","Mafia II: Definitive Edition","Saints Row","Just Cause 3","Just Cause 4","Metal Gear Solid V: The Phantom Pain","Death Stranding Director's Cut","Control Ultimate Edition","Alan Wake 2","Resident Evil 4","Resident Evil Village","Resident Evil 2","Resident Evil 3","Silent Hill 2","The Texas Chain Saw Massacre","Killer Klowns from Outer Space: The Game","Pacify","Labyrinthine","Escape the Backrooms","Backrooms: Escape Together","Inside the Backrooms","Back 4 Blood","World War Z","Killing Floor 2","Killing Floor 3","Dying Light 2 Stay Human","Dying Light","State of Decay 2","Unturned","The Long Dark","Green Hell","Ancestors: The Humankind Odyssey","Medieval Dynasty","Bellwright","Soulmask","Farming Simulator 25","Farming Simulator 22","Lawn Mowing Simulator","House Flipper","Cooking Simulator","Chef RPG","Two Point Hospital","Two Point Campus","Big Ambitions","Software Inc.","Game Dev Tycoon","Mad Games Tycoon 2","RollerCoaster Tycoon 3 Complete Edition","OpenTTD","Factorio","Satisfactory","Dyson Sphere Program","Kerbal Space Program","Kerbal Space Program 2","Prison Architect","Oxygen Not Included","Banished","Foundation","Frostpunk 2","Against the Storm","Timberborn","Anno 1800","Stronghold Definitive Edition","Stronghold Crusader HD","Age of Mythology: Retold","Warcraft III","StarCraft II","Command & Conquer Remastered Collection","Company of Heroes 3","Men of War II","They Are Billions","Total War: Rome II","Total War: Medieval II","Total War: Pharaoh","Total War: Three Kingdoms","Sid Meier's Civilization VII","Sid Meier's Civilization V","Old World","Songs of Conquest","Heroes of Might and Magic III","Age of Wonders 4","Crab Game","Pico Park 2","Pico Park","Gang Beasts","Ultimate Chicken Horse","Overcooked! 2","PlateUp!","Moving Out 2","Liar's Bar","Lockdown Protocol","Don't Starve Together","We Were Here Forever","Keep Talking and Nobody Explodes","A Way Out","It Takes Two","Portal 2","Portal","Half-Life 2","Half-Life: Alyx","The Stanley Parable: Ultra Deluxe","Superliminal","Viewfinder","The Witness","Outer Wilds","Firewatch","Road 96","Life is Strange","Life is Strange: True Colors","Detroit: Become Human","Heavy Rain","Until Dawn","Beyond: Two Souls","The Quarry","Little Nightmares II","Bendy and the Ink Machine","Bendy and the Dark Revival","Hello Neighbor 2","Hello Neighbor","Totally Accurate Battle Simulator","Totally Accurate Battlegrounds","People Playground","Boneworks","Bonelab","VRChat","The Headliners","Smite 2","Smite","Heroes of the Storm","Paladins","Predecessor","Deadlock","Battlerite","Warhammer 40,000: Dawn of War","Warhammer 40,000: Dawn of War II","Warhammer 40,000: Dawn of War III","Bloons TD 6","Plants vs. Zombies: Battle for Neighborville","Plants vs. Zombies: Garden Warfare 2","Peggle Deluxe","Balatro","Slay the Spire","Inscryption","Poker Club","The Binding of Isaac: Rebirth","Enter the Gungeon","Vampire Survivors","Brotato","20 Minutes Till Dawn","Holocure: Save the Fans!","Risk of Rain Returns","Loop Hero","Cult of the Lamb","DREDGE","Dave the Diver","Lunacid","Dark and Darker","Dungeonborne","Ravenswatch","Spell Brigade","Muck","Only Up!","A Difficult Game About Climbing","Jump King","Getting Over It with Bennett Foddy","Golf With Your Friends","Golf It!","House of Golf 2","Party Club","Pro Cycling Manager 2024","Session: Skate Sim","Skater XL","Tony Hawk's Pro Skater 1 + 2","Descenders","Steep","Riders Republic","SnowRunner","MudRunner","Euro Fishing","Russian Fishing 4","Call of the Wild: The Angler","theHunter: Call of the Wild","Fishing Planet","Goat Simulator 3","Goat Simulator","Untitled Goose Game","Neighbours from Hell","Totally Reliable Delivery Service","Brick Rigs","Automation - The Car Company Tycoon Game","Stormworks: Build and Rescue","Trailmakers","Besiege","Hydroneer","Scrap Mechanic","Mars First Logistics","Teardown","Brickadia","Viscera Cleanup Detail","Hardspace: Shipbreaker","Mon Bazou","Junkyard Truck","Jalopy","Pacific Drive","Derail Valley","Train Sim World 5","Rail Route","American Arcadia","Mouthwashing","FNaF: Help Wanted 2","Five Nights at Freddy's: Security Breach","Five Nights at Freddy's: Into the Pit","Ultimate Custom Night","Amanda the Adventurer","MiSide","Escape Simulator","Squirrel with a Gun","High on Life","The Entropy Centre","Baba Is You","Poly Bridge 3","Bridge Constructor Portal","Who's Your Daddy?!","The Break-In","Murky Divers","Ranch Simulator","Streamer Life Simulator 2","Thief Simulator 2","Police Simulator: Patrol Officers","Bus Simulator 21","Taxi Life: A City Driving Simulator","Carnival Hunt","Deceit 2","Deceit","Propnight","Secret Neighbor","Witch It","Midnight Ghost Hunt","Ghost Watchers","Paranormal Cleanup","Trombone Champ","A Dance of Fire and Ice","Muse Dash","Geometry Dash","Trackmania Nations Forever","Quake Champions","Quake Live","DOOM Eternal","DOOM","ULTRAKILL","Turbo Overkill","Mullet Madjack","Ion Fury","Selaco","RoboCop: Rogue City","Six Days in Fallujah","Bodycam","BattleBit Remastered","Zero Hour","Door Kickers 2","SWAT 4","Operation: Harsh Doorstop","Arena Breakout: Infinite","Mechabellum","Armored Core VI: Fires of Rubicon","MechWarrior 5: Mercenaries","World of Tanks","World of Warships","Crossout","Star Wars Battlefront II","Star Wars Jedi: Survivor","LEGO Star Wars: The Skywalker Saga","Star Wars: Squadrons","Workers & Resources: Soviet Republic","Captain of Industry","Space Engineers","Astroneer","Elite Dangerous","Star Citizen","EVE Online","X4: Foundations","Subnautica: Below Zero","Planet Crafter","Forever Skies","Need for Speed Most Wanted","Forza Motorsport","Car Mechanic Simulator 2021","Escape from Tarkov: Arena","Madden NFL 25","PGA Tour 2K25","eFootball 2025"
+];
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return Response.json({ error: "Method not allowed" }, { status: 405 });
   const base44 = createClientFromRequest(req);
@@ -118,6 +123,8 @@ Deno.serve(async (req) => {
   }
 
   const created = [];
+
+  // Seed detailed games first
   for (const game of SEED_GAMES) {
     const record = await base44.asServiceRole.entities.GameLibrary.create({
       ...game,
@@ -128,5 +135,31 @@ Deno.serve(async (req) => {
     created.push(record.id);
   }
 
-  return Response.json({ message: `Seeded ${created.length} games`, ids: created });
+  // Seed remaining games with minimal data (to be enriched by enrichGameMetadata)
+  let priority = SEED_GAMES.length + 1;
+  for (const title of ADDITIONAL_GAME_TITLES) {
+    // Skip if already exists
+    const alreadyExists = created.length > 0;
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const record = await base44.asServiceRole.entities.GameLibrary.create({
+      title,
+      slug,
+      normalized_title: title.toLowerCase(),
+      description_short: `${title} — AI enrichment pending.`,
+      genres: [],
+      tags: [],
+      multiplayer_type: "mixed",
+      gameplay_pacing: "medium",
+      session_style: "mixed",
+      camera_style: "first_person",
+      challenge_friendly: false,
+      difficulty_style: "mixed",
+      pc_supported: true,
+      is_active: true,
+      sort_priority: priority++,
+    });
+    created.push(record.id);
+  }
+
+  return Response.json({ message: `Seeded ${created.length} games (${SEED_GAMES.length} detailed + ${ADDITIONAL_GAME_TITLES.length} stub). Run enrichGameMetadata to fill in stubs.`, total: created.length });
 });
