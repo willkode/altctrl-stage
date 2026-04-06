@@ -402,15 +402,15 @@ Return as a JSON array of 5 games.`,
 
         {dupeResults && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-mono uppercase text-red-400">⚠️ {dupeResults.total} Duplicate Groups Found</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={deleteAllDuplicates}
                   disabled={deletingAllDupes}
-                  className="text-[9px] font-mono uppercase px-2 py-1 rounded bg-red-500/30 border border-red-500/50 text-red-300 hover:bg-red-500/40 transition-all disabled:opacity-40"
+                  className="text-[10px] font-mono uppercase px-3 py-1.5 rounded bg-red-600/40 border border-red-500/50 text-red-300 hover:bg-red-600/50 transition-all disabled:opacity-40 whitespace-nowrap"
                 >
-                  {deletingAllDupes ? 'Deleting All...' : 'Delete All Dupes'}
+                  {deletingAllDupes ? 'Deleting...' : '🗑️ Delete All'}
                 </button>
                 <button onClick={() => setDupeResults(null)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
               </div>
