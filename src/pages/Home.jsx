@@ -305,75 +305,66 @@ export default function Home() {
 
       {/* ── DESKTOP APP ───────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
-        <div className="max-w-5xl mx-auto">
-
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-14">
             <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// MEET THE ALTCTRL DESKTOP APP</div>
             <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-3">
               YOUR LIVE<br /><span style={{ color: "#ff0080" }}>CONTROL CENTER.</span>
             </h2>
-            <p className="text-slate-400 text-sm max-w-xl mx-auto">
-              One place to run your stream, watch what is happening, and get help in the moments that matter.
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+              Real-time coaching alerts, live metrics, chat integration, and performance tracking — everything you need to stream smarter.
             </p>
           </div>
 
-          {/* Mockup image */}
-          <div className="rounded-xl overflow-hidden border border-pink-900/40 mb-10" style={{ boxShadow: "0 0 60px rgba(255,0,128,0.1)" }}>
-            <img
-              src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/0b289f144_generated_image.png"
-              alt="ALT Ctrl Desktop App Mockup"
-              loading="lazy"
-              className="w-full object-cover"
-              style={{ maxHeight: "420px" }}
-            />
-          </div>
-
-          {/* Two-col: left description + right features */}
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div className="space-y-4">
-              <p className="text-slate-300 text-sm leading-relaxed">
-                It is designed to replace tools like OBS and Streamlabs — giving you one place to run your stream and get help while you are live.
-              </p>
-              <p className="text-slate-500 text-sm leading-relaxed font-mono">
-                It is not there to replace you. It is there to help you stay on top of everything while you stay focused on being you.
-              </p>
-              <p className="text-pink-400 text-sm font-bold">Most tools help you broadcast. ALT Ctrl helps you broadcast better.</p>
+          {/* Three-panel layout */}
+          <div className="grid md:grid-cols-3 gap-4 mb-12">
+            {/* Left: Coaching Alerts */}
+            <div className="rounded-xl overflow-hidden border border-pink-900/30" style={{ boxShadow: "0 0 30px rgba(255,0,128,0.1)" }}>
+              <img
+                src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/b002991e6_Screenshot2026-04-03163007.png"
+                alt="Live coaching alerts"
+                loading="lazy"
+                className="w-full object-cover"
+              />
             </div>
-            <div className="space-y-2">
-              {[
-                { label: "Run your stream", body: "Scenes, overlays, and live setup — all from one place." },
-                { label: "Watch everything live", body: "Chat, gifts, likes, and shares as they happen." },
-                { label: "Get live prompts", body: "Smart cues that tell you when to react, push engagement, or switch it up." },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 bg-[#060d1f] border border-cyan-900/30 rounded-lg px-4 py-3">
-                  <span className="text-cyan-400 font-mono font-bold text-sm mt-0.5 shrink-0">→</span>
-                  <div>
-                    <div className="text-white text-xs font-black uppercase mb-0.5">{item.label}</div>
-                    <div className="text-slate-500 text-xs font-mono">{item.body}</div>
-                  </div>
-                </div>
-              ))}
+
+            {/* Center: Main Dashboard */}
+            <div className="rounded-xl overflow-hidden border border-cyan-900/30" style={{ boxShadow: "0 0 30px rgba(0,245,255,0.1)" }}>
+              <img
+                src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/3c23be18b_Screenshot2026-04-04155001.png"
+                alt="Live dashboard"
+                loading="lazy"
+                className="w-full object-cover"
+              />
+            </div>
+
+            {/* Right: Metrics Grid */}
+            <div className="rounded-xl overflow-hidden border border-purple-900/30" style={{ boxShadow: "0 0 30px rgba(168,85,247,0.1)" }}>
+              <img
+                src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/b747aff2f_Screenshot2026-04-05142629.png"
+                alt="Live metrics"
+                loading="lazy"
+                className="w-full object-cover"
+              />
             </div>
           </div>
 
-          {/* Live prompt examples — compact row */}
-          <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl p-5">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400 mb-3">// EXAMPLE LIVE PROMPTS</div>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
-              {[
-                "Chat slowing down — ask a quick question.",
-                "New viewers arriving — reintroduce yourself.",
-                "Gifts picking up — react and build momentum.",
-              ].map((p, i) => (
-                <div key={i} className="flex items-start gap-2 px-3 py-2 rounded bg-pink-500/5 border border-pink-900/30">
-                  <span className="text-pink-400 text-xs mt-0.5 shrink-0">▸</span>
-                  <p className="text-xs text-slate-400 font-mono leading-relaxed italic">{p}</p>
-                </div>
-              ))}
+          {/* Description below */}
+          <div className="grid md:grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-2">// COACHING</div>
+              <p className="text-sm text-slate-400">Smart alerts tell you exactly when and what to do — chat pace, viewer retention, engagement opportunities.</p>
+            </div>
+            <div>
+              <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-2">// LIVE CONTROL</div>
+              <p className="text-sm text-slate-400">Run your stream, monitor chat, track gifts and follows in real-time. One dashboard, everything you need.</p>
+            </div>
+            <div>
+              <div className="text-xs font-mono uppercase tracking-widest text-purple-400 mb-2">// METRICS</div>
+              <p className="text-sm text-slate-400">View every important stat at a glance — viewers, engagement, conversions, retention. Know your numbers.</p>
             </div>
           </div>
-
         </div>
       </section>
 
