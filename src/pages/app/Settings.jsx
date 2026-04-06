@@ -311,10 +311,11 @@ export default function Settings() {
           </div>
         </Section>
 
-        {/* TikTok Connection */}
+        {/* TikTok Connection - hidden
         <Section title="// TikTok Connection" accent="pink">
           <TikTokConnectionCard />
         </Section>
+        */}
 
         {/* External Platforms (TikTok, Twitch, YouTube) */}
         <Section title="// External Platforms" accent="purple">
