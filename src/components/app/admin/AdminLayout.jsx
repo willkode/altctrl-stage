@@ -10,6 +10,7 @@ const ADMIN_NAV = [
   { label: "Session Inspection", path: "/app/admin/sessions", icon: Database },
   { label: "Error Center", path: "/app/admin/errors", icon: AlertCircle },
   { label: "Game Library", path: "/app/admin/games", icon: Swords },
+  { label: "Users", path: "/app/admin/users", icon: Users },
   { label: "Creator Support", path: "/app/admin/support", icon: Users },
   { label: "Messaging", path: "/app/admin/messaging", icon: Mail },
 ];
