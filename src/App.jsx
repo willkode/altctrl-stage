@@ -141,7 +141,7 @@ const AuthenticatedApp = () => {
         <Route path="/desktop/callback" element={<DesktopCallback />} />
         <Route path="/og-creators" element={<OGCreators />} />
         <Route path="/investors" element={<Investors />} />
-        <Route path="/games-library" element={<GamesLibrary />} />
+        <Route path="/popular-tiktok-games" element={<GamesLibrary />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

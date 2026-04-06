@@ -417,7 +417,7 @@ export default function Home() {
           </div>
           <TopGamesGrid />
           <div className="text-center mt-10">
-            <Link to="/games-library"
+            <Link to="/popular-tiktok-games"
               className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95"
               style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)", color: "white", boxShadow: "0 0 20px rgba(168,85,247,0.4)" }}>
               VIEW FULL LIBRARY <ArrowRight className="w-4 h-4" />

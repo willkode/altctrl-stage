@@ -13,6 +13,7 @@ const navLinks = [
 
 const footerLinks = [
   { label: "FAQ", path: "/faq" },
+  { label: "Game Library", path: "/popular-tiktok-games" },
   { label: "Blog", path: "/blog" },
   { label: "Contact", path: "/contact" },
   { label: "Privacy", path: "/privacy" },
