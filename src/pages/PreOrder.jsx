@@ -38,12 +38,42 @@ export default function PreOrder() {
 
   if (success) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <div className="max-w-md mx-auto text-center">
-          <CheckCircle2 className="w-16 h-16 text-green-400 mx-auto mb-6" />
-          <GlitchText text="YOU'RE IN." className="text-4xl font-black uppercase text-white block mb-3" tag="h1" />
-          <p className="text-slate-300 mb-2">Your pre-order is confirmed at <span className="font-black text-cyan-400">$15/mo</span> — locked in forever.</p>
-          <p className="text-sm text-slate-500 font-mono mb-8">We'll send you access details before launch on April 10th.</p>
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+        <div className="max-w-lg mx-auto text-center">
+          <div className="mb-8">
+            <div className="w-20 h-20 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center mx-auto mb-6" style={{ boxShadow: "0 0 40px rgba(34,197,94,0.2)" }}>
+              <CheckCircle2 className="w-10 h-10 text-green-400" />
+            </div>
+            <GlitchText text="THANK YOU." className="text-5xl font-black uppercase text-white block mb-3" tag="h1" />
+            <p className="text-2xl font-black uppercase text-cyan-400" style={{ textShadow: "0 0 20px rgba(0,245,255,0.4)" }}>You're locked in.</p>
+          </div>
+
+          <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-6 mb-8 text-left space-y-4">
+            <div className="flex items-start gap-3">
+              <Zap className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-white">Your rate: $15/mo — forever</p>
+                <p className="text-xs text-slate-500 font-mono">This price is locked in and will never increase for you.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="w-5 h-5 text-pink-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-white">We launch April 10th</p>
+                <p className="text-xs text-slate-500 font-mono">When we go live, you'll receive an email with your official invite to join and set up your account.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <ArrowRight className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-white">Nothing to do until then</p>
+                <p className="text-xs text-slate-500 font-mono">Sit tight — we'll handle the rest. You're officially part of the first wave.</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-slate-500 text-xs font-mono mb-6">Check your inbox for a payment confirmation from Stripe.</p>
+
           <a href="/" className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors">
             ← Back to Home
           </a>
