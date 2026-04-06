@@ -188,8 +188,7 @@ export default function Analytics() {
             <GameBreakdown sessions={filtered} />
             <PromoImpact sessions={filtered} />
           </div>
-          <TopFollowersStats sessions={filtered} />
-          <TopFollowersStats sessions={filtered} />
+          <TopFollowersStats />
           <EngagementTriggersAnalysis />
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
           <TimeHeatmap sessions={filtered} />
