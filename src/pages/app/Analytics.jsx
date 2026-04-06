@@ -9,6 +9,7 @@ import GameBreakdown from "../../components/app/analytics/GameBreakdown";
 import TimeHeatmap from "../../components/app/analytics/TimeHeatmap";
 import PromoImpact from "../../components/app/analytics/PromoImpact";
 import SessionHistory from "../../components/app/analytics/SessionHistory";
+import TopFollowersStats from "../../components/app/analytics/TopFollowersStats";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import TikTokAccountStats from "../../components/app/analytics/TikTokAccountStats";
 import TikTokVideoStats from "../../components/app/analytics/TikTokVideoStats";
@@ -186,6 +187,8 @@ export default function Analytics() {
             <GameBreakdown sessions={filtered} />
             <PromoImpact sessions={filtered} />
           </div>
+          <TopFollowersStats sessions={filtered} />
+          <TopFollowersStats sessions={filtered} />
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
           <TimeHeatmap sessions={filtered} />
         </div>
