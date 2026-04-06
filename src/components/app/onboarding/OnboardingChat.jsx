@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Send, Loader2, Sparkles, Gamepad2, CheckCircle2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import GameSelector from "./GameSelector";
 
 const INITIAL_MESSAGE = {
   role: "ai",
@@ -21,7 +22,8 @@ export default function OnboardingChat({ onComplete }) {
   const [processing, setProcessing] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [resolvedGames, setResolvedGames] = useState(null);
-  const [phase, setPhase] = useState("intro"); // intro | follow_up | resolving_games | ready
+  const [phase, setPhase] = useState("intro"); // intro | follow_up | resolving_games | game_selection | ready
+  const [selectedGames, setSelectedGames] = useState(null);
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -82,35 +84,9 @@ export default function OnboardingChat({ onComplete }) {
         return;
       }
 
-      // Show confirmation message
-      addMessage("ai", data.ai_follow_up || "Got it! Let me set up your game library...");
-      setPhase("resolving_games");
-
-      // Resolve games
-      addMessage("system", `🔍 Looking up ${gameTitles.length} game${gameTitles.length > 1 ? "s" : ""} in the library...`);
-
-      const gamesRes = await base44.functions.invoke("onboardingAI", {
-        action: "resolve_games",
-        payload: { game_titles: gameTitles },
-      });
-
-      const games = gamesRes.data?.games || [];
-      setResolvedGames(games);
-
-      const newGames = games.filter(g => g.source === "ai_created");
-      const existingGames = games.filter(g => g.source === "existing");
-
-      let gameMsg = "";
-      if (existingGames.length > 0) {
-        gameMsg += `✅ Found **${existingGames.map(g => g.title).join(", ")}** in our library.\n`;
-      }
-      if (newGames.length > 0) {
-        gameMsg += `🆕 Added **${newGames.map(g => g.title).join(", ")}** to the library with full metadata.\n`;
-      }
-      gameMsg += "\nEverything looks good! Click **Continue** to review your profile.";
-
-      addMessage("ai", gameMsg);
-      setPhase("ready");
+      // Move to game selection
+      addMessage("ai", (data.ai_follow_up || "Great!") + "\n\n**Now let's add the games you own.** Search our library or add custom games to build your collection.");
+      setPhase("game_selection");
       setProcessing(false);
       return;
     }
@@ -129,6 +105,32 @@ export default function OnboardingChat({ onComplete }) {
     if (profileData && resolvedGames) {
       onComplete(profileData, resolvedGames);
     }
+  };
+
+  const handleGameSelectionComplete = async (selectedGameList) => {
+    setSelectedGames(selectedGameList);
+    addMessage("system", `📚 Processing ${selectedGameList.length} game${selectedGameList.length !== 1 ? "s" : ""}...`);
+    setProcessing(true);
+
+    try {
+      // Resolve/create games
+      const gamesRes = await base44.functions.invoke("onboardingAI", {
+        action: "resolve_games",
+        payload: { 
+          game_titles: selectedGameList.filter(g => g.source === "custom").map(g => g.title),
+          library_game_ids: selectedGameList.filter(g => g.source === "library").map(g => g.id),
+        },
+      });
+
+      const games = gamesRes.data?.games || [];
+      setResolvedGames(games);
+
+      addMessage("ai", "✅ Games added successfully! Click **Continue** to review your profile.");
+      setPhase("ready");
+    } catch (err) {
+      addMessage("ai", "❌ There was an error processing your games. Please try again.");
+    }
+    setProcessing(false);
   };
 
   return (
@@ -155,6 +157,13 @@ export default function OnboardingChat({ onComplete }) {
         )}
         <div ref={chatEndRef} />
       </div>
+
+      {/* Game selection phase */}
+      {phase === "game_selection" && (
+        <div className="border-t border-cyan-900/20 p-4">
+          <GameSelector onComplete={handleGameSelectionComplete} />
+        </div>
+      )}
 
       {/* Input area */}
       <div className="border-t border-cyan-900/20 p-4">
