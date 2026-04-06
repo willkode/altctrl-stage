@@ -4,6 +4,7 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Check, Zap, AlertTriangle, Download, LogOut } from "lucide-react";
 import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
+import ExternalPlatformCard from "../../components/app/external/ExternalPlatformCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";
 import DesktopSettingsPanel from "../../components/app/tiktok/DesktopSettingsPanel";
@@ -313,6 +314,12 @@ export default function Settings() {
         {/* TikTok Connection */}
         <Section title="// TikTok Connection" accent="pink">
           <TikTokConnectionCard />
+        </Section>
+
+        {/* External Platforms (Twitch, YouTube) */}
+        <Section title="// External Platforms" accent="purple">
+          <p className="text-xs text-slate-500 font-mono mb-4">Sync your Twitch and YouTube profile stats. Stats are fetched automatically when you sync.</p>
+          <ExternalPlatformCard />
         </Section>
 
         {/* Extension Settings Panel */}
