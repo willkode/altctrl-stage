@@ -100,24 +100,54 @@ export default function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-cyan-900/40 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2">
+      <footer className="border-t border-cyan-900/40 mt-20 bg-[#030609]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
+            {/* Brand Column */}
+            <div>
               <img
                 src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/9e338f22f_altctrl-logo2.png"
                 alt="AltCtrl"
-                className="h-7 w-auto"
+                className="h-7 w-auto mb-3"
               />
-              <span className="text-xs font-mono text-slate-600 ml-2">// AI OS FOR TIKTOK LIVE GAMING</span>
+              <p className="text-xs font-mono text-slate-600 leading-relaxed">// AI OS FOR TIKTOK LIVE GAMING</p>
             </div>
-            <div className="flex flex-wrap gap-4 justify-center">
-              {footerLinks.map(link => (
-                <Link key={link.path} to={link.path} className="text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">{link.label}</Link>
-              ))}
+
+            {/* Product Column */}
+            <div>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4 font-bold">Product</h3>
+              <div className="space-y-2">
+                <Link to="/features" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Features</Link>
+                <Link to="/how-it-works" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">How It Works</Link>
+                <Link to="/pricing" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Pricing</Link>
+                <Link to="/for-creators" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">For Creators</Link>
+              </div>
+            </div>
+
+            {/* Resources Column */}
+            <div>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4 font-bold">Resources</h3>
+              <div className="space-y-2">
+                <Link to="/faq" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">FAQ</Link>
+                <Link to="/blog" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Blog</Link>
+                <Link to="/popular-tiktok-games" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Game Library</Link>
+                <Link to="/tiktok-appeal-helper" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Appeal Helper</Link>
+              </div>
+            </div>
+
+            {/* Company Column */}
+            <div>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4 font-bold">Company</h3>
+              <div className="space-y-2">
+                <Link to="/about" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">About</Link>
+                <Link to="/contact" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Contact</Link>
+                <Link to="/privacy" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Privacy</Link>
+                <Link to="/terms" className="text-xs font-mono text-slate-500 hover:text-cyan-400 transition-colors block">Terms</Link>
+              </div>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-cyan-900/20 text-center">
+
+          <div className="pt-8 border-t border-cyan-900/20 text-center">
             <p className="text-xs font-mono text-slate-600">© 2026 ALTCTRL. ALL SYSTEMS ACTIVE. <span className="text-cyan-900">// SIGNAL LOCKED</span></p>
           </div>
         </div>
