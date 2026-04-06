@@ -33,6 +33,7 @@ export default function GameLibraryAdmin() {
   const [viewGame, setViewGame] = useState(null);
   const [saving, setSaving] = useState(false);
   const [seeding, setSeeding] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -78,6 +79,77 @@ export default function GameLibraryAdmin() {
     load();
   }
 
+  async function generateGames() {
+    setGenerating(true);
+    const res = await base44.integrations.Core.InvokeLLM({
+      prompt: `Generate 5 popular PC games that are currently trending (as of 2026). For each game, provide in JSON format with these exact fields:
+{
+  "title": "Game Name",
+  "description_short": "One sentence description",
+  "description_full": "2-3 sentences with gameplay details",
+  "developer": "Developer Name",
+  "publisher": "Publisher Name",
+  "genres": ["Genre1", "Genre2"],
+  "tags": ["tag1", "tag2"],
+  "game_modes": ["mode1", "mode2"],
+  "multiplayer_type": "online_multiplayer or single_player",
+  "gameplay_pacing": "fast or medium",
+  "session_style": "short_runs or long_sessions",
+  "difficulty_style": "casual or competitive",
+  "camera_style": "first_person or third_person",
+  "challenge_friendly": true or false,
+  "core_objective": "Main objective description",
+  "pc_supported": true,
+  "cover_image": "A stock photo URL or game image description"
+}
+Return as a JSON array of 5 games.`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          games: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                description_short: { type: "string" },
+                description_full: { type: "string" },
+                developer: { type: "string" },
+                publisher: { type: "string" },
+                genres: { type: "array", items: { type: "string" } },
+                tags: { type: "array", items: { type: "string" } },
+                game_modes: { type: "array", items: { type: "string" } },
+                multiplayer_type: { type: "string" },
+                gameplay_pacing: { type: "string" },
+                session_style: { type: "string" },
+                difficulty_style: { type: "string" },
+                camera_style: { type: "string" },
+                challenge_friendly: { type: "boolean" },
+                core_objective: { type: "string" },
+                pc_supported: { type: "boolean" },
+                cover_image: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (res.data?.games?.length > 0) {
+      for (const game of res.data.games) {
+        await base44.entities.GameLibrary.create({
+          ...emptyGame(),
+          ...game,
+          is_active: true,
+          sort_priority: 50,
+          normalized_title: game.title?.toLowerCase(),
+          slug: game.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+        });
+      }
+      await load();
+    }
+    setGenerating(false);
+  }
+
   const filtered = games.filter(g => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -93,6 +165,11 @@ export default function GameLibraryAdmin() {
             <p className="text-sm text-muted-foreground font-mono">{games.length} games in library</p>
           </div>
           <div className="flex gap-2">
+            <button onClick={() => generateGames()} disabled={generating}
+              className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-pink-900/30 text-slate-500 hover:text-pink-400 transition-all disabled:opacity-50">
+              {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Swords className="w-3 h-3" />}
+              {generating ? "Generating…" : "AI Generate Games"}
+            </button>
             <button onClick={seedLibrary} disabled={seeding}
               className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-cyan-900/30 text-slate-500 hover:text-cyan-400 transition-all disabled:opacity-50">
               {seeding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Database className="w-3 h-3" />}
