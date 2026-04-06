@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-// Desktop app endpoint: GET strategy for a scheduled stream
-// Called by desktop app to pull in strategy and guide user during stream
+// Desktop app endpoint: strategy management for scheduled streams
 Deno.serve(async (req) => {
   if (req.method !== "POST") return Response.json({ error: "Method not allowed" }, { status: 405 });
 
@@ -23,7 +22,6 @@ Deno.serve(async (req) => {
       .sort((a, b) => a.scheduled_date.localeCompare(b.scheduled_date))
       .slice(0, 10);
 
-    // Get strategies for these streams
     const strategies = await base44.asServiceRole.entities.StreamStrategy.filter({
       created_by: user.email,
     });
@@ -67,16 +65,42 @@ Deno.serve(async (req) => {
     const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email }, '-created_date', 1);
     const avgViewers = profiles[0]?.avg_viewers || 0;
 
-    // Scale thresholds to the creator's audience size
-    const triggerThresholds = {
-      chat_slowdown_msgs_per_min: avgViewers >= 500 ? 20 : avgViewers >= 200 ? 15 : avgViewers >= 50 ? 8 : 4,
-      viewer_drop_pct:            avgViewers >= 200 ? 15 : 20,
-      viewer_spike_pct:           25,
-      gift_burst_count:           avgViewers >= 200 ? 5 : 3,
-      monologue_seconds:          avgViewers >= 100 ? 60 : 75,
-      engagement_low_score:       avgViewers >= 200 ? 35 : 30,
-      support_momentum_high:      avgViewers >= 500 ? 70 : 65,
-    };
+    // 3-tier thresholds based on audience size
+    let triggerThresholds;
+    if (avgViewers >= 500) {
+      // Tight thresholds — more sensitive for large audiences
+      triggerThresholds = {
+        chat_slowdown_msgs_per_min: 20,
+        viewer_drop_pct: 12,
+        viewer_spike_pct: 20,
+        gift_burst_count: 6,
+        monologue_seconds: 45,
+        engagement_low_score: 40,
+        support_momentum_high: 75,
+      };
+    } else if (avgViewers >= 100) {
+      // Default thresholds
+      triggerThresholds = {
+        chat_slowdown_msgs_per_min: 12,
+        viewer_drop_pct: 18,
+        viewer_spike_pct: 25,
+        gift_burst_count: 4,
+        monologue_seconds: 60,
+        engagement_low_score: 35,
+        support_momentum_high: 65,
+      };
+    } else {
+      // Relaxed thresholds — less sensitive for smaller audiences
+      triggerThresholds = {
+        chat_slowdown_msgs_per_min: 5,
+        viewer_drop_pct: 25,
+        viewer_spike_pct: 35,
+        gift_burst_count: 3,
+        monologue_seconds: 90,
+        engagement_low_score: 25,
+        support_momentum_high: 60,
+      };
+    }
 
     // Parse JSON fields for the desktop app
     let engagementPrompts = [];
@@ -94,12 +118,11 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Action: "activate" — mark strategy as active and link session_id to scheduled_stream_id + stream_strategy_id
+  // Action: "activate" — mark strategy as active and link session
   if (action === "activate") {
     if (!scheduled_stream_id) {
       return Response.json({ error: "scheduled_stream_id required" }, { status: 400 });
     }
-    // session_id and stream_strategy_id already destructured from body above
 
     const strategies = await base44.asServiceRole.entities.StreamStrategy.filter({
       scheduled_stream_id,
@@ -109,7 +132,6 @@ Deno.serve(async (req) => {
       const stratId = stream_strategy_id || strategies[0].id;
       await base44.asServiceRole.entities.StreamStrategy.update(strategies[0].id, { status: "active" });
 
-      // Link the session → stream → strategy by upserting the DesktopSession record
       if (session_id) {
         const existing = await base44.asServiceRole.entities.DesktopSession.filter({
           session_id,
@@ -133,7 +155,7 @@ Deno.serve(async (req) => {
     return Response.json({ error: "No strategy found" }, { status: 404 });
   }
 
-  // Action: "complete" — mark strategy as completed (stream ended)
+  // Action: "complete" — mark strategy as completed
   if (action === "complete") {
     if (!scheduled_stream_id) {
       return Response.json({ error: "scheduled_stream_id required" }, { status: 400 });

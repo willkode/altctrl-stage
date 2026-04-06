@@ -8,7 +8,7 @@
     },
     "user_id": {
       "type": "string",
-      "title": "TikTok User ID (stable key)"
+      "title": "Viewer User ID (stable key)"
     },
     "display_name": {
       "type": "string",
@@ -29,6 +29,10 @@
       "format": "date-time",
       "title": "Last Seen At"
     },
+    "last_session_id": {
+      "type": "string",
+      "title": "Last Session ID"
+    },
     "total_joins": {
       "type": "number",
       "title": "Total Joins",
@@ -48,5 +52,46 @@
   "required": [
     "creator_id",
     "user_id"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "creator_id": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "creator_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "creator_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "creator_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

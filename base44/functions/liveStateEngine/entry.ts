@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 /**
  * Live State Engine — Phase 2
  * Deterministic stream state detection. No AI calls.
- * Triggered by new LivePulse entity records.
+ * Triggered by desktop app every 30 seconds during a live stream.
  *
  * Reads last N LivePulse entries for a session and classifies:
  *   warming_up | settling | stable | rising | high_momentum |
@@ -31,9 +31,11 @@ Deno.serve(async (req) => {
   if (body.sessionId && body.viewers !== undefined) {
     const uptimeSec = body.uptimeSec || 0;
     const minuteLiveFromDesktop = Math.round(uptimeSec / 60);
+    const rawPlatform = body.platform || "tiktok";
     const pulseRecord = {
       session_id,
       user_id: user.email,
+      platform: rawPlatform.toLowerCase(),
       captured_at: body.timestamp || new Date().toISOString(),
       minute_live: minuteLiveFromDesktop,
       current_viewers: body.viewers || 0,
@@ -60,6 +62,7 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.entities.DesktopSession.create({
           session_id,
           user_id: user.email,
+          platform: rawPlatform.toLowerCase(),
           started_at: body.timestamp || new Date().toISOString(),
           ...linkData,
         });
@@ -98,8 +101,6 @@ Deno.serve(async (req) => {
   const momentum = latest.momentum_score || 0;
   const chatLast2m = latest.comments_last_2m || 0;
   const giftsLast2m = latest.gifts_last_2m || 0;
-  const sharesLast2m = latest.shares_last_2m || 0;
-  const followsLast2m = latest.follows_last_2m || 0;
 
   // Viewer trend: compare latest vs 3 pulses ago
   const refPulse = last3[last3.length - 1];
@@ -123,7 +124,6 @@ Deno.serve(async (req) => {
   const giftSpike = prevGifts > 0 ? giftsLast2m / prevGifts : (giftsLast2m > 0 ? 2 : 1);
 
   // How long since the previous classification (state duration)
-  // We read the last CoachActionLog to get previous state
   let previousState = 'unknown';
   let stateDurationMinutes = 0;
 
@@ -140,63 +140,47 @@ Deno.serve(async (req) => {
     }
   }
 
-  // Also track state from the LivePulse entity itself if available
   const prevPulseState = prev?.stream_state || 'unknown';
 
   // --- 3. Classify stream state (priority ordered — first match wins) ---
-  // Dynamic thresholds scaled to the creator's normal audience size
   const deadZoneSilentThreshold = creatorAvgViewers >= 200 ? 3 : 2;
   const chatCoolingMinViewers = creatorAvgViewers >= 100 ? 10 : 0;
 
   let state = 'stable';
 
-  // WARMING UP: first 3 minutes
   if (minuteLive <= 3) {
     state = 'warming_up';
   }
-  // DEAD ZONE: 0 chat (threshold scales with audience size)
   else if (consecutiveSilentPulses >= deadZoneSilentThreshold && currentViewers < avgViewers5 * 0.9) {
     state = 'dead_zone';
   }
-  // DROP RISK: viewers down >20% from peak
   else if (peakViewers > 0 && currentViewers < peakViewers * 0.80) {
     state = 'drop_risk';
   }
-  // RETENTION DIP: viewers trending down >10% over last 3 pulses
   else if (viewerDelta < -0.10 && state !== 'drop_risk') {
     state = 'retention_dip';
   }
-  // VIEWER SPIKE: sudden jump >25% from previous pulse
   else if (viewerSpikePct >= 0.25) {
     state = 'viewer_spike';
   }
-  // MONETIZATION WINDOW: gift spike 2x+ AND momentum high
   else if (giftSpike >= 2 && momentum >= 60) {
     state = 'monetization_window';
   }
-  // HIGH MOMENTUM: momentum score >= 75
   else if (momentum >= 75) {
     state = 'high_momentum';
   }
-  // RISING: viewers up >15% over last 3 pulses
   else if (viewerDelta >= 0.15) {
     state = 'rising';
   }
-  // CHAT COOLING: chat was active before but slowing
-  // Only fire if the creator typically gets enough viewers to expect chat
   else if (chatLast2m === 0 && (prev?.comments_last_2m || 0) > 0 && currentViewers >= chatCoolingMinViewers) {
     state = 'chat_cooling';
   }
-  // CLOSING WINDOW: late in stream — but only if we know target duration
-  // We'll use a heuristic: minute 50+ suggests closing unless we have target data
   else if (minuteLive >= 50 && momentum < 50) {
     state = 'closing_window';
   }
-  // SETTLING: first 4-8 minutes after warm-up
   else if (minuteLive <= 8) {
     state = 'settling';
   }
-  // Default: stable
   else {
     state = 'stable';
   }
@@ -204,7 +188,6 @@ Deno.serve(async (req) => {
   const stateChanged = state !== prevPulseState;
 
   // --- 4. Decide whether to trigger Coach AI ---
-  // Rules: only fire on meaningful state changes or sustained danger states
   const HIGH_PRIORITY_STATES = ['dead_zone', 'drop_risk', 'monetization_window', 'viewer_spike'];
   const RECOVERY_STATES = ['retention_dip', 'chat_cooling'];
 
@@ -215,7 +198,6 @@ Deno.serve(async (req) => {
     triggerCoach = true;
     triggerReason = 'state_change_high_priority';
   } else if (HIGH_PRIORITY_STATES.includes(state) && stateDurationMinutes >= 2) {
-    // Still in a danger state for 2+ min — re-trigger
     triggerCoach = true;
     triggerReason = 'sustained_danger_state';
   } else if (stateChanged && RECOVERY_STATES.includes(state)) {
@@ -226,7 +208,7 @@ Deno.serve(async (req) => {
     triggerReason = 'monetization_window_opened';
   }
 
-  // --- 5. Cooldown check — do not spam the streamer ---
+  // --- 5. Cooldown check ---
   if (triggerCoach && recentLogs[0]) {
     const cooldownUntil = recentLogs[0].cooldown_until
       ? new Date(recentLogs[0].cooldown_until)

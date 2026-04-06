@@ -26,6 +26,10 @@ Deno.serve(async (req) => {
 
     const now = new Date().toISOString();
 
+    // Normalize platform to lowercase
+    const rawPlatform = session.platform || body.platform || "tiktok";
+    const platform = rawPlatform.toLowerCase();
+
     const record = {
       session_id: sessionId,
       user_id: user.email,
@@ -33,7 +37,8 @@ Deno.serve(async (req) => {
       stream_strategy_id: body.streamStrategyId || session.streamStrategyId || null,
       title: session.title || body.title || "",
       game: session.game || body.game || "",
-      platform: session.platform || body.platform || "TikTok",
+      platform,
+      currency_type: body.currencyType || session.currencyType || "diamonds",
       strategy_pack_id: session.strategyPackId || "",
       started_at: startedAt,
       ended_at: session.endedAt || body.endedAt || null,
@@ -65,6 +70,8 @@ Deno.serve(async (req) => {
       supporter_concentration: body.supporterConcentration ? JSON.stringify(body.supporterConcentration) : null,
       viewer_snapshots: body.viewerSnapshots?.length ? JSON.stringify(body.viewerSnapshots) : "[]",
       top_gifters: body.topGifters?.length ? JSON.stringify(body.topGifters) : "[]",
+      timeline: body.timeline?.length ? JSON.stringify(body.timeline) : "[]",
+      chat_log: body.chatLog?.length ? JSON.stringify(body.chatLog) : "[]",
       peak_moments: body.peakMoments?.length ? JSON.stringify(body.peakMoments) : "[]",
       drop_moments: body.dropMoments?.length ? JSON.stringify(body.dropMoments) : "[]",
       top_support_moments: body.topSupportMoments?.length ? JSON.stringify(body.topSupportMoments) : "[]",
@@ -91,20 +98,22 @@ Deno.serve(async (req) => {
     }
 
     // Process viewerLog — upsert each viewer into ViewerHistory
+    // Only TikTok sends viewerLog; YouTube/Twitch will have empty arrays — skip gracefully
     if (body.viewerLog?.length) {
       for (const entry of body.viewerLog) {
         if (!entry.userId) continue;
-        const existing = await base44.asServiceRole.entities.ViewerHistory.filter({
+        const existingViewer = await base44.asServiceRole.entities.ViewerHistory.filter({
           creator_id: user.email,
           user_id: entry.userId,
         });
-        const entryTime = entry.timestamp || now;
-        if (existing.length > 0) {
-          const rec = existing[0];
+        const entryTime = entry.lastJoinAt || entry.firstJoinAt || now;
+        if (existingViewer.length > 0) {
+          const rec = existingViewer[0];
           await base44.asServiceRole.entities.ViewerHistory.update(rec.id, {
-            display_name: entry.displayName || rec.display_name,
+            display_name: entry.nickname || entry.displayName || rec.display_name,
             stream_count: (rec.stream_count || 0) + 1,
             last_seen_at: entryTime,
+            last_session_id: sessionId,
             total_joins: (rec.total_joins || 0) + (entry.joinCount || 1),
             is_subscriber: rec.is_subscriber || (entry.teamMemberLevel > 0),
             is_follower: rec.is_follower || (entry.followRole > 0),
@@ -113,10 +122,11 @@ Deno.serve(async (req) => {
           await base44.asServiceRole.entities.ViewerHistory.create({
             creator_id: user.email,
             user_id: entry.userId,
-            display_name: entry.displayName || '',
+            display_name: entry.nickname || entry.displayName || '',
             stream_count: 1,
-            first_seen_at: entryTime,
+            first_seen_at: entry.firstJoinAt || now,
             last_seen_at: entryTime,
+            last_session_id: sessionId,
             total_joins: entry.joinCount || 1,
             is_subscriber: (entry.teamMemberLevel > 0) || false,
             is_follower: (entry.followRole > 0) || false,

@@ -10,6 +10,16 @@
       "type": "string",
       "title": "User ID"
     },
+    "platform": {
+      "type": "string",
+      "title": "Platform",
+      "enum": [
+        "tiktok",
+        "youtube",
+        "twitch"
+      ],
+      "default": "tiktok"
+    },
     "captured_at": {
       "type": "string",
       "format": "date-time",
@@ -77,5 +87,46 @@
     "user_id",
     "captured_at",
     "minute_live"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "user_id": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }

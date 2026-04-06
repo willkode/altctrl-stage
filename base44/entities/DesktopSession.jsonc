@@ -28,7 +28,23 @@
     },
     "platform": {
       "type": "string",
-      "title": "Platform"
+      "title": "Platform",
+      "enum": [
+        "tiktok",
+        "youtube",
+        "twitch"
+      ],
+      "default": "tiktok"
+    },
+    "currency_type": {
+      "type": "string",
+      "title": "Currency Type",
+      "enum": [
+        "diamonds",
+        "usd_cents",
+        "bits"
+      ],
+      "default": "diamonds"
     },
     "strategy_pack_id": {
       "type": "string",
@@ -87,7 +103,7 @@
     },
     "total_diamonds": {
       "type": "number",
-      "title": "Total Diamonds",
+      "title": "Total Diamonds / Currency Units",
       "default": 0
     },
     "total_follows": {
@@ -163,6 +179,14 @@
     "top_support_moments": {
       "type": "string",
       "title": "Top Support Moments (JSON array)"
+    },
+    "timeline": {
+      "type": "string",
+      "title": "Timeline Events (JSON array)"
+    },
+    "chat_log": {
+      "type": "string",
+      "title": "Chat Log (JSON array)"
     },
     "viewer_log": {
       "type": "string",
