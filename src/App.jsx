@@ -78,49 +78,12 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-  if (authError.type === 'user_not_registered') {
+  // Handle user not registered error
+  if (authError?.type === 'user_not_registered') {
     return <UserNotRegisteredError />;
-  } else if (authError.type === 'auth_required') {
-    // Public pages that should load without auth
-    const publicPaths = ['/tiktok-callback', '/desktop/auth', '/desktop/callback', '/extension-auth', '/investors', '/og-creators'];
-    // Also allow all non-app public marketing pages
-    const isAppRoute = window.location.pathname.startsWith('/app');
-    if (publicPaths.includes(window.location.pathname) || !isAppRoute) {
-      return (
-        <Routes>
-          <Route path="/tiktok-callback" element={<TikTokCallback />} />
-          <Route path="/desktop/auth" element={<DesktopAuth />} />
-          <Route path="/desktop/callback" element={<DesktopCallback />} />
-          <Route path="/extension-auth" element={<ExtensionAuth />} />
-          <Route path="/og-creators" element={<OGCreators />} />
-          <Route path="/investors" element={<Investors />} />
-          <Route element={<Layout />}>
-            <Route path="/" element={<HomeRedirect />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/for-creators" element={<ForCreators />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/founding-creators" element={<FoundingCreators />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/waitlist" element={<Waitlist />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Route>
-        </Routes>
-      );
-    }
-    base44.auth.redirectToLogin('/app/dashboard');
-    return null;
-  }
   }
 
-  // Redirect authenticated users to dashboard
+  // Render all routes - AppAuthGate handles /app route protection
   return (
     <Routes>
       <Route path="/app/*" element={<AppAuthGate />}>
