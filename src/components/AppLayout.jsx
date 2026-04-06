@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair, Swords } from "lucide-react";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
 import { base44 } from "@/api/base44Client";
@@ -23,6 +23,7 @@ const navItems = [
   { path: "/app/replay", label: "Replay", icon: Film },
   { path: "/app/audience", label: "Audience", icon: Users },
   { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
+  { path: "/app/games", label: "Game Intel", icon: Swords },
 ];
 
 // Mobile bottom nav — limited to 5 core items to meet 44px tap target minimum
@@ -49,6 +50,7 @@ const pageTitles = {
   "/app/replay": "REPLAY REVIEW",
   "/app/audience": "AUDIENCE & MONETIZATION",
   "/app/experiments": "EXPERIMENTS",
+  "/app/games": "GAME INTEL",
 };
 
 export default function AppLayout() {
