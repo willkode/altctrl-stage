@@ -60,7 +60,11 @@ import ExtensionAuth from './pages/ExtensionAuth';
 import OGCreators from './pages/OGCreators';
 import Investors from './pages/Investors';
 
-const HomeRedirect = () => <Navigate to="/app/dashboard" replace />;
+const HomeRedirect = () => {
+  // This component will be wrapped in auth context later
+  // If here, user is authenticated, so redirect to dashboard
+  return <Navigate to="/app/dashboard" replace />;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -151,7 +155,7 @@ const AuthenticatedApp = () => {
         </Route>
       </Route>
       <Route element={<Layout />}>
-        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/" element={<Home />} />
         <Route path="/tiktok-callback" element={<TikTokCallback />} />
         <Route path="/features" element={<Features />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
