@@ -212,7 +212,7 @@ function buildInsight(state, triggerReason, sig, strategy, profile, recentPrompt
   const insights = {
     dead_zone: {
       what:       'Stream has gone silent — no chat activity detected',
-      why:        `Chat has been inactive for 2+ minutes at minute ${minuteLive}. Silent streams lose viewers fast.`,
+      why:        `Chat dead for 2+ minutes at minute ${minuteLive}. Your baseline is ~${sig.creator_avg_viewers || viewers} viewers — this silence is unusually deep for your audience size.`,
       best_action:'Break the silence immediately with a direct question or challenge prompt',
       context:    { goal, minuteLive, viewers },
     },
@@ -242,9 +242,9 @@ function buildInsight(state, triggerReason, sig, strategy, profile, recentPrompt
     },
     chat_cooling: {
       what:       'Chat activity just went quiet after being active',
-      why:        'Chat engagement dropped to zero. Viewers are disengaging before you lose them.',
+      why:        `Chat dropped to zero at minute ${minuteLive}. With ~${sig.creator_avg_viewers || viewers} typical viewers, silence this deep means disengagement is spreading.`,
       best_action:'Ask a direct yes/no or choice question — make it easy for chat to respond immediately',
-      context:    { goal, minuteLive, viewers, chatRate: sig.chat_last_2m },
+      context:    { goal, minuteLive, viewers, chatRate: sig.chat_last_2m, creatorAvgViewers: sig.creator_avg_viewers },
     },
     closing_window: {
       what:       `Stream approaching close at minute ${minuteLive}`,
@@ -299,6 +299,10 @@ function buildWordingPrompt(insight, profile, sig) {
   const tone = profile?.promo_tone || 'hype';
   const displayName = profile?.display_name || 'the streamer';
 
+  const avgViewersContext = sig.creator_avg_viewers
+    ? `\nCREATOR AVG VIEWERS (their normal baseline): ${sig.creator_avg_viewers}`
+    : '';
+
   return `You are the live coaching AI for a TikTok LIVE gaming creator named ${displayName}.
 
 The stream intelligence system has detected the following situation:
@@ -308,7 +312,7 @@ WHY IT MATTERS: ${insight.why}
 BEST ACTION: ${insight.best_action}
 CREATOR TONE: ${tone}
 MINUTE INTO STREAM: ${sig.minute_live || 0}
-CURRENT VIEWERS: ${sig.current_viewers || 0}
+CURRENT VIEWERS: ${sig.current_viewers || 0}${avgViewersContext}
 
 Your job: Turn this into a coaching prompt for the creator.
 
@@ -320,6 +324,7 @@ Rules:
 - Write like a real coach in their ear, not a report
 - Match the creator's tone (${tone})
 - "confidence" is 0.0-1.0 based on how clear-cut the situation is
+- If creator avg viewers is provided, calibrate urgency relative to their normal baseline (e.g. 0 chat is less alarming for a 5-viewer stream than a 200-viewer stream)
 
 Return JSON with: message, fallback, confidence`;
 }

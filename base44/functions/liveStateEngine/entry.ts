@@ -36,6 +36,12 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'No pulses found for session' }, { status: 404 });
   }
 
+  // --- Fetch creator profile for personalized thresholds ---
+  const profiles = await base44.asServiceRole.entities.CreatorProfile.filter(
+    { created_by: user.email }, '-created_date', 1
+  );
+  const creatorAvgViewers = profiles[0]?.avg_viewers || 0;
+
   const latest = pulses[0];
   const prev = pulses[1] || null;
   const last3 = pulses.slice(0, 3);
@@ -94,14 +100,18 @@ Deno.serve(async (req) => {
   const prevPulseState = prev?.stream_state || 'unknown';
 
   // --- 3. Classify stream state (priority ordered — first match wins) ---
+  // Dynamic thresholds scaled to the creator's normal audience size
+  const deadZoneSilentThreshold = creatorAvgViewers >= 200 ? 3 : 2;
+  const chatCoolingMinViewers = creatorAvgViewers >= 100 ? 10 : 0;
+
   let state = 'stable';
 
   // WARMING UP: first 3 minutes
   if (minuteLive <= 3) {
     state = 'warming_up';
   }
-  // DEAD ZONE: 0 chat for 90+ seconds (1.5 pulses ~ 2 consecutive zero-chat pulses)
-  else if (consecutiveSilentPulses >= 2 && currentViewers < avgViewers5 * 0.9) {
+  // DEAD ZONE: 0 chat (threshold scales with audience size)
+  else if (consecutiveSilentPulses >= deadZoneSilentThreshold && currentViewers < avgViewers5 * 0.9) {
     state = 'dead_zone';
   }
   // DROP RISK: viewers down >20% from peak
@@ -129,7 +139,8 @@ Deno.serve(async (req) => {
     state = 'rising';
   }
   // CHAT COOLING: chat was active before but slowing
-  else if (chatLast2m === 0 && (prev?.comments_last_2m || 0) > 0) {
+  // Only fire if the creator typically gets enough viewers to expect chat
+  else if (chatLast2m === 0 && (prev?.comments_last_2m || 0) > 0 && currentViewers >= chatCoolingMinViewers) {
     state = 'chat_cooling';
   }
   // CLOSING WINDOW: late in stream — but only if we know target duration
@@ -210,6 +221,7 @@ Deno.serve(async (req) => {
       gift_spike_ratio: Math.round(giftSpike * 10) / 10,
       momentum_score: momentum,
       consecutive_silent_pulses: consecutiveSilentPulses,
+      creator_avg_viewers: creatorAvgViewers,
     },
   };
 
@@ -221,7 +233,7 @@ Deno.serve(async (req) => {
       state,
       state_changed: stateChanged,
       trigger_reason: triggerReason,
-      signals: result.signals,
+      signals: { ...result.signals, creator_avg_viewers: creatorAvgViewers },
     });
   }
 
