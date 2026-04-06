@@ -34,6 +34,7 @@ export default function GameLibraryAdmin() {
   const [saving, setSaving] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -77,6 +78,29 @@ export default function GameLibraryAdmin() {
     if (!confirm(`Delete "${game.title}"?`)) return;
     await base44.entities.GameLibrary.delete(game.id);
     load();
+  }
+
+  async function bulkUploadGames(file) {
+    setUploading(true);
+    try {
+      const text = await file.text();
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      for (const name of lines) {
+        await base44.entities.GameLibrary.create({
+          ...emptyGame(),
+          title: name,
+          normalized_title: name.toLowerCase(),
+          slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          is_active: true,
+          sort_priority: 100,
+        });
+      }
+      await load();
+    } catch (err) {
+      console.error('Upload failed:', err);
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function generateGames() {
@@ -165,6 +189,16 @@ Return as a JSON array of 5 games.`,
             <p className="text-sm text-muted-foreground font-mono">{games.length} games in library</p>
           </div>
           <div className="flex gap-2">
+            <label className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-purple-900/30 text-slate-500 hover:text-purple-400 transition-all cursor-pointer disabled:opacity-50">
+              <input
+                type="file"
+                accept=".txt,.csv"
+                onChange={e => e.target.files?.[0] && bulkUploadGames(e.target.files[0])}
+                disabled={uploading}
+                className="hidden"
+              />
+              {uploading ? 'Uploading…' : '📤 Bulk Upload'}
+            </label>
             <button onClick={() => generateGames()} disabled={generating}
               className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-pink-900/30 text-slate-500 hover:text-pink-400 transition-all disabled:opacity-50">
               {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Swords className="w-3 h-3" />}
