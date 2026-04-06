@@ -51,6 +51,7 @@ import AdminErrors from './pages/app/admin/ErrorCenter';
 import AdminSupport from './pages/app/admin/CreatorSupport';
 import AdminMessaging from './pages/app/admin/Messaging';
 import AdminGameLibrary from './pages/app/admin/GameLibraryAdmin';
+import GameIntel from './pages/app/GameIntel';
 import TikTokCallback from './pages/TikTokCallback';
 import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
@@ -135,6 +136,7 @@ const AuthenticatedApp = () => {
           <Route path="strategy" element={<Strategy />} />
           <Route path="audience" element={<AudienceMonetization />} />
           <Route path="experiments" element={<Experiments />} />
+          <Route path="games" element={<GameIntel />} />
         </Route>
         <Route element={<AdminAuthGate />}>
           <Route path="admin/dashboard" element={<AdminDashboard />} />
