@@ -43,25 +43,45 @@ function daysAgo(n) {
 // ─── 1. Trend Chart (30-day) ─────────────────────────────────────────────────
 
 /**
- * Returns per-session data points for the last N days, sorted oldest→newest.
- * Each point has: date, label, avg_viewers, peak_viewers, followers_gained, game.
- * hasEnoughData: false if fewer than CHART_MIN_SESSIONS sessions in the window.
+ * Returns daily aggregated data points for the last N days, sorted oldest→newest.
+ * Groups multiple streams per day into daily totals.
+ * Each point has: date, label, avg_viewers (daily avg), peak_viewers (daily peak), followers_gained (daily total).
+ * hasEnoughData: false if fewer than CHART_MIN_SESSIONS data points in the window.
  */
 export function buildTrendData(sessions, days = THRESHOLDS.TREND_DAYS) {
   const cutoff = daysAgo(days);
   const inWindow = sessions
-    .filter(s => s.stream_date && new Date(s.stream_date + "T12:00:00") >= cutoff)
-    .sort((a, b) => a.stream_date.localeCompare(b.stream_date));
+    .filter(s => s.stream_date && new Date(s.stream_date + "T12:00:00") >= cutoff);
 
-  const points = inWindow.map(s => ({
-    date: s.stream_date,
-    label: new Date(s.stream_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    avg_viewers: s.avg_viewers ?? null,
-    peak_viewers: s.peak_viewers ?? null,
-    followers_gained: s.followers_gained ?? null,
-    game: s.game || "",
-    promo_posted: !!s.promo_posted,
-  }));
+  // Group sessions by date
+  const byDate = {};
+  inWindow.forEach(s => {
+    if (!byDate[s.stream_date]) {
+      byDate[s.stream_date] = [];
+    }
+    byDate[s.stream_date].push(s);
+  });
+
+  // Aggregate by date
+  const points = Object.keys(byDate)
+    .sort()
+    .map(date => {
+      const daySessions = byDate[date];
+      const avgViewersArr = daySessions.filter(s => s.avg_viewers != null).map(s => s.avg_viewers);
+      const dailyAvgViewers = avgViewersArr.length > 0 ? Math.round(avg(avgViewersArr)) : null;
+      const dailyPeakViewers = Math.max(...daySessions.map(s => s.peak_viewers || 0)) || null;
+      const dailyFollowersGained = daySessions.reduce((sum, s) => sum + (s.followers_gained || 0), 0);
+
+      return {
+        date,
+        label: new Date(date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        avg_viewers: dailyAvgViewers,
+        peak_viewers: dailyPeakViewers,
+        followers_gained: dailyFollowersGained,
+        game: daySessions.map(s => s.game).filter(Boolean).join(", "),
+        promo_posted: daySessions.some(s => s.promo_posted),
+      };
+    });
 
   return {
     points,
