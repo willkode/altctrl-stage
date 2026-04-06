@@ -106,6 +106,24 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, #020408)" }} />
       </section>
 
+      {/* ── LIVE STATS PREVIEW ────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// SEE YOUR DATA IN REAL TIME</div>
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto">Track everything that matters — viewers, engagement, conversions, and more. Every session is analyzed so you can learn what actually works.</p>
+          </div>
+          <div className="rounded-xl overflow-hidden border border-cyan-900/30 shadow-2xl" style={{ boxShadow: "0 0 40px rgba(0,245,255,0.15)" }}>
+            <img 
+              src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/4fd0ea8e8_Screenshot2026-04-06124632.png" 
+              alt="Live stream stats dashboard" 
+              loading="lazy" 
+              className="w-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ── FEATURES GRID ────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
         <div className="max-w-5xl mx-auto">
