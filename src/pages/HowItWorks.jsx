@@ -1,43 +1,43 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Monitor, AppWindow, Chrome, RefreshCw } from "lucide-react";
+import { ArrowRight, Calendar, Sparkles, Brain, TrendingUp, Monitor } from "lucide-react";
 import GlitchText from "../components/GlitchText";
 
 const pillars = [
   {
     num: "01",
-    icon: AppWindow,
-    label: "THE WEB APP",
-    title: "Helps you get ready",
+    icon: Calendar,
+    label: "PROGRAMMING",
+    title: "Plan your week strategically",
     accent: "cyan",
-    body: "Before you go live, the ALT Ctrl web app helps you build a better plan. It looks at your past streams, your goals, and what has been working for your content. Then it helps shape a smarter strategy for your next live, so you are not going in blind.",
-    tagline: "This is where your stream game plan lives.",
+    body: "Build a real weekly stream schedule. ALT Ctrl analyzes your past performance and recommends the best games, times, and stream types for growth. Get AI-powered plans that are built on YOUR data, not generic advice.",
+    tagline: "Stop guessing what to stream next.",
   },
   {
     num: "02",
-    icon: Monitor,
-    label: "THE DESKTOP APP",
-    title: "Helps you while you stream",
+    icon: Sparkles,
+    label: "PROMOTION",
+    title: "Generate promo in seconds",
     accent: "pink",
-    body: "When it is time to go live, the ALT Ctrl Desktop App becomes your control center. This is where you run your stream, manage your setup, and get live prompts while you are streaming. It helps you stay on top of what is happening in the moment — like when chat slows down, when support starts picking up, or when it is time to pull viewers back in.",
-    tagline: "So instead of guessing what to do next, you get help while you are live.",
+    body: "Before every stream, ALT Ctrl generates a complete promo kit — hooks, captions, hashtags, and title options. No more staring at a blank screen trying to figure out what to post.",
+    tagline: "Post smarter promo, get more viewers.",
   },
   {
     num: "03",
-    icon: Chrome,
-    label: "THE CHROME EXTENSION",
-    title: "Captures extra stream data",
+    icon: Brain,
+    label: "COACHING",
+    title: "Get real-time guidance while streaming",
     accent: "yellow",
-    body: "Some platforms do not show creators everything they need. The ALT Ctrl Chrome extension captures extra stream data and fills in important gaps, so you get a more complete picture of what really happened during your live.",
-    tagline: "Better insights, better tracking, and better feedback after the stream ends.",
+    body: "The desktop app watches your stream metrics and sends you live prompts. When chat slows down, when support picks up, when viewers are about to leave — you get alerts telling you exactly what to do.",
+    tagline: "Never feel lost while you\'re live again.",
   },
   {
     num: "04",
-    icon: RefreshCw,
-    label: "THE LOOP",
-    title: "Everything flows back together",
+    icon: TrendingUp,
+    label: "ANALYTICS",
+    title: "Understand what actually works",
     accent: "cyan",
-    body: "After your stream is over, your session data flows back into ALT Ctrl. The system looks at what happened, what worked, what did not, and what you should do differently next time. Then it uses that to improve your next strategy.",
-    tagline: "So every stream helps make the next one better.",
+    body: "Every session is logged and analyzed. See which games, times, and tactics drive your growth. Track viewers, engagement, conversions, and retention — and get coaching on how to improve next time.",
+    tagline: "Data-driven decisions beat guessing every time.",
   },
 ];
 
@@ -114,10 +114,10 @@ export default function HowItWorks() {
           <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// IN SIMPLE TERMS</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
             {[
-              { text: "The web app helps you plan", accent: "cyan" },
-              { text: "The desktop app helps you while you stream", accent: "pink" },
-              { text: "The Chrome extension captures extra data", accent: "yellow" },
-              { text: "ALT Ctrl brings it all together", accent: "cyan" },
+              { text: "Programming: Plan your week", accent: "cyan" },
+              { text: "Promotion: Generate promo kits", accent: "pink" },
+              { text: "Coaching: Get live guidance", accent: "yellow" },
+              { text: "Analytics: Learn from every stream", accent: "cyan" },
             ].map((item, i) => (
               <div key={i} className={`rounded-xl border ${accentColors[item.accent].border} bg-[#060d1f] p-4 flex flex-col items-center text-center gap-2`}>
                 <span className={`text-lg font-black ${accentColors[item.accent].text}`}>0{i + 1}</span>
