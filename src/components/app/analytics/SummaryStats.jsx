@@ -36,8 +36,10 @@ export default function SummaryStats({ sessions }) {
   const totalFanClubJoins = sessions.reduce((s, r) => s + (r.fan_club_joins || 0), 0);
   
   // Advanced metrics
+  const totalUniqueViewers = sessions.reduce((s, r) => s + (r.total_unique_viewers ?? 0), 0);
   const totalReturnViewers = sessions.reduce((s, r) => s + (r.return_viewers ?? 0), 0);
   const totalUniqueChatters = sessions.reduce((s, r) => s + (r.unique_chatters ?? 0), 0);
+  const retentionRate = totalUniqueViewers > 0 ? Math.round((totalReturnViewers / totalUniqueViewers) * 100) : 0;
   
   // Conversion rates (% per avg viewer)
   const totalAvgViewers = sessions.filter(s => s.avg_viewers != null && s.avg_viewers > 0).reduce((s, r) => s + (r.avg_viewers || 0), 0);
@@ -106,6 +108,12 @@ export default function SummaryStats({ sessions }) {
             <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl px-4 py-3">
               <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1">Return Viewers</div>
               <div className="text-base font-black text-cyan-400">{totalReturnViewers.toLocaleString()}</div>
+            </div>
+          )}
+          {retentionRate > 0 && (
+            <div className="bg-[#060d1f] border border-pink-900/30 rounded-xl px-4 py-3">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1">Retention Rate</div>
+              <div className="text-base font-black text-pink-400">{retentionRate}%</div>
             </div>
           )}
           {totalUniqueChatters > 0 && (
