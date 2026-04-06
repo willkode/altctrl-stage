@@ -155,6 +155,7 @@ export default function ExternalPlatformCard() {
               onChange={(e) => setNewPlatform(e.target.value)}
               className="bg-[#02040f] border border-cyan-900/20 text-white rounded px-3 py-2 text-xs font-mono"
             >
+              <option value="tiktok">TikTok</option>
               <option value="twitch">Twitch</option>
               <option value="youtube">YouTube</option>
             </select>
@@ -186,7 +187,7 @@ export default function ExternalPlatformCard() {
           onClick={() => setAddingNew(true)}
           className="w-full flex items-center justify-center gap-2 text-[10px] font-mono uppercase px-4 py-3 rounded border border-cyan-900/30 text-slate-500 hover:text-cyan-400 transition-all"
         >
-          <Plus className="w-3.5 h-3.5" /> Add Twitch / YouTube
+          <Plus className="w-3.5 h-3.5" /> Add TikTok / Twitch / YouTube
         </button>
       )}
     </div>

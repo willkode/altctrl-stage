@@ -19,6 +19,7 @@ Deno.serve(async (req) => {
     const platformUrls = {
       twitch: `https://twitch.tv/${handle}`,
       youtube: `https://youtube.com/@${handle}`,
+      tiktok: `https://tiktok.com/@${handle}`,
     };
 
     const url = platformUrls[platform];
