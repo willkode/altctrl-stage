@@ -1,0 +1,80 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "title": "Stripe Customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "title": "Stripe Subscription ID"
+    },
+    "plan": {
+      "type": "string",
+      "title": "Plan",
+      "enum": [
+        "free",
+        "pro"
+      ],
+      "default": "free"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "active",
+        "canceled",
+        "past_due",
+        "incomplete",
+        "trialing",
+        "none"
+      ],
+      "default": "none"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Current Period End"
+    },
+    "cancel_at_period_end": {
+      "type": "boolean",
+      "title": "Cancel At Period End",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email"
+  ],
+  "rls": {
+    "create": {
+      "user_email": "{{user.email}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

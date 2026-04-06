@@ -41,6 +41,7 @@ import AudienceMonetization from './pages/app/AudienceMonetization';
 import Experiments from './pages/app/Experiments';
 import Profile from './pages/app/Profile';
 import Settings from './pages/app/Settings';
+import Billing from './pages/app/Billing';
 import AdminAuthGate from './components/app/admin/AdminAuthGate';
 import AdminDashboard from './pages/app/admin/Dashboard';
 import AdminExtensions from './pages/app/admin/ExtensionIntegrations';
@@ -100,6 +101,7 @@ const AuthenticatedApp = () => {
           <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="billing" element={<Billing />} />
           <Route path="golive" element={<GoLive />} />
           <Route path="debrief" element={<PostLiveDebrief />} />
           <Route path="replay" element={<ReplayReviewPage />} />

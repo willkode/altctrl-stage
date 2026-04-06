@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair, Swords, HelpCircle } from "lucide-react";
+import { LayoutDashboard, Calendar, Radio, TrendingUp, Brain, Bell, User, Menu, X, Zap, Settings as Settings2Icon, PlayCircle, ClipboardList, Film, Users, FlaskConical, ShieldAlert, Sparkles, Crosshair, Swords, HelpCircle, CreditCard } from "lucide-react";
 import SupportTicketModal from "./app/SupportTicketModal";
 import GlitchText from "./GlitchText";
 import { useCreatorBootstrap } from "../hooks/useCreatorBootstrap";
@@ -25,6 +25,7 @@ const navItems = [
   { path: "/app/audience", label: "Audience", icon: Users },
   { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
   { path: "/app/games", label: "Game Intel", icon: Swords },
+  { path: "/app/billing", label: "Billing", icon: CreditCard },
 ];
 
 // Mobile bottom nav — limited to 5 core items to meet 44px tap target minimum
