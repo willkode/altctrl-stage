@@ -33,7 +33,7 @@ export default function SummaryStats({ sessions }) {
 
   return (
     <div>
-      <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// OVERVIEW</div>
+      <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-3">// LIVE STREAM STATS</div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatBox label="Total Sessions" value={total} sub="all time" icon={Zap} accent="cyan" glow />
         <StatBox label="Last 30 Days" value={last30Count} sub="sessions" icon={Radio} accent="pink" />
