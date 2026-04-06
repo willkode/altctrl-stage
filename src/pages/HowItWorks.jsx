@@ -66,16 +66,59 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* ═══ SYSTEM DIAGRAM ═══ */}
-      <section className="px-4 pb-16" style={{ backgroundColor: "#020408" }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-xl overflow-hidden border border-cyan-900/40 mb-4" style={{ boxShadow: "0 0 40px rgba(0,245,255,0.06)" }}>
-            <img
-              src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/395f77fb3_generated_image.png"
-              alt="ALT Ctrl System Overview"
-              className="w-full object-cover"
-              style={{ maxHeight: "380px" }}
-            />
+      {/* ═══ THE THREE TOOLS ═══ */}
+      <section className="py-16 px-4" style={{ backgroundColor: "#050b18" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// THE ECOSYSTEM</div>
+            <h2 className="text-3xl sm:text-4xl font-black uppercase text-white">Web App + Desktop App + Chrome Extension</h2>
+            <p className="text-slate-400 text-sm mt-4 max-w-2xl mx-auto">Three tools working together to cover every part of your streaming journey.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Web App */}
+            <div className="bg-[#060d1f] border border-cyan-500/30 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-4">
+                <span className="text-cyan-400 font-black">🌐</span>
+              </div>
+              <h3 className="text-lg font-black uppercase text-cyan-400 mb-3">Web App</h3>
+              <p className="text-sm text-slate-400 mb-3">Plan, promote, and analyze — all in your browser.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Weekly stream planning</li>
+                <li>✓ AI promo generation</li>
+                <li>✓ Performance analytics</li>
+                <li>✓ Coaching insights</li>
+              </ul>
+            </div>
+
+            {/* Desktop App */}
+            <div className="bg-[#060d1f] border border-pink-500/30 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4">
+                <span className="text-pink-400 font-black">🖥️</span>
+              </div>
+              <h3 className="text-lg font-black uppercase text-pink-400 mb-3">Desktop App</h3>
+              <p className="text-sm text-slate-400 mb-3">Real-time coaching while you stream.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Live metrics dashboard</li>
+                <li>✓ Smart coaching alerts</li>
+                <li>✓ Chat & viewer tracking</li>
+                <li>✓ Stream control center</li>
+              </ul>
+            </div>
+
+            {/* Chrome Extension */}
+            <div className="bg-[#060d1f] border border-yellow-500/30 rounded-xl p-6">
+              <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center mb-4">
+                <span className="text-yellow-400 font-black">⚙️</span>
+              </div>
+              <h3 className="text-lg font-black uppercase text-yellow-400 mb-3">Chrome Extension</h3>
+              <p className="text-sm text-slate-400 mb-3">Automatically capture complete session data.</p>
+              <ul className="space-y-2 text-xs text-slate-500">
+                <li>✓ Auto session logging</li>
+                <li>✓ Viewer metrics capture</li>
+                <li>✓ Engagement tracking</li>
+                <li>✓ Data sync to dashboard</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
