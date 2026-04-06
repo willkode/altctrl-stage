@@ -9,6 +9,7 @@ export default function ExternalPlatformCard() {
   const [newPlatform, setNewPlatform] = useState("twitch");
   const [newHandle, setNewHandle] = useState("");
   const [addingNew, setAddingNew] = useState(false);
+  const [addError, setAddError] = useState(null);
 
   useEffect(() => {
     loadConnections();
@@ -49,6 +50,7 @@ export default function ExternalPlatformCard() {
   async function handleAdd() {
     if (!newHandle.trim()) return;
     setSyncing("new");
+    setAddError(null);
     try {
       const result = await base44.functions.invoke("fetchExternalStats", {
         platform: newPlatform,
@@ -57,10 +59,14 @@ export default function ExternalPlatformCard() {
       if (result.data?.success) {
         setNewHandle("");
         setAddingNew(false);
+        setAddError(null);
         await loadConnections();
+      } else {
+        setAddError(result.data?.error || "Failed to sync platform stats");
       }
     } catch (err) {
       console.error("Add failed:", err);
+      setAddError(err.message || "Error syncing platform");
     } finally {
       setSyncing(null);
     }
@@ -166,6 +172,13 @@ export default function ExternalPlatformCard() {
               className="bg-[#02040f] border border-cyan-900/20 text-white rounded px-3 py-2 text-xs font-mono placeholder-slate-700"
             />
           </div>
+          <div className="space-y-2">
+          {addError && (
+            <div className="flex items-start gap-2 bg-red-500/10 border border-red-900/20 rounded px-3 py-2">
+              <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />
+              <p className="text-[9px] font-mono text-red-400">{addError}</p>
+            </div>
+          )}
           <div className="flex gap-2">
             <button
               onClick={handleAdd}
@@ -175,14 +188,18 @@ export default function ExternalPlatformCard() {
               {syncing === "new" ? "Syncing..." : "Connect & Sync"}
             </button>
             <button
-              onClick={() => setAddingNew(false)}
+              onClick={() => {
+                setAddingNew(false);
+                setAddError(null);
+              }}
               className="px-4 text-[10px] font-mono uppercase border border-cyan-900/30 text-slate-500 rounded hover:text-white transition-all"
             >
               Cancel
             </button>
           </div>
-        </div>
-      ) : (
+          </div>
+          </div>
+          ) : (
         <button
           onClick={() => setAddingNew(true)}
           className="w-full flex items-center justify-center gap-2 text-[10px] font-mono uppercase px-4 py-3 rounded border border-cyan-900/30 text-slate-500 hover:text-cyan-400 transition-all"
