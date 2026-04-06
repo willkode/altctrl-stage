@@ -107,17 +107,86 @@ export default function GameLibraryAdmin() {
   async function bulkUploadGames(file) {
     setUploading(true);
     try {
-      const text = await file.text();
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      for (const name of lines) {
-        await base44.entities.GameLibrary.create({
-          ...emptyGame(),
-          title: name,
-          normalized_title: name.toLowerCase(),
-          slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-          is_active: true,
-          sort_priority: 100,
+      if (file.name.endsWith('.xlsx')) {
+        // Parse XLSX file
+        const arrayBuffer = await file.arrayBuffer();
+        const response = await base44.integrations.Core.ExtractDataFromUploadedFile({
+          file_url: '',
+          json_schema: {
+            type: 'object',
+            properties: {
+              rank: { type: 'number' },
+              score: { type: 'number' },
+              title: { type: 'string' },
+              genre: { type: 'string' },
+              platform_fit: { type: 'string' },
+              stream_style: { type: 'string' },
+              challenge_friendly: { type: 'boolean' },
+              type_tags: { type: 'string' },
+              creator_skill_curve: { type: 'string' },
+              feature_image_search: { type: 'string' },
+              source_basis: { type: 'string' },
+            },
+          },
         });
+        
+        // First upload the file to get its URL
+        const uploadRes = await base44.integrations.Core.UploadFile({ file });
+        
+        // Extract data from the uploaded file
+        const extractRes = await base44.integrations.Core.ExtractDataFromUploadedFile({
+          file_url: uploadRes.data.file_url,
+          json_schema: {
+            type: 'object',
+            properties: {
+              rank: { type: 'number' },
+              score: { type: 'number' },
+              title: { type: 'string' },
+              genre: { type: 'string' },
+              platform_fit: { type: 'string' },
+              stream_style: { type: 'string' },
+              challenge_friendly: { type: 'boolean' },
+              type_tags: { type: 'string' },
+              creator_skill_curve: { type: 'string' },
+              feature_image_search: { type: 'string' },
+              source_basis: { type: 'string' },
+            },
+          },
+        });
+        
+        if (extractRes.data?.output && Array.isArray(extractRes.data.output)) {
+          for (const row of extractRes.data.output) {
+            await base44.entities.GameLibrary.create({
+              ...emptyGame(),
+              title: row.title || '',
+              description_short: row.source_basis || '',
+              genres: row.genre ? [row.genre] : [],
+              tags: row.type_tags ? row.type_tags.split(',').map(t => t.trim()) : [],
+              gameplay_pacing: row.stream_style || 'medium',
+              challenge_friendly: row.challenge_friendly === true || row.challenge_friendly === 'true',
+              difficulty_style: row.creator_skill_curve || 'mixed',
+              cover_image: row.feature_image_search || '',
+              sort_priority: row.rank || 100,
+              normalized_title: (row.title || '').toLowerCase(),
+              slug: (row.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+              is_active: true,
+            });
+          }
+        }
+      } else {
+        // Parse CSV/TXT file (simple line-by-line)
+        const text = await file.text();
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        for (const name of lines) {
+          await base44.entities.GameLibrary.create({
+            ...emptyGame(),
+            title: name,
+            normalized_title: name.toLowerCase(),
+            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            is_active: true,
+            sort_priority: 100,
+          });
+        }
       }
       await load();
     } catch (err) {
@@ -221,7 +290,7 @@ Return as a JSON array of 5 games.`,
             <label className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-purple-900/30 text-slate-500 hover:text-purple-400 transition-all cursor-pointer disabled:opacity-50">
               <input
                 type="file"
-                accept=".txt,.csv"
+                accept=".xlsx,.csv,.txt"
                 onChange={e => e.target.files?.[0] && bulkUploadGames(e.target.files[0])}
                 disabled={uploading}
                 className="hidden"
