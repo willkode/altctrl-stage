@@ -61,6 +61,7 @@ import ExtensionAuth from './pages/ExtensionAuth';
 import OGCreators from './pages/OGCreators';
 import Investors from './pages/Investors';
 import GamesLibrary from './pages/GamesLibrary';
+import TikTokAppealHelper from './pages/TikTokAppealHelper';
 
 const HomeRedirect = () => {
   // This component will be wrapped in auth context later
@@ -142,6 +143,7 @@ const AuthenticatedApp = () => {
         <Route path="/og-creators" element={<OGCreators />} />
         <Route path="/investors" element={<Investors />} />
         <Route path="/popular-tiktok-games" element={<GamesLibrary />} />
+        <Route path="/tiktok-appeal-helper" element={<TikTokAppealHelper />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
