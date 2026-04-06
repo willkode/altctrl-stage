@@ -11,6 +11,7 @@ import PromoImpact from "../../components/app/analytics/PromoImpact";
 import SessionHistory from "../../components/app/analytics/SessionHistory";
 import TopFollowersStats from "../../components/app/analytics/TopFollowersStats";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
+import EngagementTriggersAnalysis from "../../components/app/analytics/EngagementTriggersAnalysis";
 import TikTokAccountStats from "../../components/app/analytics/TikTokAccountStats";
 import TikTokVideoStats from "../../components/app/analytics/TikTokVideoStats";
 import { Plus, X, SlidersHorizontal } from "lucide-react";
@@ -189,6 +190,7 @@ export default function Analytics() {
           </div>
           <TopFollowersStats sessions={filtered} />
           <TopFollowersStats sessions={filtered} />
+          <EngagementTriggersAnalysis />
           <SessionHistory sessions={filtered} onLogSession={() => setLogOpen(true)} onRefresh={loadData} onEditSession={s => setEditSession(s)} />
           <TimeHeatmap sessions={filtered} />
         </div>
