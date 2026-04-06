@@ -75,9 +75,12 @@ export default function LogSessionDrawer({ open, onClose, session = null, onSave
       Promise.all([
         base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
         base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      ]).then(([sessions, streams]) => {
-        const games = [...new Set(sessions.map(s => s.game).filter(Boolean))];
-        setGameSuggestions(games);
+        base44.entities.GameLibrary.list('-created_date', 200),
+      ]).then(([sessions, streams, gameLib]) => {
+        const historyGames = [...new Set(sessions.map(s => s.game).filter(Boolean))];
+        const libGames = gameLib.map(g => g.title || g.name).filter(Boolean);
+        setGameSuggestions(historyGames);
+        setAllGames([...new Set([...historyGames, ...libGames])]);
         const today = new Date().toISOString().split("T")[0];
         const upcoming = streams
           .filter(s => s.scheduled_date >= today && s.status !== "cancelled")
