@@ -67,7 +67,9 @@ export function buildTrendData(sessions, days = THRESHOLDS.TREND_DAYS) {
     .sort()
     .map(date => {
       const daySessions = byDate[date];
-      const avgViewersArr = daySessions.filter(s => s.avg_viewers != null).map(s => s.avg_viewers);
+      const avgViewersArr = daySessions
+        .filter(s => s.avg_viewers != null && s.avg_viewers > 0)
+        .map(s => s.avg_viewers);
       const dailyAvgViewers = avgViewersArr.length > 0 ? Math.round(avg(avgViewersArr)) : null;
       const dailyPeakViewers = Math.max(...daySessions.map(s => s.peak_viewers || 0)) || null;
       const dailyFollowersGained = daySessions.reduce((sum, s) => sum + (s.followers_gained || 0), 0);
