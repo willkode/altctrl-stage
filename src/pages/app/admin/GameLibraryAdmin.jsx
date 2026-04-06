@@ -38,6 +38,8 @@ export default function GameLibraryAdmin() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [enriching, setEnriching] = useState(false);
   const [enrichProgress, setEnrichProgress] = useState(null);
+  const [checkingDupes, setCheckingDupes] = useState(false);
+  const [dupeResults, setDupeResults] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -81,6 +83,32 @@ export default function GameLibraryAdmin() {
     if (!confirm(`Delete "${game.title}"?`)) return;
     await base44.entities.GameLibrary.delete(game.id);
     load();
+  }
+
+  async function checkDuplicates() {
+    setCheckingDupes(true);
+    const titleMap = {};
+    const dupes = [];
+
+    // Group games by normalized title
+    games.forEach(g => {
+      const normalized = g.normalized_title || g.title?.toLowerCase() || '';
+      if (!normalized) return;
+      if (!titleMap[normalized]) {
+        titleMap[normalized] = [];
+      }
+      titleMap[normalized].push(g);
+    });
+
+    // Find groups with duplicates
+    Object.entries(titleMap).forEach(([title, items]) => {
+      if (items.length > 1) {
+        dupes.push({ title, count: items.length, games: items });
+      }
+    });
+
+    setDupeResults({ total: dupes.length, duplicates: dupes });
+    setCheckingDupes(false);
   }
 
   async function enrichWithAI() {
@@ -314,6 +342,11 @@ Return as a JSON array of 5 games.`,
               {seeding ? <Loader2 className="w-3 h-3 animate-spin" /> : <Database className="w-3 h-3" />}
               {seeding ? "Seeding…" : "Seed Default Games"}
             </button>
+            <button onClick={checkDuplicates} disabled={checkingDupes}
+              className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg border border-red-900/30 text-slate-500 hover:text-red-400 transition-all disabled:opacity-50">
+              {checkingDupes ? <Loader2 className="w-3 h-3 animate-spin" /> : '🔍'}
+              {checkingDupes ? "Checking..." : "Check Dupes"}
+            </button>
             <button onClick={() => setEditGame(emptyGame())}
               className="flex items-center gap-1.5 text-[10px] font-mono uppercase px-3 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/15 transition-all">
               <Plus className="w-3 h-3" /> Add Game
@@ -324,6 +357,30 @@ Return as a JSON array of 5 games.`,
         {enrichProgress && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-xs font-mono text-yellow-400">
             {enrichProgress}
+          </div>
+        )}
+
+        {dupeResults && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-mono uppercase text-red-400">⚠️ {dupeResults.total} Duplicate Groups Found</span>
+              <button onClick={() => setDupeResults(null)} className="text-red-400 hover:text-red-300 text-xs">✕</button>
+            </div>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {dupeResults.duplicates.map((group, idx) => (
+                <div key={idx} className="bg-red-900/10 border border-red-900/30 rounded px-3 py-2">
+                  <p className="text-xs font-mono text-red-400 mb-1">"{group.title}" ({group.count} entries)
+                  </p>
+                  <div className="space-y-1">
+                    {group.games.map(g => (
+                      <div key={g.id} className="text-[9px] font-mono text-slate-600">
+                        • {g.title} {g.developer && `(${g.developer})`}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
