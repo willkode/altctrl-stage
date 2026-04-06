@@ -40,6 +40,7 @@ export default function GameLibraryAdmin() {
   const [enrichProgress, setEnrichProgress] = useState(null);
   const [checkingDupes, setCheckingDupes] = useState(false);
   const [dupeResults, setDupeResults] = useState(null);
+  const [deletingDupeGroup, setDeletingDupeGroup] = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -109,6 +110,20 @@ export default function GameLibraryAdmin() {
 
     setDupeResults({ total: dupes.length, duplicates: dupes });
     setCheckingDupes(false);
+  }
+
+  async function deleteDuplicateGroup(group) {
+    // Keep the first game, delete the rest
+    const [keep, ...toDelete] = group.games;
+    setDeletingDupeGroup(group.title);
+    
+    for (const game of toDelete) {
+      await base44.entities.GameLibrary.delete(game.id);
+    }
+    
+    setDeletingDupeGroup(null);
+    await load();
+    await checkDuplicates();
   }
 
   async function enrichWithAI() {
@@ -371,13 +386,20 @@ Return as a JSON array of 5 games.`,
                 <div key={idx} className="bg-red-900/10 border border-red-900/30 rounded px-3 py-2">
                   <p className="text-xs font-mono text-red-400 mb-1">"{group.title}" ({group.count} entries)
                   </p>
-                  <div className="space-y-1">
-                    {group.games.map(g => (
+                  <div className="space-y-1 mb-2">
+                    {group.games.map((g, i) => (
                       <div key={g.id} className="text-[9px] font-mono text-slate-600">
-                        • {g.title} {g.developer && `(${g.developer})`}
+                        • {g.title} {g.developer && `(${g.developer})`} {i === 0 && <span className="text-green-600 ml-1">(keeping)</span>}
                       </div>
                     ))}
                   </div>
+                  <button
+                    onClick={() => deleteDuplicateGroup(group)}
+                    disabled={deletingDupeGroup === group.title}
+                    className="text-[9px] font-mono uppercase px-2 py-1 rounded bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 transition-all disabled:opacity-40"
+                  >
+                    {deletingDupeGroup === group.title ? 'Deleting...' : 'Delete Duplicates'}
+                  </button>
                 </div>
               ))}
             </div>
