@@ -152,43 +152,55 @@ export default function GameIntel() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-cyan-900/20 text-[10px] font-mono uppercase tracking-widest text-slate-600">
-                    <th className="text-right py-3 px-4">Score</th>
-                    <th className="text-left py-3 px-4">Title</th>
-                    <th className="text-left py-3 px-4">Genre</th>
-                    <th className="text-left py-3 px-4">Platform Fit</th>
-                    <th className="text-left py-3 px-4">Stream Style</th>
-                    <th className="text-center py-3 px-4">Challenge</th>
-                    <th className="text-left py-3 px-4">Type Tags</th>
-                    <th className="text-left py-3 px-4">Skill Curve</th>
+                  <tr className="border-b border-cyan-900/30 bg-[#030609] text-[10px] font-mono uppercase tracking-widest text-cyan-400">
+                    <th className="text-right py-3.5 px-4">Score</th>
+                    <th className="text-left py-3.5 px-4">Title</th>
+                    <th className="text-left py-3.5 px-4">Genre</th>
+                    <th className="text-left py-3.5 px-4">Platform</th>
+                    <th className="text-left py-3.5 px-4">Style</th>
+                    <th className="text-center py-3.5 px-4">Challenge</th>
+                    <th className="text-left py-3.5 px-4">Tags</th>
+                    <th className="text-left py-3.5 px-4">Skill</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map(g => {
+                  {filtered.map((g, idx) => {
                     const score = g.sort_priority ? Math.max(0, Math.min(100, 100 - g.sort_priority)) : 50;
+                    const scoreColor = score >= 75 ? "bg-green-500/15 border-l-2 border-green-500" : score >= 50 ? "bg-cyan-500/10 border-l-2 border-cyan-500" : score >= 25 ? "bg-yellow-500/10 border-l-2 border-yellow-500" : "bg-slate-500/5 border-l-2 border-slate-700";
+                    const scoreTextColor = score >= 75 ? "text-green-400" : score >= 50 ? "text-cyan-400" : score >= 25 ? "text-yellow-400" : "text-slate-600";
                     return (
-                      <tr key={g.id} className="border-b border-cyan-900/10 hover:bg-white/[0.02] transition-colors">
-                        <td className="text-right py-3 px-4">
-                          <span className={`font-bold ${score >= 70 ? "text-green-400" : score >= 40 ? "text-yellow-400" : "text-slate-500"}`}>
-                            {score}
-                          </span>
+                      <tr key={g.id} className={`border-b border-cyan-900/10 hover:bg-cyan-500/5 transition-all ${idx % 2 === 0 ? "bg-[#020408]" : ""}`}>
+                        <td className={`text-right py-4 px-4 font-bold text-lg ${scoreTextColor} ${scoreColor}`}>
+                          {score}
                         </td>
-                        <td className="py-3 px-4">
-                          <div className="font-bold text-white">{g.title}</div>
-                          {g.developer && <div className="text-[10px] text-slate-600">{g.developer}</div>}
+                        <td className="py-4 px-4">
+                          <div className="font-bold text-white truncate">{g.title}</div>
+                          {g.developer && <div className="text-[10px] text-slate-600 truncate">{g.developer}</div>}
                         </td>
-                        <td className="py-3 px-4 text-[10px]">{g.genres?.join(", ") || "—"}</td>
-                        <td className="py-3 px-4 text-[10px]">{g.multiplayer_type || "—"}</td>
-                        <td className="py-3 px-4 text-[10px]">{g.gameplay_pacing || "—"}</td>
-                        <td className="text-center py-3 px-4">
+                        <td className="py-4 px-4">
+                          <div className="flex flex-wrap gap-1">
+                            {g.genres?.slice(0, 2).map(genre => (
+                              <span key={genre} className="text-[9px] font-mono px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300">{genre}</span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-xs text-slate-400">{g.multiplayer_type?.replace("_", " ") || "—"}</td>
+                        <td className="py-4 px-4 text-xs text-slate-400">{g.gameplay_pacing || "—"}</td>
+                        <td className="text-center py-4 px-4">
                           {g.challenge_friendly ? (
-                            <span className="text-pink-400 font-bold">✓</span>
+                            <span className="inline-block px-2.5 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-400 text-xs font-bold">✓</span>
                           ) : (
                             <span className="text-slate-700">—</span>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-[10px]">{g.tags?.join(", ") || "—"}</td>
-                        <td className="py-3 px-4 text-[10px]">{g.difficulty_style || "—"}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex flex-wrap gap-1 max-w-xs">
+                            {g.tags?.slice(0, 3).map(tag => (
+                              <span key={tag} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-500/10 border border-slate-500/20 text-slate-400 whitespace-nowrap">{tag}</span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-xs text-slate-400">{g.difficulty_style || "—"}</td>
                       </tr>
                     );
                   })}
