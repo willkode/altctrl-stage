@@ -35,6 +35,7 @@ export default function GameLibraryAdmin() {
   const [seeding, setSeeding] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [enriching, setEnriching] = useState(false);
   const [enrichProgress, setEnrichProgress] = useState(null);
 
@@ -155,7 +156,9 @@ export default function GameLibraryAdmin() {
         });
         
         if (extractRes.data?.output && Array.isArray(extractRes.data.output)) {
-          for (const row of extractRes.data.output) {
+          const total = extractRes.data.output.length;
+          for (let i = 0; i < total; i++) {
+            const row = extractRes.data.output[i];
             await base44.entities.GameLibrary.create({
               ...emptyGame(),
               title: row.title || '',
@@ -171,13 +174,15 @@ export default function GameLibraryAdmin() {
               slug: (row.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
               is_active: true,
             });
+            setUploadProgress(Math.round(((i + 1) / total) * 100));
           }
         }
       } else {
         // Parse CSV/TXT file (simple line-by-line)
         const text = await file.text();
         const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        for (const name of lines) {
+        for (let i = 0; i < lines.length; i++) {
+          const name = lines[i];
           await base44.entities.GameLibrary.create({
             ...emptyGame(),
             title: name,
@@ -186,6 +191,7 @@ export default function GameLibraryAdmin() {
             is_active: true,
             sort_priority: 100,
           });
+          setUploadProgress(Math.round(((i + 1) / lines.length) * 100));
         }
       }
       await load();
@@ -193,6 +199,7 @@ export default function GameLibraryAdmin() {
       console.error('Upload failed:', err);
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   }
 
@@ -317,6 +324,18 @@ Return as a JSON array of 5 games.`,
         {enrichProgress && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-2 text-xs font-mono text-yellow-400">
             {enrichProgress}
+          </div>
+        )}
+
+        {uploading && (
+          <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg px-4 py-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono uppercase text-purple-400">Uploading games...</span>
+              <span className="text-xs font-mono text-purple-400">{uploadProgress}%</span>
+            </div>
+            <div className="h-1.5 bg-purple-900/30 rounded-full overflow-hidden">
+              <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+            </div>
           </div>
         )}
 
