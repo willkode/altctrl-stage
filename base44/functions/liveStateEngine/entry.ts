@@ -21,7 +21,51 @@ Deno.serve(async (req) => {
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
-  const { session_id, pulse_id } = body;
+
+  // Support both desktop camelCase payload and internal snake_case pulse payload
+  const session_id = body.session_id || body.sessionId;
+  const pulse_id = body.pulse_id;
+
+  // If the desktop sent a full pulse payload, create/upsert the LivePulse record first
+  let resolvedPulseId = pulse_id;
+  if (body.sessionId && body.viewers !== undefined) {
+    const uptimeSec = body.uptimeSec || 0;
+    const minuteLiveFromDesktop = Math.round(uptimeSec / 60);
+    const pulseRecord = {
+      session_id,
+      user_id: user.email,
+      captured_at: body.timestamp || new Date().toISOString(),
+      minute_live: minuteLiveFromDesktop,
+      current_viewers: body.viewers || 0,
+      peak_viewers_so_far: body.peakViewers || 0,
+      comments_last_2m: body.chatRateMpm ? Math.round(body.chatRateMpm * 2) : 0,
+      gifts_last_2m: body.totalGifts || 0,
+      shares_last_2m: body.totalShares || 0,
+      follows_last_2m: body.totalFollows || 0,
+      momentum_score: body.supportMomentum || body.engagementScore || 0,
+    };
+    const createdPulse = await base44.asServiceRole.entities.LivePulse.create(pulseRecord);
+    resolvedPulseId = createdPulse.id;
+
+    // Also link scheduledStreamId / streamStrategyId onto DesktopSession if provided
+    if (body.scheduledStreamId || body.streamStrategyId) {
+      const existingSession = await base44.asServiceRole.entities.DesktopSession.filter({ session_id, user_id: user.email });
+      const linkData = {
+        scheduled_stream_id: body.scheduledStreamId || null,
+        stream_strategy_id: body.streamStrategyId || null,
+      };
+      if (existingSession.length > 0) {
+        await base44.asServiceRole.entities.DesktopSession.update(existingSession[0].id, linkData);
+      } else {
+        await base44.asServiceRole.entities.DesktopSession.create({
+          session_id,
+          user_id: user.email,
+          started_at: body.timestamp || new Date().toISOString(),
+          ...linkData,
+        });
+      }
+    }
+  }
 
   if (!session_id) return Response.json({ error: 'session_id required' }, { status: 400 });
 
@@ -194,8 +238,8 @@ Deno.serve(async (req) => {
   }
 
   // --- 6. Update the LivePulse record with classified state ---
-  if (pulse_id) {
-    await base44.asServiceRole.entities.LivePulse.update(pulse_id, {
+  if (resolvedPulseId) {
+    await base44.asServiceRole.entities.LivePulse.update(resolvedPulseId, {
       stream_state: state,
     });
   }
@@ -203,7 +247,7 @@ Deno.serve(async (req) => {
   // --- 7. Build result payload ---
   const result = {
     session_id,
-    pulse_id,
+    pulse_id: resolvedPulseId,
     state,
     state_changed: stateChanged,
     previous_state: prevPulseState,
@@ -229,7 +273,7 @@ Deno.serve(async (req) => {
   if (triggerCoach) {
     await base44.asServiceRole.functions.invoke('runCoachAI', {
       session_id,
-      pulse_id,
+      pulse_id: resolvedPulseId,
       state,
       state_changed: stateChanged,
       trigger_reason: triggerReason,

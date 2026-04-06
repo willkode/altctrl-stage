@@ -9,7 +9,8 @@ Deno.serve(async (req) => {
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { scheduled_stream_id, action } = await req.json();
+  const body = await req.json();
+  const { scheduled_stream_id, action, session_id, stream_strategy_id } = body;
 
   // Action: "list_upcoming" — return upcoming streams with strategy status
   if (action === "list_upcoming") {
@@ -62,6 +63,21 @@ Deno.serve(async (req) => {
 
     const strategy = strategies[0];
 
+    // Load creator profile to compute personalized trigger thresholds
+    const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email }, '-created_date', 1);
+    const avgViewers = profiles[0]?.avg_viewers || 0;
+
+    // Scale thresholds to the creator's audience size
+    const triggerThresholds = {
+      chat_slowdown_msgs_per_min: avgViewers >= 500 ? 20 : avgViewers >= 200 ? 15 : avgViewers >= 50 ? 8 : 4,
+      viewer_drop_pct:            avgViewers >= 200 ? 15 : 20,
+      viewer_spike_pct:           25,
+      gift_burst_count:           avgViewers >= 200 ? 5 : 3,
+      monologue_seconds:          avgViewers >= 100 ? 60 : 75,
+      engagement_low_score:       avgViewers >= 200 ? 35 : 30,
+      support_momentum_high:      avgViewers >= 500 ? 70 : 65,
+    };
+
     // Parse JSON fields for the desktop app
     let engagementPrompts = [];
     let milestones = [];
@@ -73,22 +89,46 @@ Deno.serve(async (req) => {
         ...strategy,
         engagement_prompts_parsed: engagementPrompts,
         milestones_parsed: milestones,
+        trigger_thresholds: triggerThresholds,
       },
     });
   }
 
-  // Action: "activate" — mark strategy as active (stream starting)
+  // Action: "activate" — mark strategy as active and link session_id to scheduled_stream_id + stream_strategy_id
   if (action === "activate") {
     if (!scheduled_stream_id) {
       return Response.json({ error: "scheduled_stream_id required" }, { status: 400 });
     }
+    // session_id and stream_strategy_id already destructured from body above
+
     const strategies = await base44.asServiceRole.entities.StreamStrategy.filter({
       scheduled_stream_id,
       created_by: user.email,
     });
     if (strategies.length > 0) {
+      const stratId = stream_strategy_id || strategies[0].id;
       await base44.asServiceRole.entities.StreamStrategy.update(strategies[0].id, { status: "active" });
-      return Response.json({ success: true, status: "active" });
+
+      // Link the session → stream → strategy by upserting the DesktopSession record
+      if (session_id) {
+        const existing = await base44.asServiceRole.entities.DesktopSession.filter({
+          session_id,
+          user_id: user.email,
+        });
+        const linkData = { scheduled_stream_id, stream_strategy_id: stratId };
+        if (existing.length > 0) {
+          await base44.asServiceRole.entities.DesktopSession.update(existing[0].id, linkData);
+        } else {
+          await base44.asServiceRole.entities.DesktopSession.create({
+            session_id,
+            user_id: user.email,
+            started_at: new Date().toISOString(),
+            ...linkData,
+          });
+        }
+      }
+
+      return Response.json({ success: true, status: "active", strategy_id: strategies[0].id });
     }
     return Response.json({ error: "No strategy found" }, { status: 404 });
   }

@@ -1,0 +1,52 @@
+{
+  "name": "ViewerHistory",
+  "type": "object",
+  "properties": {
+    "creator_id": {
+      "type": "string",
+      "title": "Creator ID (email)"
+    },
+    "user_id": {
+      "type": "string",
+      "title": "TikTok User ID (stable key)"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name (most recent)"
+    },
+    "stream_count": {
+      "type": "number",
+      "title": "Stream Count",
+      "default": 0
+    },
+    "first_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "First Seen At"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Last Seen At"
+    },
+    "total_joins": {
+      "type": "number",
+      "title": "Total Joins",
+      "default": 0
+    },
+    "is_subscriber": {
+      "type": "boolean",
+      "title": "Is Subscriber (teamMemberLevel > 0)",
+      "default": false
+    },
+    "is_follower": {
+      "type": "boolean",
+      "title": "Is Follower (followRole > 0)",
+      "default": false
+    }
+  },
+  "required": [
+    "creator_id",
+    "user_id"
+  ]
+}

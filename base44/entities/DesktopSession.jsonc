@@ -10,6 +10,14 @@
       "type": "string",
       "title": "User ID"
     },
+    "scheduled_stream_id": {
+      "type": "string",
+      "title": "Linked Scheduled Stream ID"
+    },
+    "stream_strategy_id": {
+      "type": "string",
+      "title": "Linked Stream Strategy ID"
+    },
     "title": {
       "type": "string",
       "title": "Title"

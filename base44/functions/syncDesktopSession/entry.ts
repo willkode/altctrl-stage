@@ -29,6 +29,8 @@ Deno.serve(async (req) => {
     const record = {
       session_id: sessionId,
       user_id: user.email,
+      scheduled_stream_id: body.scheduledStreamId || session.scheduledStreamId || null,
+      stream_strategy_id: body.streamStrategyId || session.streamStrategyId || null,
       title: session.title || body.title || "",
       game: session.game || body.game || "",
       platform: session.platform || body.platform || "TikTok",
@@ -86,6 +88,41 @@ Deno.serve(async (req) => {
     } else {
       const created = await base44.asServiceRole.entities.DesktopSession.create(record);
       desktopSessionDbId = created.id;
+    }
+
+    // Process viewerLog — upsert each viewer into ViewerHistory
+    if (body.viewerLog?.length) {
+      for (const entry of body.viewerLog) {
+        if (!entry.userId) continue;
+        const existing = await base44.asServiceRole.entities.ViewerHistory.filter({
+          creator_id: user.email,
+          user_id: entry.userId,
+        });
+        const entryTime = entry.timestamp || now;
+        if (existing.length > 0) {
+          const rec = existing[0];
+          await base44.asServiceRole.entities.ViewerHistory.update(rec.id, {
+            display_name: entry.displayName || rec.display_name,
+            stream_count: (rec.stream_count || 0) + 1,
+            last_seen_at: entryTime,
+            total_joins: (rec.total_joins || 0) + (entry.joinCount || 1),
+            is_subscriber: rec.is_subscriber || (entry.teamMemberLevel > 0),
+            is_follower: rec.is_follower || (entry.followRole > 0),
+          });
+        } else {
+          await base44.asServiceRole.entities.ViewerHistory.create({
+            creator_id: user.email,
+            user_id: entry.userId,
+            display_name: entry.displayName || '',
+            stream_count: 1,
+            first_seen_at: entryTime,
+            last_seen_at: entryTime,
+            total_joins: entry.joinCount || 1,
+            is_subscriber: (entry.teamMemberLevel > 0) || false,
+            is_follower: (entry.followRole > 0) || false,
+          });
+        }
+      }
     }
 
     return Response.json({ ok: true, sessionId: desktopSessionDbId });
