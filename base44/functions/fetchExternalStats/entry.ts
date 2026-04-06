@@ -28,17 +28,17 @@ Deno.serve(async (req) => {
     }
 
     // Use AI to fetch and parse the profile
-    const llmResult = await base44.integrations.Core.InvokeLLM({
+    const stats = await base44.integrations.Core.InvokeLLM({
       prompt: `Visit and analyze the ${platform.toUpperCase()} profile at: ${url}
 
 Extract and return ONLY valid JSON with these fields (use null if not found):
 {
   "followers": <number or null>,
-  "status": "<'online', 'offline', or 'unknown'>",
+  "status": "<online, offline, or unknown>",
   "bio": "<profile bio/description or null>",
   "profile_title": "<display name or channel name>",
   "last_stream_title": "<title of last stream or null>",
-  "verified": <true/false>,
+  "verified": <true or false>,
   "follower_text": "<the exact follower count text if visible>"
 }
 
@@ -47,23 +47,21 @@ Be accurate with the follower count. Return ONLY the JSON object, no other text.
       response_json_schema: {
         type: 'object',
         properties: {
-          followers: { type: ['number', 'null'] },
-          status: { type: 'string', enum: ['online', 'offline', 'unknown'] },
-          bio: { type: ['string', 'null'] },
-          profile_title: { type: ['string', 'null'] },
-          last_stream_title: { type: ['string', 'null'] },
+          followers: { type: 'number' },
+          status: { type: 'string' },
+          bio: { type: 'string' },
+          profile_title: { type: 'string' },
+          last_stream_title: { type: 'string' },
           verified: { type: 'boolean' },
-          follower_text: { type: ['string', 'null'] },
+          follower_text: { type: 'string' },
         },
       },
     });
 
-    const stats = llmResult.data;
-
-    // Normalize followers (in case API returns a string)
+    // InvokeLLM with response_json_schema returns the parsed object directly
     const followerCount = typeof stats.followers === 'number' 
       ? stats.followers 
-      : parseInt(stats.follower_text?.replace(/[^0-9]/g, '') || '0');
+      : parseInt(String(stats.follower_text || '0').replace(/[^0-9]/g, '') || '0');
 
     const connection = {
       platform,
@@ -71,16 +69,16 @@ Be accurate with the follower count. Return ONLY the JSON object, no other text.
       profile_url: url,
       followers: followerCount || 0,
       status: stats.status || 'unknown',
-      bio: stats.bio,
+      bio: stats.bio || null,
       profile_title: stats.profile_title || handle,
-      last_stream_title: stats.last_stream_title,
+      last_stream_title: stats.last_stream_title || null,
       verified: stats.verified === true,
       stats_snapshot: JSON.stringify(stats),
       last_sync_at: new Date().toISOString(),
       last_sync_status: 'success',
+      last_error: null,
     };
 
-    // If updating existing, use the ID
     let result;
     if (id) {
       await base44.entities.ExternalPlatformConnection.update(id, connection);
