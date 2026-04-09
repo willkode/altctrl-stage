@@ -1,5 +1,19 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+// Max safe size for a single entity string field (~180KB to stay well under limits)
+const MAX_FIELD_SIZE = 180_000;
+
+async function safeJsonField(base44, data, fallback = "[]") {
+  if (!data || (Array.isArray(data) && data.length === 0)) return fallback;
+  const str = typeof data === 'string' ? data : JSON.stringify(data);
+  if (str.length <= MAX_FIELD_SIZE) return str;
+  // Too large — upload as file and store the URL
+  const blob = new Blob([str], { type: 'application/json' });
+  const file = new File([blob], 'data.json', { type: 'application/json' });
+  const { file_url } = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+  return JSON.stringify({ __file_url: file_url });
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -68,15 +82,15 @@ Deno.serve(async (req) => {
       alerts_marked_helpful: body.alertsMarkedHelpful ?? 0,
 
       supporter_concentration: body.supporterConcentration ? JSON.stringify(body.supporterConcentration) : null,
-      viewer_snapshots: body.viewerSnapshots?.length ? JSON.stringify(body.viewerSnapshots) : "[]",
-      top_gifters: body.topGifters?.length ? JSON.stringify(body.topGifters) : "[]",
-      timeline: body.timeline?.length ? JSON.stringify(body.timeline) : "[]",
-      chat_log: body.chatLog?.length ? JSON.stringify(body.chatLog) : "[]",
-      peak_moments: body.peakMoments?.length ? JSON.stringify(body.peakMoments) : "[]",
-      drop_moments: body.dropMoments?.length ? JSON.stringify(body.dropMoments) : "[]",
-      top_support_moments: body.topSupportMoments?.length ? JSON.stringify(body.topSupportMoments) : "[]",
-      viewer_log: body.viewerLog?.length ? JSON.stringify(body.viewerLog) : "[]",
-      activity_log: body.activityLog?.length ? JSON.stringify(body.activityLog) : "[]",
+      viewer_snapshots: await safeJsonField(base44, body.viewerSnapshots),
+      top_gifters: await safeJsonField(base44, body.topGifters),
+      timeline: await safeJsonField(base44, body.timeline),
+      chat_log: await safeJsonField(base44, body.chatLog),
+      peak_moments: await safeJsonField(base44, body.peakMoments),
+      drop_moments: await safeJsonField(base44, body.dropMoments),
+      top_support_moments: await safeJsonField(base44, body.topSupportMoments),
+      viewer_log: await safeJsonField(base44, body.viewerLog),
+      activity_log: await safeJsonField(base44, body.activityLog),
 
       notes: body.notes || "",
       synced_at: now,
