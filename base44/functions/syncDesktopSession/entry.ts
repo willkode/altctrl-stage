@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-// Max safe size for a single entity string field
-const MAX_FIELD_SIZE = 150_000;
+// Max safe size for a single entity string field (~10MB)
+const MAX_FIELD_SIZE = 10_000_000;
 
 function safeJsonField(data, fallback = "[]") {
   if (!data || (Array.isArray(data) && data.length === 0)) return fallback;
