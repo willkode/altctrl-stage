@@ -1,21 +1,30 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-// Max safe size for a single entity string field (~10MB)
-const MAX_FIELD_SIZE = 10_000_000;
+// DB hard limit is around 200KB per string field. Stay safely under it.
+const MAX_FIELD_SIZE = 180_000;
 
-function safeJsonField(data, fallback = "[]") {
+async function safeJsonField(base44, data, fallback = "[]") {
   if (!data || (Array.isArray(data) && data.length === 0)) return fallback;
   const str = typeof data === 'string' ? data : JSON.stringify(data);
   if (str.length <= MAX_FIELD_SIZE) return str;
-  // Too large — truncate array keeping most recent entries
-  if (Array.isArray(data)) {
-    let truncated = data;
-    while (JSON.stringify(truncated).length > MAX_FIELD_SIZE && truncated.length > 1) {
-      truncated = truncated.slice(Math.ceil(truncated.length * 0.3));
+  // Too large — upload as file and store a reference URL
+  try {
+    const blob = new Blob([str], { type: 'application/json' });
+    const file = new File([blob], 'field_data.json', { type: 'application/json' });
+    const { file_url } = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+    return JSON.stringify({ __file_url: file_url });
+  } catch (uploadErr) {
+    // If upload fails, truncate to fit
+    console.error('Upload fallback - truncating field:', uploadErr.message);
+    if (Array.isArray(data)) {
+      let truncated = data;
+      while (JSON.stringify(truncated).length > MAX_FIELD_SIZE && truncated.length > 1) {
+        truncated = truncated.slice(Math.ceil(truncated.length * 0.3));
+      }
+      return truncated.length > 0 ? JSON.stringify(truncated) : fallback;
     }
-    return truncated.length > 0 ? JSON.stringify(truncated) : fallback;
+    return str.substring(0, MAX_FIELD_SIZE);
   }
-  return str.substring(0, MAX_FIELD_SIZE);
 }
 
 Deno.serve(async (req) => {
@@ -86,15 +95,15 @@ Deno.serve(async (req) => {
       alerts_marked_helpful: body.alertsMarkedHelpful ?? 0,
 
       supporter_concentration: body.supporterConcentration ? JSON.stringify(body.supporterConcentration) : null,
-      viewer_snapshots: safeJsonField(body.viewerSnapshots),
-      top_gifters: safeJsonField(body.topGifters),
-      timeline: safeJsonField(body.timeline),
-      chat_log: safeJsonField(body.chatLog),
-      peak_moments: safeJsonField(body.peakMoments),
-      drop_moments: safeJsonField(body.dropMoments),
-      top_support_moments: safeJsonField(body.topSupportMoments),
-      viewer_log: safeJsonField(body.viewerLog),
-      activity_log: safeJsonField(body.activityLog),
+      viewer_snapshots: await safeJsonField(base44, body.viewerSnapshots),
+      top_gifters: await safeJsonField(base44, body.topGifters),
+      timeline: await safeJsonField(base44, body.timeline),
+      chat_log: await safeJsonField(base44, body.chatLog),
+      peak_moments: await safeJsonField(base44, body.peakMoments),
+      drop_moments: await safeJsonField(base44, body.dropMoments),
+      top_support_moments: await safeJsonField(base44, body.topSupportMoments),
+      viewer_log: await safeJsonField(base44, body.viewerLog),
+      activity_log: await safeJsonField(base44, body.activityLog),
 
       notes: body.notes || "",
       synced_at: now,
@@ -116,40 +125,48 @@ Deno.serve(async (req) => {
     }
 
     // Process viewerLog — upsert each viewer into ViewerHistory
-    // Only TikTok sends viewerLog; YouTube/Twitch will have empty arrays — skip gracefully
+    // Wrapped in try/catch so viewer processing doesn't block main sync
     if (body.viewerLog?.length) {
-      for (const entry of body.viewerLog) {
-        if (!entry.userId) continue;
-        const existingViewer = await base44.asServiceRole.entities.ViewerHistory.filter({
-          creator_id: user.email,
-          user_id: entry.userId,
-        });
-        const entryTime = entry.lastJoinAt || entry.firstJoinAt || now;
-        if (existingViewer.length > 0) {
-          const rec = existingViewer[0];
-          await base44.asServiceRole.entities.ViewerHistory.update(rec.id, {
-            display_name: entry.nickname || entry.displayName || rec.display_name,
-            stream_count: (rec.stream_count || 0) + 1,
-            last_seen_at: entryTime,
-            last_session_id: sessionId,
-            total_joins: (rec.total_joins || 0) + (entry.joinCount || 1),
-            is_subscriber: rec.is_subscriber || (entry.teamMemberLevel > 0),
-            is_follower: rec.is_follower || (entry.followRole > 0),
-          });
-        } else {
-          await base44.asServiceRole.entities.ViewerHistory.create({
-            creator_id: user.email,
-            user_id: entry.userId,
-            display_name: entry.nickname || entry.displayName || '',
-            stream_count: 1,
-            first_seen_at: entry.firstJoinAt || now,
-            last_seen_at: entryTime,
-            last_session_id: sessionId,
-            total_joins: entry.joinCount || 1,
-            is_subscriber: (entry.teamMemberLevel > 0) || false,
-            is_follower: (entry.followRole > 0) || false,
-          });
+      try {
+        for (const entry of body.viewerLog) {
+          if (!entry.userId) continue;
+          try {
+            const existingViewer = await base44.asServiceRole.entities.ViewerHistory.filter({
+              creator_id: user.email,
+              user_id: entry.userId,
+            });
+            const entryTime = entry.lastJoinAt || entry.firstJoinAt || now;
+            if (existingViewer.length > 0) {
+              const rec = existingViewer[0];
+              await base44.asServiceRole.entities.ViewerHistory.update(rec.id, {
+                display_name: entry.nickname || entry.displayName || rec.display_name,
+                stream_count: (rec.stream_count || 0) + 1,
+                last_seen_at: entryTime,
+                last_session_id: sessionId,
+                total_joins: (rec.total_joins || 0) + (entry.joinCount || 1),
+                is_subscriber: rec.is_subscriber || (entry.teamMemberLevel > 0),
+                is_follower: rec.is_follower || (entry.followRole > 0),
+              });
+            } else {
+              await base44.asServiceRole.entities.ViewerHistory.create({
+                creator_id: user.email,
+                user_id: entry.userId,
+                display_name: entry.nickname || entry.displayName || '',
+                stream_count: 1,
+                first_seen_at: entry.firstJoinAt || now,
+                last_seen_at: entryTime,
+                last_session_id: sessionId,
+                total_joins: entry.joinCount || 1,
+                is_subscriber: (entry.teamMemberLevel > 0) || false,
+                is_follower: (entry.followRole > 0) || false,
+              });
+            }
+          } catch (viewerErr) {
+            console.error(`ViewerHistory error for ${entry.userId}:`, viewerErr.message);
+          }
         }
+      } catch (viewerProcessErr) {
+        console.error('ViewerHistory processing failed:', viewerProcessErr.message);
       }
     }
 
