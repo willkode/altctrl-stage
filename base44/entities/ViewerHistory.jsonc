@@ -54,9 +54,7 @@
     "user_id"
   ],
   "rls": {
-    "create": {
-      "creator_id": "{{user.email}}"
-    },
+    "create": {},
     "read": {
       "$or": [
         {
