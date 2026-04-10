@@ -27,16 +27,21 @@ export default function AppAuthGate() {
         return;
       }
       // Check if subscription is past_due
-      const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
-      if (res.data?.status === "past_due") {
-        setStatus("past_due");
-      } else {
+        try {
+          const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
+          if (res.data?.status === "past_due") {
+            setStatus("past_due");
+            return;
+          }
+        } catch (e) {
+          // If status check fails, still allow access
+          console.warn("Subscription status check failed:", e);
+        }
         setStatus("approved");
         // Redirect to dashboard on first login if at /app root
         if (location.pathname === "/app" || location.pathname === "/app/") {
           navigate("/app/dashboard", { replace: true });
         }
-      }
     }).catch(() => setStatus("pending"));
   }, []);
 
