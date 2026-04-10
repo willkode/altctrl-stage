@@ -148,7 +148,6 @@ export default function Dashboard() {
             {/* Performance Overview */}
             <div className="space-y-5">
               <SummaryStats sessions={recentSessions} />
-              {recentSessions.length > 0 && <PerformanceChart sessions={recentSessions} />}
             </div>
 
             {/* Recent sessions */}
