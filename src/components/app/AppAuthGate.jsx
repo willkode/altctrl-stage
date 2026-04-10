@@ -15,22 +15,22 @@ export default function AppAuthGate() {
       return;
     }
     base44.auth.me().then(async (user) => {
-      if (user?.role === "admin" || user?.approved === true) {
-        // Check subscription status — allow billing page always
-        const isBillingPage = location.pathname === "/app/billing";
-        if (isBillingPage) {
-          setStatus("approved");
-          return;
-        }
-        // Check if subscription is past_due
-        const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
-        if (res.data?.status === "past_due") {
-          setStatus("past_due");
-        } else {
-          setStatus("approved");
-        }
-      } else {
+      if (!user) {
         setStatus("pending");
+        return;
+      }
+      // Allow billing page always so users can fix payment
+      const isBillingPage = location.pathname === "/app/billing";
+      if (isBillingPage) {
+        setStatus("approved");
+        return;
+      }
+      // Check if subscription is past_due
+      const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
+      if (res.data?.status === "past_due") {
+        setStatus("past_due");
+      } else {
+        setStatus("approved");
       }
     }).catch(() => setStatus("pending"));
   }, []);
