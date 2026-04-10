@@ -8,7 +8,7 @@ import { base44 } from "@/api/base44Client";
 import Onboarding from "../pages/app/Onboarding";
 import LoadingState from "./app/LoadingState";
 import AppToaster from "./app/AppToaster";
-import QuickActions from "./app/QuickActions";
+
 import StreamDrawer from "./app/drawers/StreamDrawer";
 import LogSessionDrawer from "./app/drawers/LogSessionDrawer";
 
@@ -69,10 +69,7 @@ export default function AppLayout() {
     }).catch(() => {});
   }, [location.pathname]);
 
-  const handleQuickAction = (event) => {
-    if (event === "add-stream") setActiveDrawer("stream");
-    else if (event === "log-session") setActiveDrawer("session");
-  };
+
 
   if (loading) {
     return (
@@ -238,7 +235,6 @@ export default function AppLayout() {
       </nav>
 
       {/* Global shared tools */}
-      <QuickActions onAction={handleQuickAction} />
       <AppToaster />
       <StreamDrawer open={activeDrawer === "stream"} onClose={() => setActiveDrawer(null)} />
       <LogSessionDrawer open={activeDrawer === "session"} onClose={() => setActiveDrawer(null)} />
