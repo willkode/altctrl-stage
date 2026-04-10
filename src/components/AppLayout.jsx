@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import Onboarding from "../pages/app/Onboarding";
 import LoadingState from "./app/LoadingState";
 import AppToaster from "./app/AppToaster";
+import ErrorBoundary from "./app/ErrorBoundary";
 
 import StreamDrawer from "./app/drawers/StreamDrawer";
 import LogSessionDrawer from "./app/drawers/LogSessionDrawer";
@@ -212,7 +213,9 @@ export default function AppLayout() {
 
         {/* Main content */}
         <main className="flex-1 md:ml-56 min-h-full pb-20 md:pb-8">
-          <Outlet />
+          <ErrorBoundary name="PageContent">
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
 

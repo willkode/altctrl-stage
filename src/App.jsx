@@ -10,6 +10,8 @@ import { initGlobalErrorLogging } from '@/lib/errorLogger';
 // Init once at module load
 initGlobalErrorLogging();
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import ErrorBoundary from '@/components/app/ErrorBoundary';
+import DebugPanel from '@/components/app/DebugPanel';
 import Layout from './components/Layout';
 import AppLayout from './components/AppLayout';
 import AppAuthGate from './components/app/AppAuthGate';
@@ -91,7 +93,8 @@ const AuthenticatedApp = () => {
 
   // Render all routes - AppAuthGate handles /app route protection
   return (
-    <Routes>
+    <ErrorBoundary name="App">
+      <Routes>
       <Route path="/app/*" element={<AppAuthGate />}>
         <Route element={<AppLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
@@ -153,6 +156,8 @@ const AuthenticatedApp = () => {
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
+    <DebugPanel />
+    </ErrorBoundary>
   );
 };
 
