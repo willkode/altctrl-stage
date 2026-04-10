@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
-import { Check, Zap, AlertTriangle, Download, LogOut } from "lucide-react";
+import { Check, Zap, AlertTriangle, Download, LogOut, Key } from "lucide-react";
 
 import ExternalPlatformCard from "../../components/app/external/ExternalPlatformCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
@@ -220,6 +220,20 @@ export default function Settings() {
       </div>
 
       <div className="space-y-5">
+        {/* Account Security */}
+        <Section title="// Account Security" accent="cyan">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm text-white font-mono">Add Google Account</p>
+              <p className="text-xs text-slate-600 font-mono mt-0.5">Enable Google login for faster access to your account.</p>
+            </div>
+            <button onClick={() => base44.auth.redirectToLogin()}
+              className="flex items-center gap-1.5 text-xs font-mono uppercase px-4 py-2.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-all shrink-0">
+              <Key className="w-3.5 h-3.5" /> Add Login
+            </button>
+          </div>
+        </Section>
+
         {/* Promo Settings */}
         <Section title="// Promo Settings" accent="cyan">
           <div>
