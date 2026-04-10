@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
+import { loadAllSessions } from "../../utils/sessionLoader";
 import HeroWelcome from "../../components/app/dashboard/HeroWelcome";
 import QuickStatsRow from "../../components/app/dashboard/QuickStatsRow";
 import TodayStreamCard from "../../components/app/dashboard/TodayStreamCard";
@@ -40,37 +41,11 @@ export default function Dashboard() {
     const week = getISOWeek(now);
     const year = now.getFullYear();
 
-    const [profiles, streams, liveSessions, desktopSessions] = await Promise.all([
+    const [profiles, streams, allSessions] = await Promise.all([
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100),
-      base44.entities.DesktopSession.filter({ user_id: user.email }, "-started_at", 100),
+      loadAllSessions(100),
     ]);
-
-    // Normalize desktop sessions to same shape as LiveSession
-    const normalizedDesktop = desktopSessions.map(d => ({
-      id: d.id,
-      stream_date: d.started_at ? d.started_at.split('T')[0] : null,
-      game: d.game || "",
-      stream_type: null,
-      avg_viewers: d.avg_viewers ?? 0,
-      peak_viewers: d.peak_viewers ?? 0,
-      duration_minutes: d.duration_min ?? 0,
-      followers_gained: d.total_follows ?? 0,
-      comments: d.unique_chatters ?? 0,
-      gifters: d.unique_gifters ?? 0,
-      diamonds: d.total_diamonds ?? 0,
-      shares: d.total_shares ?? 0,
-      promo_posted: false,
-      energy_level: null,
-      source: "desktop_sync",
-      title: d.title || "",
-      _desktop: true,
-    }));
-
-    const allSessions = [...liveSessions, ...normalizedDesktop].sort((a, b) =>
-      (b.stream_date || "").localeCompare(a.stream_date || "")
-    );
 
     setProfile(profiles[0] || null);
     setTodayStream(streams.find(s => s.scheduled_date === TODAY_STR) || null);
