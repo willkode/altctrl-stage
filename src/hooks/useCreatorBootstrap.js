@@ -8,7 +8,8 @@ export function useCreatorBootstrap() {
 
   useEffect(() => {
     bootstrap();
-  }, []);
+    // eslint-disable-next-line
+  }, []); // bootstrap is async — do NOT return its promise
 
   async function bootstrap() {
     setLoading(true);
