@@ -145,11 +145,10 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* 7-Day Overview */}
+            {/* Performance Overview */}
             <div className="space-y-5">
-              <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// 7-Day Overview</p>
-              <SummaryStats sessions={last7Sessions} />
-              {last7Sessions.length > 0 && <PerformanceChart sessions={last7Sessions} />}
+              <SummaryStats sessions={recentSessions} />
+              {recentSessions.length > 0 && <PerformanceChart sessions={recentSessions} />}
             </div>
 
             {/* Recent sessions */}
