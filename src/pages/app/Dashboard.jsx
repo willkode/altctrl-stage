@@ -11,7 +11,7 @@ import StreamDrawer from "../../components/app/drawers/StreamDrawer";
 import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import SummaryStats from "../../components/app/analytics/SummaryStats";
 import PerformanceChart from "../../components/app/analytics/PerformanceChart";
-import ExternalPlatformStats from "../../components/app/analytics/ExternalPlatformStats";
+
 import { Zap, CheckSquare, Sparkles } from "lucide-react";
 
 function getISOWeek(date) {
@@ -40,11 +40,37 @@ export default function Dashboard() {
     const week = getISOWeek(now);
     const year = now.getFullYear();
 
-    const [profiles, streams, sessions] = await Promise.all([
+    const [profiles, streams, liveSessions, desktopSessions] = await Promise.all([
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
       base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100),
+      base44.entities.DesktopSession.filter({ user_id: user.email }, "-started_at", 100),
     ]);
+
+    // Normalize desktop sessions to same shape as LiveSession
+    const normalizedDesktop = desktopSessions.map(d => ({
+      id: d.id,
+      stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+      game: d.game || "",
+      stream_type: null,
+      avg_viewers: d.avg_viewers ?? 0,
+      peak_viewers: d.peak_viewers ?? 0,
+      duration_minutes: d.duration_min ?? 0,
+      followers_gained: d.total_follows ?? 0,
+      comments: d.unique_chatters ?? 0,
+      gifters: d.unique_gifters ?? 0,
+      diamonds: d.total_diamonds ?? 0,
+      shares: d.total_shares ?? 0,
+      promo_posted: false,
+      energy_level: null,
+      source: "desktop_sync",
+      title: d.title || "",
+      _desktop: true,
+    }));
+
+    const allSessions = [...liveSessions, ...normalizedDesktop].sort((a, b) =>
+      (b.stream_date || "").localeCompare(a.stream_date || "")
+    );
 
     setProfile(profiles[0] || null);
     setTodayStream(streams.find(s => s.scheduled_date === TODAY_STR) || null);
@@ -52,7 +78,7 @@ export default function Dashboard() {
       const d = new Date(s.scheduled_date);
       return getISOWeek(d) === week && d.getFullYear() === year;
     }));
-    setRecentSessions(sessions);
+    setRecentSessions(allSessions);
     setLoading(false);
   }
 
@@ -139,10 +165,7 @@ export default function Dashboard() {
           <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// 7-Day Overview</p>
           <SummaryStats sessions={last7Sessions} />
           {last7Sessions.length > 0 && (
-            <>
-              <PerformanceChart sessions={last7Sessions} />
-              <ExternalPlatformStats />
-            </>
+            <PerformanceChart sessions={last7Sessions} />
           )}
         </div>
 
