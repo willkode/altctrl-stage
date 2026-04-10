@@ -17,7 +17,6 @@ const navItems = [
   { path: "/app/schedule", label: "Schedule", icon: Calendar },
   { path: "/app/promo", label: "Promo", icon: Radio },
   { path: "/app/golive", label: "Checklist", icon: PlayCircle },
-  { path: "/app/analytics", label: "Analytics", icon: TrendingUp },
   { path: "/app/coach", label: "Coach", icon: Brain },
   { path: "/app/strategy", label: "Strategy", icon: Crosshair },
   { path: "/app/debrief", label: "Debrief", icon: ClipboardList },
@@ -33,15 +32,14 @@ const MOBILE_NAV_ITEMS = [
   { path: "/app/dashboard", label: "Home", icon: LayoutDashboard },
   { path: "/app/schedule", label: "Schedule", icon: Calendar },
   { path: "/app/golive", label: "Go Live", icon: PlayCircle },
-  { path: "/app/analytics", label: "Stats", icon: TrendingUp },
   { path: "/app/coach", label: "Coach", icon: Brain },
+  { path: "/app/promo", label: "Promo", icon: Radio },
 ];
 
 const pageTitles = {
   "/app/dashboard": "DASHBOARD",
   "/app/schedule": "SCHEDULE",
   "/app/promo": "PROMO",
-  "/app/analytics": "ANALYTICS",
   "/app/coach": "COACH",
   "/app/notifications": "NOTIFICATIONS",
   "/app/profile": "PROFILE",

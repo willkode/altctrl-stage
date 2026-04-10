@@ -16,7 +16,7 @@ import AppAuthGate from './components/app/AppAuthGate';
 import Dashboard from './pages/app/Dashboard';
 import Schedule from './pages/app/Schedule';
 import Promo from './pages/app/Promo';
-import Analytics from './pages/app/Analytics';
+// Analytics merged into Dashboard
 import Coach from './pages/app/Coach';
 import Home from './pages/Home';
 import Features from './pages/Features';
@@ -97,7 +97,7 @@ const AuthenticatedApp = () => {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="schedule" element={<Schedule />} />
           <Route path="promo" element={<Promo />} />
-          <Route path="analytics" element={<Analytics />} />
+
           <Route path="coach" element={<Coach />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
