@@ -15,7 +15,7 @@ export default function DailyCoachingCard({ recommendation, sessions, profile, o
   }
   
   // If not enough data, show onboarding guidance
-  if (!recommendation || sessions.length < 3) {
+  if (sessions.length < 3) {
     return (
       <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-400/5 border border-yellow-400/30 rounded-xl p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
