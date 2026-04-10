@@ -1,19 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
 /**
- * Strategy AI — Weekly Planner (Phase 6)
+ * Strategy AI — Weekly Planner
  *
  * Diagnoses top growth bottlenecks from real session data,
  * recommends experiments, generates full per-stream playbook,
  * and populates every structured field in the WeeklyPlan schema.
  *
- * Data sources used:
- *   - LiveSession (last 30)
- *   - SessionFact (scored sessions — best signal quality)
+ * Data sources:
+ *   - LiveSession + DesktopSession (merged, last 40)
  *   - CoachActionLog (what worked live)
- *   - Experiment (active + completed — avoid re-running failed ones)
+ *   - Experiment (active — avoid re-running failed ones)
  *   - ReplayReview (creator's own debrief lessons)
- *   - CreatorProfile + TikTokProfileSnapshot
+ *   - CreatorProfile
  *   - WeeklyPlan (last 2 weeks — avoid repeating same plan)
  */
 

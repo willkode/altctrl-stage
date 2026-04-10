@@ -1,15 +1,20 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const TOKEN_TTL = 30 * 60;
-
 // ============================================================================
-// LOGGING HELPER
+// HELPERS
 // ============================================================================
 
-async function logSync(base44, user, syncLog) {
+async function hashToken(token) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(token);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function logSync(base44, userEmail, syncLog) {
   try {
     await base44.asServiceRole.entities.ImportSyncLog.create({
-      created_by: user.email,
+      created_by: userEmail,
       sync_timestamp: new Date().toISOString(),
       ...syncLog,
     });
@@ -19,69 +24,156 @@ async function logSync(base44, user, syncLog) {
 }
 
 // ============================================================================
-// TOKEN ERROR DETECTION
+// TOKEN VERIFICATION
 // ============================================================================
 
-function detectTokenIssue(error) {
-  const msg = error.message || '';
-  if (msg.includes('expired')) return 'expired';
-  if (msg.includes('revoked') || msg.includes('invalid')) return 'revoked';
-  if (msg.includes('malformed')) return 'malformed';
-  return null;
+async function verifyToken(base44, rawToken, userEmail) {
+  const tokenHash = await hashToken(rawToken);
+  const tokens = await base44.asServiceRole.entities.ExtensionToken.filter(
+    { created_by: userEmail, token_hash: tokenHash, status: 'active' },
+    '-generated_at',
+    1
+  );
+  if (tokens.length === 0) return { valid: false, reason: 'not_found' };
+  const tok = tokens[0];
+  if (tok.expires_at && new Date(tok.expires_at) < new Date()) {
+    await base44.asServiceRole.entities.ExtensionToken.update(tok.id, { status: 'expired' });
+    return { valid: false, reason: 'expired' };
+  }
+  // Bump usage counters
+  await base44.asServiceRole.entities.ExtensionToken.update(tok.id, {
+    last_used_at: new Date().toISOString(),
+    total_syncs: (tok.total_syncs || 0) + 1,
+  });
+  return { valid: true, token: tok };
 }
 
-// [Rest of extensionLogSession.js code from original, but with added sync logging]
-// For brevity, showing only the modifications to the main handler:
+// ============================================================================
+// VALIDATION
+// ============================================================================
+
+function validateDate(dateStr) {
+  if (!dateStr) return { valid: false, error: 'date is required' };
+  const d = new Date(dateStr + 'T12:00:00');
+  if (isNaN(d.getTime())) return { valid: false, error: 'invalid date format' };
+  const now = new Date();
+  const oneYearAgo = new Date(now);
+  oneYearAgo.setFullYear(now.getFullYear() - 1);
+  if (d < oneYearAgo) return { valid: false, error: 'date too old' };
+  if (d > new Date(now.getTime() + 2 * 86400000)) return { valid: false, error: 'date in the future' };
+  return { valid: true };
+}
+
+function validateNumber(val, fieldName) {
+  if (val === null || val === undefined) return { valid: true };
+  if (typeof val !== 'number' || val < 0) return { valid: false, error: `${fieldName} must be a non-negative number` };
+  return { valid: true };
+}
+
+// ============================================================================
+// DEDUP & SESSION LOGIC
+// ============================================================================
+
+function generateExternalSessionKey(sess) {
+  const date = sess.date || '';
+  const game = (sess.game || '').toLowerCase().trim();
+  return `ext_${date}_${game}`;
+}
+
+const SAFE_FIELDS_AUTO_UPDATE = [
+  'avg_viewers', 'peak_viewers', 'followers_gained', 'likes_received',
+  'comments', 'shares', 'gifters', 'diamonds', 'fan_club_joins',
+  'duration_minutes', 'start_time', 'end_time',
+];
+
+function decideAction(existing, incoming) {
+  if (!existing) return { action: 'create' };
+
+  // If existing was manually entered with real data, flag for review
+  if (existing.source === 'manual' && existing.avg_viewers > 0) {
+    return { action: 'manual_review', reason: 'manual_entry_conflict' };
+  }
+
+  // If existing already came from extension, skip (idempotent)
+  if (existing.source === 'extension_import' && existing.import_updated_at) {
+    return { action: 'skip', reason: 'already_imported' };
+  }
+
+  // Otherwise update with new fields
+  return { action: 'update' };
+}
+
+function prepareCreateRecord(sess, userEmail) {
+  return {
+    owner_email: userEmail,
+    game: sess.game || 'Unknown',
+    stream_date: sess.date,
+    stream_type: sess.stream_type || 'other',
+    start_time: sess.start_time || null,
+    end_time: sess.end_time || null,
+    duration_minutes: sess.duration_minutes || null,
+    avg_viewers: sess.avg_viewers || 0,
+    peak_viewers: sess.peak_viewers || 0,
+    followers_gained: sess.followers_gained || 0,
+    likes_received: sess.likes_received || 0,
+    comments: sess.comments || 0,
+    shares: sess.shares || 0,
+    gifters: sess.gifters || 0,
+    diamonds: sess.diamonds || 0,
+    fan_club_joins: sess.fan_club_joins || 0,
+    source: 'extension_import',
+    source_confidence: 'high',
+    was_auto_imported: true,
+    external_session_key: generateExternalSessionKey(sess),
+    raw_import_reference: sess.platform_session_id || null,
+    raw_import_payload: JSON.stringify(sess).slice(0, 5000),
+    import_created_at: new Date().toISOString(),
+    import_updated_at: new Date().toISOString(),
+    imported_at: new Date().toISOString(),
+  };
+}
+
+// ============================================================================
+// MAIN HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return Response.json({ error: "Method not allowed" }, { status: 405 });
 
   const base44 = createClientFromRequest(req);
-  const startTime = new Date().toISOString();
-  
+
   try {
     const payload = await req.json();
-    
+
     if (!payload.token) {
-      await logSync(base44, { email: 'unknown' }, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'MISSING_FIELD',
-        error_message: 'token required',
-        sessions_submitted: 0,
-        sessions_failed: 1,
+      await logSync(base44, 'unknown', {
+        source: 'extension', status: 'failed',
+        error_code: 'MISSING_FIELD', error_message: 'token required',
+        sessions_submitted: 0, sessions_failed: 1,
       });
       return Response.json({ error: 'token required', code: 'MISSING_FIELD' }, { status: 400 });
     }
 
     const user = await base44.auth.me();
     if (!user) {
-      await logSync(base44, { email: 'unknown' }, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'AUTH_FAILED',
-        error_message: 'Authentication failed',
-        sessions_submitted: 0,
-        sessions_failed: 1,
+      await logSync(base44, 'unknown', {
+        source: 'extension', status: 'failed',
+        error_code: 'AUTH_FAILED', error_message: 'Authentication failed',
+        sessions_submitted: 0, sessions_failed: 1,
       });
       return Response.json({ error: 'Authentication failed', code: 'AUTH_FAILED' }, { status: 401 });
     }
 
-    // Verify token (from original function)
-    const validation = await verifyToken(payload.token, user.email);
+    // Verify token
+    const validation = await verifyToken(base44, payload.token, user.email);
     if (!validation.valid) {
-      const tokenIssue = detectTokenIssue(new Error('Token validation failed'));
-      await logSync(base44, user, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'INVALID_TOKEN',
-        error_message: 'Token invalid or expired',
-        token_issue: tokenIssue || 'invalid',
-        sessions_submitted: 0,
-        sessions_failed: 1,
-        retry_needed: tokenIssue === 'expired',
+      await logSync(base44, user.email, {
+        source: 'extension', status: 'failed',
+        error_code: 'INVALID_TOKEN', error_message: `Token ${validation.reason}`,
+        token_issue: validation.reason,
+        sessions_submitted: 0, sessions_failed: 1,
       });
-      return Response.json({ error: 'Token invalid', code: 'INVALID_TOKEN' }, { status: 401 });
+      return Response.json({ error: `Token ${validation.reason}`, code: 'INVALID_TOKEN' }, { status: 401 });
     }
 
     // Parse sessions
@@ -89,30 +181,24 @@ Deno.serve(async (req) => {
     if (payload.session) sessions = [payload.session];
     else if (Array.isArray(payload.sessions)) sessions = payload.sessions;
     else {
-      await logSync(base44, user, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'INVALID_PAYLOAD',
-        error_message: 'Need session or sessions array',
-        sessions_submitted: 0,
-        sessions_failed: 1,
+      await logSync(base44, user.email, {
+        source: 'extension', status: 'failed',
+        error_code: 'INVALID_PAYLOAD', error_message: 'Need session or sessions array',
+        sessions_submitted: 0, sessions_failed: 1,
       });
       return Response.json({ error: 'Need session or sessions array', code: 'INVALID_PAYLOAD' }, { status: 400 });
     }
 
     if (sessions.length === 0 || sessions.length > 100) {
-      await logSync(base44, user, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'INVALID_PAYLOAD',
-        error_message: `Need 1-100 sessions, got ${sessions.length}`,
-        sessions_submitted: sessions.length,
-        sessions_failed: sessions.length,
+      await logSync(base44, user.email, {
+        source: 'extension', status: 'failed',
+        error_code: 'INVALID_PAYLOAD', error_message: `Need 1-100 sessions, got ${sessions.length}`,
+        sessions_submitted: sessions.length, sessions_failed: sessions.length,
       });
       return Response.json({ error: `Need 1-100 sessions`, code: 'INVALID_PAYLOAD' }, { status: 400 });
     }
 
-    // Validate each session (from original function)
+    // Validate each session
     const validated = [];
     const results = [];
     const failureReasons = {};
@@ -125,44 +211,41 @@ Deno.serve(async (req) => {
         failureReasons[i] = dateCheck.error;
         continue;
       }
-      
-      if (!validateNumber(s.avg_viewers, 'avg_viewers').valid ||
-          !validateNumber(s.peak_viewers, 'peak_viewers').valid) {
-        results.push({ index: i, status: 'failed', error: "field validation failed" });
+      const avgCheck = validateNumber(s.avg_viewers, 'avg_viewers');
+      const peakCheck = validateNumber(s.peak_viewers, 'peak_viewers');
+      if (!avgCheck.valid || !peakCheck.valid) {
+        results.push({ index: i, status: 'failed', error: 'field validation failed' });
         failureReasons[i] = 'field_validation';
         continue;
       }
-      
       validated.push({ ...s, _index: i });
     }
 
-    // [Process sessions using original logic - create, update, skip, manual_review]
-    // Load existing sessions
-    const existing = await base44.asServiceRole.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 500);
+    // Load existing sessions for dedup
+    const existing = await base44.asServiceRole.entities.LiveSession.filter(
+      { created_by: user.email }, '-stream_date', 500
+    );
 
     let created = 0, updated = 0, skipped = 0, manual_review = 0;
-    const processed = [];
-    const manualReviewIds = [];
     const createdSessionIds = [];
+    const manualReviewIds = [];
 
-    // For each validated session, apply dedup logic (from original function)
     for (const sess of validated) {
-      const existingMatch = existing.find(e => {
-        const eKey = e.external_session_key;
-        const iKey = generateExternalSessionKey(sess);
-        return eKey === iKey || (sess.platform_session_id && e.raw_import_reference === sess.platform_session_id);
-      });
+      const iKey = generateExternalSessionKey(sess);
+      const existingMatch = existing.find(e =>
+        e.external_session_key === iKey ||
+        (sess.platform_session_id && e.raw_import_reference === sess.platform_session_id)
+      );
 
       const decision = decideAction(existingMatch, sess);
 
-      if (decision.action === "create") {
-        const createRecord = prepareCreateRecord(sess, user.email);
-        const created_sess = await base44.asServiceRole.entities.LiveSession.create(createRecord);
-        processed.push(created_sess.id);
+      if (decision.action === 'create') {
+        const record = prepareCreateRecord(sess, user.email);
+        const created_sess = await base44.asServiceRole.entities.LiveSession.create(record);
         createdSessionIds.push(created_sess.id);
         created++;
         results.push({ index: sess._index, status: 'created', session_id: created_sess.id });
-      } else if (decision.action === "update") {
+      } else if (decision.action === 'update') {
         const safeUpdate = {};
         for (const field of SAFE_FIELDS_AUTO_UPDATE) {
           const eVal = existingMatch[field];
@@ -172,20 +255,19 @@ Deno.serve(async (req) => {
           }
         }
         safeUpdate.import_updated_at = new Date().toISOString();
-        safeUpdate.source = existingMatch.source === "manual" ? "hybrid" : "extension_import";
+        safeUpdate.source = existingMatch.source === 'manual' ? 'hybrid' : 'extension_import';
         await base44.asServiceRole.entities.LiveSession.update(existingMatch.id, safeUpdate);
-        processed.push(existingMatch.id);
         updated++;
         results.push({ index: sess._index, status: 'updated', session_id: existingMatch.id });
-      } else if (decision.action === "manual_review") {
+      } else if (decision.action === 'manual_review') {
         await base44.asServiceRole.entities.LiveSession.update(existingMatch.id, {
-          manual_review_status: "pending",
+          manual_review_status: 'pending',
           import_updated_at: new Date().toISOString(),
         });
         manualReviewIds.push(existingMatch.id);
         manual_review++;
         results.push({ index: sess._index, status: 'manual_review', session_id: existingMatch.id });
-      } else if (decision.action === "skip") {
+      } else {
         skipped++;
         results.push({ index: sess._index, status: 'skipped', session_id: existingMatch?.id, reason: decision.reason });
       }
@@ -193,69 +275,58 @@ Deno.serve(async (req) => {
 
     // Update profile aggregates
     let profile_updated = false;
-    try {
-      if (processed.length > 0) {
-        const all_sessions = await base44.asServiceRole.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 500);
+    if (created > 0 || updated > 0) {
+      try {
+        const all_sessions = await base44.asServiceRole.entities.LiveSession.filter({ created_by: user.email }, '-stream_date', 500);
         const profiles = await base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email });
-        if (profiles[0]) {
+        if (profiles[0] && all_sessions.length > 0) {
           await base44.asServiceRole.entities.CreatorProfile.update(profiles[0].id, {
             follower_count: all_sessions.reduce((sum, s) => sum + (s.followers_gained || 0), 0),
-            avg_viewers: Math.round(all_sessions.reduce((sum, s) => sum + (s.avg_viewers || 0), 0) / all_sessions.length),
+            avg_viewers: Math.round(all_sessions.filter(s => s.avg_viewers > 0).reduce((sum, s) => sum + s.avg_viewers, 0) / (all_sessions.filter(s => s.avg_viewers > 0).length || 1)),
           });
           profile_updated = true;
         }
+      } catch (e) {
+        console.warn("Failed to update profile:", e.message);
       }
-    } catch (e) {
-      console.warn("Failed to update profile:", e.message);
     }
 
-    // LOG THE SYNC RESULT
+    // Update token stats
+    if (validation.token) {
+      await base44.asServiceRole.entities.ExtensionToken.update(validation.token.id, {
+        total_sessions_imported: (validation.token.total_sessions_imported || 0) + created,
+      });
+    }
+
+    // Log sync
     const failed = results.filter(r => r.status === 'failed').length;
     const syncStatus = failed > 0 && (created + updated + manual_review) === 0 ? 'failed' : (failed > 0 ? 'partial_success' : 'success');
-    
-    await logSync(base44, user, {
-      source: 'extension',
-      status: syncStatus,
+    await logSync(base44, user.email, {
+      source: 'extension', status: syncStatus,
       sessions_submitted: sessions.length,
-      sessions_created: created,
-      sessions_updated: updated,
-      sessions_skipped: skipped,
-      sessions_manual_review: manual_review,
-      sessions_failed: failed,
-      profile_updated,
-      failure_reasons: JSON.stringify(failureReasons),
-      failed_indices: results.filter(r => r.status === 'failed').map(r => r.index).join(','),
-      session_ids_created: createdSessionIds.join(','),
+      sessions_created: created, sessions_updated: updated,
+      sessions_skipped: skipped, sessions_manual_review: manual_review,
+      sessions_failed: failed, profile_updated,
     });
 
     const response = { created, updated, skipped, failed, manual_review, profile_updated };
-    
-    if (failed > 0) {
-      response.results = results.filter(r => r.status === 'failed');
-    }
+    if (failed > 0) response.results = results.filter(r => r.status === 'failed');
     if (manual_review > 0) {
       response.manual_review_ids = manualReviewIds;
-      response.needs_review_note = "Some sessions flagged for manual review.";
+      response.needs_review_note = 'Some sessions flagged for manual review.';
     }
 
     return Response.json(response);
   } catch (error) {
     console.error(error);
-    
     const user = await base44.auth.me().catch(() => null);
     if (user) {
-      await logSync(base44, user, {
-        source: 'extension',
-        status: 'failed',
-        error_code: 'INTERNAL_ERROR',
-        error_message: error.message,
-        sessions_submitted: 0,
-        sessions_failed: 1,
+      await logSync(base44, user.email, {
+        source: 'extension', status: 'failed',
+        error_code: 'INTERNAL_ERROR', error_message: error.message,
+        sessions_submitted: 0, sessions_failed: 1,
       });
     }
-    
     return Response.json({ error: error.message, code: 'INTERNAL_ERROR' }, { status: 500 });
   }
 });
-
-// [Include all original helper functions: verifyToken, validateDate, validateNumber, generateExternalSessionKey, etc.]

@@ -124,12 +124,24 @@ async function jobDailyCoaching(sr, userEmail) {
   const weekNumber = getISOWeek(now);
   const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
 
-  const [profiles, sessions, goals, streams] = await Promise.all([
+  const [profiles, liveSess, desktopSess, goals, streams] = await Promise.all([
     sr.entities.CreatorProfile.filter({ created_by: userEmail }),
     sr.entities.LiveSession.filter({ created_by: userEmail }, '-stream_date', 10),
+    sr.entities.DesktopSession.filter({ user_id: userEmail }, '-started_at', 10),
     sr.entities.GrowthGoal.filter({ created_by: userEmail, status: 'active' }),
     sr.entities.ScheduledStream.filter({ created_by: userEmail }, '-scheduled_date', 14),
   ]);
+
+  // Merge sessions
+  const nDesktop = desktopSess.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    promo_posted: false,
+  }));
+  const lDatesCoach = new Set(liveSess.map(s => s.stream_date));
+  const sessions = [...liveSess, ...nDesktop.filter(d => d.stream_date && !lDatesCoach.has(d.stream_date))];
 
   const profile = profiles[0] || null;
   if (!profile) return { skipped: 'no creator profile' };
@@ -364,16 +376,16 @@ Return JSON: { primary_game, secondary_games (array 1-2), stream_target (number)
   });
 
   const plan = await sr.entities.WeeklyPlan.create({
+    owner_email: userEmail,
     week_number: weekNumber, year,
-    week_start_date: weekStart, week_end_date: weekEnd,
-    stream_target: result.stream_target || target,
-    primary_game: result.primary_game || profile.primary_game || null,
-    secondary_games: result.secondary_games || [],
-    focus_note: result.focus_note,
-    ai_brief: result.ai_brief,
+    week_start_date: weekStart,
+    target_duration_minutes: 60,
+    recommended_games: result.primary_game ? [result.primary_game, ...(result.secondary_games || [])] : [],
+    ai_brief: result.ai_brief || result.focus_note,
     status: 'active',
-    streams_completed: 0,
-    promo_posted_count: 0,
+    data_sessions_analyzed: sessions.length,
+    generated_at: new Date().toISOString(),
+    generated_by: 'ai',
   });
 
   return { created: plan.id };

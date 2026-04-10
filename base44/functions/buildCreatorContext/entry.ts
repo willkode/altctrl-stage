@@ -209,7 +209,7 @@ function normalizeSession(live, desktop) {
       live_session_id: null,
       desktop_session_id: desktop.id,
       stream_date: d.toISOString().split("T")[0],
-      game: desktop.title || "",
+      game: desktop.game || desktop.title || "",
       stream_type: "other",
       platform: desktop.platform || "TikTok",
       start_time: desktop.started_at || "",
@@ -323,7 +323,7 @@ Deno.serve(async (req) => {
   ] = await Promise.all([
     base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.asServiceRole.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", sessionLimit),
-    base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.email }, "-created_date", sessionLimit),
+    base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.email }, "-started_at", sessionLimit),
     base44.asServiceRole.entities.ScheduledStream.filter({ created_by: user.email }),
     base44.asServiceRole.entities.WeeklyPlan.filter({ created_by: user.email, week_number: currentWeek, year: currentYear }),
     base44.asServiceRole.entities.GrowthGoal.filter({ created_by: user.email, status: "active" }),
