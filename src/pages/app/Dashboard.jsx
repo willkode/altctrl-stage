@@ -150,8 +150,7 @@ export default function Dashboard() {
               <SummaryStats sessions={recentSessions} />
             </div>
 
-            {/* Recent sessions */}
-            <RecentSessions sessions={recentSessions.slice(0, 10)} />
+
           </div>
         )}
 
