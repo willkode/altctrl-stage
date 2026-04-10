@@ -28,9 +28,12 @@ function SessionDetail({ session, onBack, onEdit }) {
 
   async function generateDebrief() {
     setLoadingDebrief(true);
-    const res = await base44.functions.invoke("generateAutoDebrief", { session_id: session.id });
-    if (res.data?.debrief) {
-      setDebrief(res.data.debrief);
+    const res = await base44.functions.invoke("generateAutoDebrief", {
+      session_id: session.id,
+      is_desktop: !!session._desktop,
+    });
+    if (res.data?.review) {
+      setDebrief(res.data.review);
       setGenerated(true);
     }
     setLoadingDebrief(false);
@@ -164,8 +167,30 @@ function SessionDetail({ session, onBack, onEdit }) {
         </div>
 
         {debrief ? (
-          <div className="space-y-3 text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
-            {typeof debrief === "string" ? debrief : JSON.stringify(debrief, null, 2)}
+          <div className="space-y-4">
+            {debrief.overall_rating != null && (
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] font-mono uppercase text-slate-600">Rating</span>
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map(n => (
+                    <Star key={n} className={`w-4 h-4 ${n <= debrief.overall_rating ? "text-yellow-400 fill-yellow-400" : "text-slate-700"}`} />
+                  ))}
+                </div>
+                <span className="text-xs font-black text-yellow-400">{debrief.overall_rating}/5</span>
+              </div>
+            )}
+            {[
+              { key: "strongest_opening", label: "Opening" },
+              { key: "strongest_engagement", label: "Peak Engagement" },
+              { key: "dead_zones", label: "Dead Zones" },
+              { key: "clip_worthy", label: "Clip-Worthy Moments" },
+              { key: "lessons", label: "Lessons for Next Time" },
+            ].filter(f => debrief[f.key]).map(f => (
+              <div key={f.key}>
+                <p className="text-[9px] font-mono uppercase text-slate-600 mb-1">{f.label}</p>
+                <p className="text-sm text-slate-300 leading-relaxed">{debrief[f.key]}</p>
+              </div>
+            ))}
           </div>
         ) : (
           <p className="text-xs font-mono text-slate-600">
