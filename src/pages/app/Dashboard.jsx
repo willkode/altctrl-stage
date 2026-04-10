@@ -10,7 +10,8 @@ import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import SummaryStats from "../../components/app/analytics/SummaryStats";
 import PerformanceChart from "../../components/app/analytics/PerformanceChart";
 import AnalyticsTab from "../../components/app/dashboard/AnalyticsTab";
-import { Zap, CheckSquare, Sparkles, LayoutDashboard, TrendingUp } from "lucide-react";
+import SessionsTab from "../../components/app/dashboard/SessionsTab";
+import { Zap, CheckSquare, Sparkles, LayoutDashboard, TrendingUp, List } from "lucide-react";
 
 function getISOWeek(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -23,6 +24,7 @@ const TODAY_STR = new Date().toISOString().split("T")[0];
 
 const TABS = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
+  { key: "sessions", label: "Sessions", icon: List },
   { key: "analytics", label: "Analytics", icon: TrendingUp },
 ];
 
@@ -156,6 +158,9 @@ export default function Dashboard() {
             <RecentSessions sessions={recentSessions.slice(0, 10)} />
           </div>
         )}
+
+        {/* Sessions Tab */}
+        {activeTab === "sessions" && <SessionsTab />}
 
         {/* Analytics Tab */}
         {activeTab === "analytics" && <AnalyticsTab />}
