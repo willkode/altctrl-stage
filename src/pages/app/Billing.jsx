@@ -4,15 +4,8 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Crown, Check, Loader2, ExternalLink, Zap } from "lucide-react";
 
-const FREE_FEATURES = [
-  "Basic scheduling",
-  "Manual session logging",
-  "Limited analytics",
-  "Community support",
-];
-
 const PRO_FEATURES = [
-  "Everything in Free",
+  "Full access to all 5 core modules",
   "AI-powered coaching",
   "Stream strategy generator",
   "Advanced analytics & trends",
@@ -101,30 +94,9 @@ export default function Billing() {
         </div>
       )}
 
-      {/* Plan cards */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {/* Free */}
-        <div className={`bg-[#060d1f] border rounded-xl p-6 ${!isPro ? "border-cyan-500/30" : "border-cyan-900/20"}`}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-black uppercase text-white">Free</h3>
-              <p className="text-2xl font-black text-white mt-1">$0<span className="text-sm font-normal text-slate-500">/mo</span></p>
-            </div>
-            {!isPro && (
-              <span className="text-[9px] font-mono uppercase px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">Current</span>
-            )}
-          </div>
-          <ul className="space-y-2.5">
-            {FREE_FEATURES.map(f => (
-              <li key={f} className="flex items-center gap-2.5 text-sm text-slate-400">
-                <Check className="w-3.5 h-3.5 text-slate-600 shrink-0" /> {f}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Pro */}
-        <div className={`bg-[#060d1f] border rounded-xl p-6 relative overflow-hidden ${isPro ? "border-yellow-500/30" : "border-cyan-900/20"}`}>
+      {/* Plan card */}
+      <div className="max-w-md">
+        <div className={`bg-[#060d1f] border rounded-xl p-6 relative overflow-hidden ${isPro ? "border-yellow-500/30" : "border-cyan-500/30"}`}>
           {isPro && (
             <div className="absolute top-0 right-0 bg-yellow-500 text-[#02040f] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">
               Active
