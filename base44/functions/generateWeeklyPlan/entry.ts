@@ -74,23 +74,21 @@ Deno.serve(async (req) => {
   // --- Load all data in parallel ---
   const [
     profiles,
-    sessions,
-    facts,
+    liveSessions,
+    desktopSessions,
     goals,
     scheduledStreams,
     replays,
-    profileSnapshots,
     coachLogs,
     experiments,
     prevPlans,
   ] = await Promise.all([
     base44.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.entities.LiveSession.filter({ owner_email: user.email }, '-stream_date', 40),
-    base44.entities.SessionFact.filter({ owner_email: user.email }, '-stream_date', 40),
+    base44.entities.DesktopSession.filter({ user_id: user.email }, '-started_at', 40),
     base44.entities.GrowthGoal.filter({ created_by: user.email, status: 'active' }),
     base44.entities.ScheduledStream.filter({ created_by: user.email }, '-scheduled_date', 20),
     base44.entities.ReplayReview.filter({ created_by: user.email }, '-reviewed_at', 5),
-    base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, '-captured_at', 2),
     base44.entities.CoachActionLog.filter({ owner_email: user.email }, '-sent_at', 50),
     base44.entities.Experiment.filter({ created_by: user.email }, '-created_date', 20),
     base44.entities.WeeklyPlan.filter({ owner_email: user.email }, '-week_start_date', 2),
@@ -98,8 +96,24 @@ Deno.serve(async (req) => {
 
   const profile = profiles[0] || null;
 
-  // Use SessionFacts if available (higher quality), fall back to LiveSessions
-  const dataSource = facts.length >= sessions.length * 0.5 ? facts : sessions;
+  // Merge LiveSession + DesktopSession, dedup by date
+  const normalizedDesktop = desktopSessions.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    stream_type: null,
+    start_time: d.started_at ? d.started_at.split('T')[1]?.substring(0, 5) : null,
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    duration_minutes: d.duration_min ?? 0,
+    followers_gained: d.total_follows ?? 0,
+    diamonds: d.total_diamonds ?? 0,
+    shares: d.total_shares ?? 0,
+    promo_posted: false,
+    source: 'desktop_sync',
+  }));
+  const liveDates = new Set(liveSessions.map(s => s.stream_date));
+  const uniqueDesktop = normalizedDesktop.filter(d => d.stream_date && !liveDates.has(d.stream_date));
+  const dataSource = [...liveSessions, ...uniqueDesktop].sort((a, b) => (b.stream_date || '').localeCompare(a.stream_date || ''));
   const sessionCount = dataSource.length;
 
   // --- Compute baselines ---
@@ -199,8 +213,6 @@ Deno.serve(async (req) => {
     .sort((a, b) => b.avg - a.avg)[0];
 
   // --- Coach feedback analysis (what worked) ---
-  const workedActions  = coachLogs.filter(l => l.result === 'worked');
-  const failedActions  = coachLogs.filter(l => l.result === 'failed');
   const helpfulActions = coachLogs.filter(l => l.helpful === true);
   const coachInsights  = helpfulActions
     .slice(0, 5)
@@ -209,8 +221,6 @@ Deno.serve(async (req) => {
 
   // --- Experiment context ---
   const activeExperiments   = experiments.filter(e => e.status === 'active' || e.status === 'running');
-  const completedExp        = experiments.filter(e => e.status === 'completed');
-  const failedExp           = experiments.filter(e => e.result === 'failed' || e.result === 'no_effect');
   const experimentContext   = activeExperiments.map(e => e.hypothesis || e.title).filter(Boolean).join('; ');
 
   // --- Previous week performance ---

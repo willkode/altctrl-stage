@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     // Normalize desktop session to match LiveSession field names
     session = {
       ...ds,
-      game: ds.title || "Desktop Session",
+      game: ds.game || ds.title || "Desktop Session",
       stream_date: ds.started_at ? ds.started_at.split("T")[0] : "",
       stream_type: "desktop",
       duration_minutes: ds.duration_min,
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
   // Try to find matching desktop session for timeline
   let desktopTimeline = null;
   let desktopSession = null;
-  const desktopSessions = await base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.id }, "-created_date", 50);
+  const desktopSessions = await base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.email }, "-created_date", 50);
   const match = desktopSessions.find(d => {
     const dDate = d.started_at ? d.started_at.split("T")[0] : null;
     return dDate === session.stream_date;

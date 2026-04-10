@@ -20,15 +20,28 @@ Deno.serve(async (req) => {
     }
   }
 
-  // Gather creator context in parallel (sessions + replays + TikTok profile data)
-  const [profiles, sessions, goals, streams, replays, profileSnapshots] = await Promise.all([
+  // Gather creator context in parallel
+  const [profiles, liveSessions, desktopSessionsRaw, goals, streams, replays] = await Promise.all([
     base44.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.entities.LiveSession.filter({ created_by: user.email }, '-stream_date', 15),
+    base44.entities.DesktopSession.filter({ user_id: user.email }, '-started_at', 15),
     base44.entities.GrowthGoal.filter({ created_by: user.email, status: 'active' }),
     base44.entities.ScheduledStream.filter({ created_by: user.email }, '-scheduled_date', 20),
     base44.entities.ReplayReview.filter({ created_by: user.email }, '-reviewed_at', 10),
-    base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, '-captured_at', 3),
   ]);
+
+  // Merge LiveSession + DesktopSession
+  const normalizedDesktop = desktopSessionsRaw.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    start_time: d.started_at ? d.started_at.split('T')[1]?.substring(0, 5) : null,
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    promo_posted: false,
+  }));
+  const liveDates = new Set(liveSessions.map(s => s.stream_date));
+  const uniqueDesktop = normalizedDesktop.filter(d => d.stream_date && !liveDates.has(d.stream_date));
+  const sessions = [...liveSessions, ...uniqueDesktop].sort((a, b) => (b.stream_date || '').localeCompare(a.stream_date || ''));
 
   const profile = profiles[0] || null;
   const now = new Date();
@@ -82,9 +95,8 @@ Deno.serve(async (req) => {
     : null;
   const bestHourAvgViewers = bestHourData?.avg || null;
 
-  // Collect debrief insights and TikTok trends
+  // Collect debrief insights
   const recentReplayLessons = replays.slice(0, 3).map(r => r.lessons).filter(Boolean);
-  const latestProfileTrend = profileSnapshots[0] ? `follower trend: +${profileSnapshots.reduce((a, s) => a + (s.follower_count || 0), 0) / Math.max(profileSnapshots.length, 1)} avg` : null;
   const promoEffect = sessions.length >= 3
     ? (() => {
         const promo = sessions.filter(s => s.promo_posted).map(s => s.avg_viewers || 0);
@@ -119,9 +131,6 @@ ${promoEffect !== null ? `- Promo effect: sessions with promo average ${promoEff
 Creator debrief insights (recent):
 ${recentReplayLessons.length > 0 ? recentReplayLessons.slice(0, 2).map(l => `- ${l}`).join('\n') : '- No replay reviews yet'}
 
-TikTok profile trends:
-${latestProfileTrend ? `- ${latestProfileTrend}` : '- No profile snapshots yet'}
-
 Active goals:
 ${goals.length > 0 ? goals.map(g => `- ${g.title || g.goal_type}: target ${g.target_value} ${g.unit}`).join('\n') : '- No active goals set'}
 
@@ -133,13 +142,10 @@ Generate a daily coaching card grounded in their actual data and creator insight
 
 Return a JSON with:
 - focus_title: short punchy headline (under 8 words, UPPERCASE-friendly)
-- focus_body: 2-3 sentences of specific guidance based on their actual data, debrief, or TikTok trends
+- focus_body: 2-3 sentences of specific guidance based on their actual data or debrief
 - action_items: array of exactly 3 concrete actions for today (short, imperative)
-- best_time_to_live: string like "8:00 PM" or null if not enough data
-- predicted_viewers_min: integer or null
-- predicted_viewers_max: integer or null
 - content_tip: one specific content/gameplay tip based on their best-performing game or debrief lessons
-- reasoning: 1 sentence explaining why this advice fits today specifically (reference promo, time, game, or debrief insight if available)`
+- reasoning: 1 sentence explaining why this advice fits today specifically`
 
   const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
     prompt,
@@ -149,9 +155,6 @@ Return a JSON with:
         focus_title: { type: 'string' },
         focus_body: { type: 'string' },
         action_items: { type: 'array', items: { type: 'string' } },
-        best_time_to_live: { type: ['string', 'null'] },
-        predicted_viewers_min: { type: ['number', 'null'] },
-        predicted_viewers_max: { type: ['number', 'null'] },
         content_tip: { type: 'string' },
         reasoning: { type: 'string' },
       },
@@ -174,11 +177,6 @@ Return a JSON with:
 
   return Response.json({
     recommendation,
-    meta: {
-      best_time_to_live: result.best_time_to_live,
-      predicted_viewers_min: result.predicted_viewers_min,
-      predicted_viewers_max: result.predicted_viewers_max,
-    },
     cached: false,
   });
 });

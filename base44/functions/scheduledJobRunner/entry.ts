@@ -205,13 +205,25 @@ async function jobGenerateAlerts(sr, userEmail) {
   const week = getISOWeek(now);
   const year = now.getFullYear();
 
-  const [profile, sessions, existingAlerts] = await Promise.all([
+  const [profile, liveSessions, desktopSessionsRaw, existingAlerts] = await Promise.all([
     sr.entities.CreatorProfile.filter({ created_by: userEmail }).then(r => r[0] || null),
     sr.entities.LiveSession.filter({ created_by: userEmail }, '-stream_date', 200),
+    sr.entities.DesktopSession.filter({ user_id: userEmail }, '-started_at', 200),
     sr.entities.PerformanceAlert.filter({ created_by: userEmail, dismissed: false }, '-created_date', 100),
   ]);
 
   if (!profile) return { skipped: 'no creator profile' };
+
+  // Merge LiveSession + DesktopSession
+  const normalizedDesktop = desktopSessionsRaw.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    promo_posted: false,
+  }));
+  const liveDates = new Set(liveSessions.map(s => s.stream_date));
+  const uniqueDesktop = normalizedDesktop.filter(d => d.stream_date && !liveDates.has(d.stream_date));
+  const sessions = [...liveSessions, ...uniqueDesktop];
 
   const weeklyTarget = profile.weekly_stream_target || 3;
 
@@ -297,11 +309,22 @@ async function jobWeeklyPlan(sr, userEmail) {
   const weekStart = monday.toISOString().split('T')[0];
   const weekEnd = sunday.toISOString().split('T')[0];
 
-  const [profiles, sessions, goals] = await Promise.all([
+  const [profiles, liveSess, desktopSess, goals] = await Promise.all([
     sr.entities.CreatorProfile.filter({ created_by: userEmail }),
     sr.entities.LiveSession.filter({ created_by: userEmail }, '-stream_date', 20),
+    sr.entities.DesktopSession.filter({ user_id: userEmail }, '-started_at', 20),
     sr.entities.GrowthGoal.filter({ created_by: userEmail, status: 'active' }),
   ]);
+
+  // Merge sessions
+  const ndsk = desktopSess.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+  }));
+  const ldates = new Set(liveSess.map(s => s.stream_date));
+  const sessions = [...liveSess, ...ndsk.filter(d => d.stream_date && !ldates.has(d.stream_date))];
 
   const profile = profiles[0] || null;
   if (!profile) return { skipped: 'no creator profile' };
@@ -376,14 +399,28 @@ async function jobWeeklyRecap(sr, userEmail) {
   const weekStart = monday.toISOString().split('T')[0];
   const weekEnd = new Date(monday.getTime() + 6 * 86400000).toISOString().split('T')[0];
 
-  const [profiles, allSessions, scheduledStreams] = await Promise.all([
+  const [profiles, allLive, allDesktop, scheduledStreams] = await Promise.all([
     sr.entities.CreatorProfile.filter({ created_by: userEmail }),
     sr.entities.LiveSession.filter({ created_by: userEmail }, '-stream_date', 60),
+    sr.entities.DesktopSession.filter({ user_id: userEmail }, '-started_at', 60),
     sr.entities.ScheduledStream.filter({ created_by: userEmail }, '-scheduled_date', 30),
   ]);
 
   const profile = profiles[0] || null;
   if (!profile) return { skipped: 'no creator profile' };
+
+  // Merge sessions
+  const nDesk = allDesktop.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    duration_minutes: d.duration_min ?? 0,
+    followers_gained: d.total_follows ?? 0,
+    promo_posted: false,
+  }));
+  const lDates = new Set(allLive.map(s => s.stream_date));
+  const allSessions = [...allLive, ...nDesk.filter(d => d.stream_date && !lDates.has(d.stream_date))];
 
   const weekSessions = allSessions.filter(s => s.stream_date >= weekStart && s.stream_date <= weekEnd);
   const weekScheduled = scheduledStreams.filter(s => s.scheduled_date >= weekStart && s.scheduled_date <= weekEnd);

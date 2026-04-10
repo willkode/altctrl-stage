@@ -28,15 +28,29 @@ Deno.serve(async (req) => {
     const week = getISOWeek(now);
     const year = now.getFullYear();
 
-    // Load all data in parallel (sessions + replays + profile snapshots)
-    const [profile, sessions, streams, existingAlerts, replays, profileSnapshots] = await Promise.all([
+    // Load all data in parallel
+    const [profile, liveSessions, desktopSessionsRaw, streams, existingAlerts, replays] = await Promise.all([
       base44.entities.CreatorProfile.filter({ created_by: user.email }).then(r => r[0] || null),
       base44.entities.LiveSession.filter({ created_by: user.email }, "-stream_date", 200),
+      base44.entities.DesktopSession.filter({ user_id: user.email }, "-started_at", 200),
       base44.entities.ScheduledStream.filter({ created_by: user.email }, "-scheduled_date", 200),
       base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false }, "-created_date", 100),
       base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 20),
-      base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, "-captured_at", 5),
     ]);
+
+    // Merge LiveSession + DesktopSession
+    const normalizedDesktop = desktopSessionsRaw.map(d => ({
+      stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+      game: d.game || d.title || '',
+      stream_type: null,
+      start_time: d.started_at ? d.started_at.split('T')[1]?.substring(0, 5) : null,
+      avg_viewers: d.avg_viewers ?? 0,
+      peak_viewers: d.peak_viewers ?? 0,
+      promo_posted: false,
+    }));
+    const liveDates = new Set(liveSessions.map(s => s.stream_date));
+    const uniqueDesktop = normalizedDesktop.filter(d => d.stream_date && !liveDates.has(d.stream_date));
+    const sessions = [...liveSessions, ...uniqueDesktop];
 
     const weeklyTarget = profile?.weekly_stream_target || 3;
     const thisWeekStart = weekStart(0);

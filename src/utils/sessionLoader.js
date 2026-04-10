@@ -8,16 +8,17 @@ import { base44 } from "@/api/base44Client";
  * Normalize a DesktopSession record to the same shape as LiveSession.
  */
 function normalizeDesktop(d) {
+  const startTimeHHMM = d.started_at ? d.started_at.split("T")[1]?.substring(0, 5) || null : null;
   return {
     id: d.id,
     stream_date: d.started_at ? d.started_at.split("T")[0] : null,
-    game: d.game || "",
+    game: d.game || d.title || "",
     stream_type: null,
     avg_viewers: d.avg_viewers ?? 0,
     peak_viewers: d.peak_viewers ?? 0,
     duration_minutes: d.duration_min ?? 0,
     followers_gained: d.total_follows ?? 0,
-    comments: d.unique_chatters ?? 0,
+    comments: 0,
     gifters: d.unique_gifters ?? 0,
     diamonds: d.total_diamonds ?? 0,
     shares: d.total_shares ?? 0,
@@ -30,7 +31,7 @@ function normalizeDesktop(d) {
     energy_level: null,
     source: "desktop_sync",
     title: d.title || "",
-    start_time: d.started_at || null,
+    start_time: startTimeHHMM,
     _desktop: true,
     _started_at: d.started_at,
   };

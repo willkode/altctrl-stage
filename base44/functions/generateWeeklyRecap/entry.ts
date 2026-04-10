@@ -43,17 +43,31 @@ Deno.serve(async (req) => {
     if (existing.length > 0) return Response.json({ recap: existing[0], cached: true });
   }
 
-  // Gather data (sessions + replays + profile snapshots)
-  const [profiles, allSessions, goals, scheduledStreams, replays, profileSnapshots] = await Promise.all([
+  // Gather data
+  const [profiles, allLiveSessions, allDesktopSessions, goals, scheduledStreams, replays] = await Promise.all([
     base44.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.entities.LiveSession.filter({ created_by: user.email }, '-stream_date', 60),
+    base44.entities.DesktopSession.filter({ user_id: user.email }, '-started_at', 60),
     base44.entities.GrowthGoal.filter({ created_by: user.email }),
     base44.entities.ScheduledStream.filter({ created_by: user.email }, '-scheduled_date', 30),
     base44.entities.ReplayReview.filter({ created_by: user.email }, '-reviewed_at', 10),
-    base44.entities.TikTokProfileSnapshot.filter({ created_by: user.email }, '-captured_at', 5),
   ]);
 
   const profile = profiles[0] || null;
+
+  // Merge LiveSession + DesktopSession
+  const normalizedDesktop = allDesktopSessions.map(d => ({
+    stream_date: d.started_at ? d.started_at.split('T')[0] : null,
+    game: d.game || d.title || '',
+    avg_viewers: d.avg_viewers ?? 0,
+    peak_viewers: d.peak_viewers ?? 0,
+    duration_minutes: d.duration_min ?? 0,
+    followers_gained: d.total_follows ?? 0,
+    promo_posted: false,
+  }));
+  const liveDates = new Set(allLiveSessions.map(s => s.stream_date));
+  const uniqueDesktop = normalizedDesktop.filter(d => d.stream_date && !liveDates.has(d.stream_date));
+  const allSessions = [...allLiveSessions, ...uniqueDesktop];
 
   // This week's sessions
   const weekSessions = allSessions.filter(s => s.stream_date >= weekStart && s.stream_date <= weekEnd);
@@ -130,15 +144,6 @@ Deno.serve(async (req) => {
       ? `Replays reviewed: ${weekReplays.length}. Key lessons: ${weekReplays.map(r => r.lessons).filter(Boolean).slice(0, 2).join(' | ')}`
       : 'No replays reviewed this week';
 
-    // TikTok profile trend for week
-    const weekProfileSnapshots = profileSnapshots.filter(p => {
-      const pDate = new Date(p.captured_at);
-      return pDate >= new Date(weekStart) && pDate <= new Date(weekEnd);
-    }).sort((a, b) => new Date(b.captured_at) - new Date(a.captured_at));
-    const followerTrend = weekProfileSnapshots.length > 0
-      ? `Followers this week: ${weekProfileSnapshots[0].follower_count}`
-      : null;
-
     const prompt = `You are AltCtrl, an AI coach for TikTok LIVE gaming creators. Generate a weekly recap summary for week ${recapWeek} (${weekStart} to ${weekEnd}).
 
 Creator: ${profile?.display_name || 'Creator'}, goal: ${profile?.stream_goal?.replace(/_/g, ' ') || 'grow followers'}
@@ -155,9 +160,6 @@ Week ${recapWeek} results:
 
 Creator debrief insights:
 ${debriefsummary}
-
-TikTok profile trends:
-${followerTrend || 'No profile snapshots'}
 
 Previous week for comparison:
 - Sessions: ${prevWeekSessions.length}

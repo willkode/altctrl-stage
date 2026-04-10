@@ -283,24 +283,6 @@ function matchDesktopToLive(liveSessions, desktopSessions) {
   return matched;
 }
 
-// ── Connection health ──
-function buildConnectionHealth(accounts, connections) {
-  const tiktokAccount = accounts.find(a => a.provider === "tiktok" && a.connection_status === "connected");
-  const tiktokConn = connections.find(c => c.connected);
-
-  return {
-    tiktok_connected: !!(tiktokAccount || tiktokConn),
-    last_sync_at: tiktokAccount?.last_sync_at || tiktokConn?.last_sync_at || null,
-    last_sync_status: tiktokAccount?.last_sync_status || tiktokConn?.last_sync_status || "never",
-    stale: (() => {
-      const lastSync = tiktokAccount?.last_sync_at || tiktokConn?.last_sync_at;
-      if (!lastSync) return true;
-      const age = Date.now() - new Date(lastSync).getTime();
-      return age > 24 * 60 * 60 * 1000; // stale if > 24h
-    })(),
-  };
-}
-
 // ============================================================================
 // MAIN HANDLER
 // ============================================================================
@@ -337,15 +319,11 @@ Deno.serve(async (req) => {
     dailyRecs,
     alerts,
     replayReviews,
-    tiktokSnapshots,
-    tiktokVideos,
-    connectedAccounts,
-    tiktokConnections,
     coachActions,
   ] = await Promise.all([
     base44.asServiceRole.entities.CreatorProfile.filter({ created_by: user.email }),
     base44.asServiceRole.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", sessionLimit),
-    base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.id }, "-created_date", sessionLimit),
+    base44.asServiceRole.entities.DesktopSession.filter({ user_id: user.email }, "-created_date", sessionLimit),
     base44.asServiceRole.entities.ScheduledStream.filter({ created_by: user.email }),
     base44.asServiceRole.entities.WeeklyPlan.filter({ created_by: user.email, week_number: currentWeek, year: currentYear }),
     base44.asServiceRole.entities.GrowthGoal.filter({ created_by: user.email, status: "active" }),
@@ -356,10 +334,6 @@ Deno.serve(async (req) => {
     base44.asServiceRole.entities.DailyRecommendation.filter({ created_by: user.email, date: today }),
     base44.asServiceRole.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false }, "-created_date", 20),
     base44.asServiceRole.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 10),
-    base44.asServiceRole.entities.TikTokProfileSnapshot.filter({}, "-captured_at", 30),
-    base44.asServiceRole.entities.TikTokVideo.filter({}, "-created_date", 50),
-    base44.asServiceRole.entities.ConnectedAccount.filter({ created_by: user.email }),
-    base44.asServiceRole.entities.TikTokConnection.filter({ user_id: user.id }),
     scope === "coach" ? base44.asServiceRole.entities.CoachActionLog.filter({ created_by: user.email }, "-sent_at", 50) : Promise.resolve([]),
   ]);
 
@@ -390,9 +364,6 @@ Deno.serve(async (req) => {
     }), baselines, "weekday"),
   };
 
-  // ── Connection health ──
-  const connectionHealth = buildConnectionHealth(connectedAccounts, tiktokConnections);
-
   // ── Upcoming streams ──
   const upcomingStreams = scheduledStreams
     .filter(s => s.scheduled_date >= today && s.status !== "cancelled")
@@ -404,7 +375,6 @@ Deno.serve(async (req) => {
   const confidence = {
     overall: totalSessions >= 10 ? "high" : totalSessions >= 5 ? "medium" : totalSessions >= 1 ? "low" : "none",
     baselines: baselines ? (baselines.sample_size >= 10 ? "high" : baselines.sample_size >= 5 ? "medium" : "low") : "none",
-    tiktok_data: connectionHealth.tiktok_connected && !connectionHealth.stale ? "high" : connectionHealth.tiktok_connected ? "medium" : "none",
     sessions_available: totalSessions,
   };
 
@@ -418,7 +388,6 @@ Deno.serve(async (req) => {
     current_year: currentYear,
 
     profile,
-    connection_health: connectionHealth,
     confidence,
 
     goals,
@@ -440,9 +409,6 @@ Deno.serve(async (req) => {
     active_experiments: experiments.filter(e => e.status === "active"),
     completed_experiments: experiments.filter(e => e.status === "completed").slice(0, 5),
     weekly_recaps: weeklyRecaps,
-
-    tiktok_snapshots: tiktokSnapshots.slice(0, 10),
-    tiktok_videos: tiktokVideos.slice(0, 20),
   };
 
   // Coach-specific additions
