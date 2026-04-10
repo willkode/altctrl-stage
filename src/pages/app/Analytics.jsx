@@ -12,7 +12,7 @@ import SessionHistory from "../../components/app/analytics/SessionHistory";
 import TopFollowersStats from "../../components/app/analytics/TopFollowersStats";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import EngagementTriggersAnalysis from "../../components/app/analytics/EngagementTriggersAnalysis";
-import ExternalPlatformStats from "../../components/app/analytics/ExternalPlatformStats";
+
 import { Plus, X, SlidersHorizontal } from "lucide-react";
 
 export default function Analytics() {
@@ -161,11 +161,11 @@ export default function Analytics() {
               <Plus className="w-3.5 h-3.5" /> Log First Session
             </button>
           </div>
-          <ExternalPlatformStats />
+
         </div>
       ) : sessions.length < 3 ? (
         <div className="space-y-6">
-          <ExternalPlatformStats />
+
           <DataProgressBanner current={sessions.length} required={3} featureName="Full Analytics"
             hint={`${sessions.length} session${sessions.length > 1 ? "s" : ""} logged. ${3 - sessions.length} more to unlock charts and breakdowns.`}
             actionLabel="Log a session" actionLink="/app/analytics" />
@@ -178,7 +178,7 @@ export default function Analytics() {
         </div>
       ) : (
         <div className="space-y-6">
-          <ExternalPlatformStats />
+
           <SummaryStats sessions={filtered} />
           <PerformanceChart sessions={filtered} />
           <div className="grid md:grid-cols-2 gap-5">
