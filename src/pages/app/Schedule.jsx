@@ -7,6 +7,7 @@ import WeeklyConsistency from "../../components/app/schedule/WeeklyConsistency";
 import StreamDrawer from "../../components/app/drawers/StreamDrawer";
 import { ChevronLeft, ChevronRight, Plus, Sparkles } from "lucide-react";
 import { getISOWeek, getWeekDates as getWeekDatesUtil, getTodayStr } from "../../utils/dateHelpers";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 const getWeekDates = getWeekDatesUtil;
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -33,7 +34,7 @@ export default function Schedule() {
     const user = await base44.auth.me();
     const [allStreams, allSessions, profiles, plans] = await Promise.all([
       base44.entities.ScheduledStream.filter({ created_by: user.email }),
-      base44.entities.LiveSession.filter({ owner_email: user.email }),
+      loadAllSessions(200),
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
       base44.entities.WeeklyPlan.filter({ created_by: user.email, week_number: getISOWeek(new Date()), year: new Date().getFullYear() }),
     ]);

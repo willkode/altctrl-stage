@@ -7,6 +7,7 @@ import ConversionRatios from "../../components/app/audience/ConversionRatios";
 import TrendCharts from "../../components/app/audience/TrendCharts";
 import SourceBadge from "../../components/app/SourceBadge";
 import { TrendingUp } from "lucide-react";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 export default function AudienceMonetization() {
   const [loading, setLoading] = useState(true);
@@ -20,8 +21,7 @@ export default function AudienceMonetization() {
 
   async function loadData() {
     setLoading(true);
-    const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100);
+    const all = await loadAllSessions(100);
     setSessions(all);
     setFilteredSessions(all);
 

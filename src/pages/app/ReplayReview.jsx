@@ -5,6 +5,7 @@ import LoadingState from "../../components/app/LoadingState";
 import TimestampedNotes from "../../components/app/replay/TimestampedNotes";
 import { Zap, Check, Video } from "lucide-react";
 import { inp, textarea, lbl } from "../../lib/formStyles";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 export default function ReplayReview() {
   const [loading, setLoading] = useState(true);
@@ -19,8 +20,7 @@ export default function ReplayReview() {
 
   async function load() {
     setLoading(true);
-    const user = await base44.auth.me();
-    const all = await base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 30);
+    const all = await loadAllSessions(30);
     setSessions(all);
     setLoading(false);
   }

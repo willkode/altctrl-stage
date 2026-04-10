@@ -57,7 +57,7 @@ import AdminMessaging from './pages/app/admin/Messaging';
 import AdminGameLibrary from './pages/app/admin/GameLibraryAdmin';
 import AdminUsers from './pages/app/admin/Users';
 import GameIntel from './pages/app/GameIntel';
-import TikTokCallback from './pages/TikTokCallback';
+
 import DesktopAuth from './pages/DesktopAuth';
 import DesktopCallback from './pages/DesktopCallback';
 import ILoveYouMegan from './pages/ILoveYouMegan';
@@ -125,7 +125,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/tiktok-callback" element={<TikTokCallback />} />
+
         <Route path="/features" element={<Features />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/for-creators" element={<ForCreators />} />

@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Check, Zap, AlertTriangle, Download, LogOut } from "lucide-react";
-import TikTokConnectionCard from "../../components/app/tiktok/TikTokConnectionCard";
+
 import ExternalPlatformCard from "../../components/app/external/ExternalPlatformCard";
 import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";

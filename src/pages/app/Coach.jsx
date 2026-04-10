@@ -11,6 +11,7 @@ import LiveCoachPanel from "../../components/app/coach/LiveCoachPanel";
 import DataProgressBanner from "../../components/app/DataProgressBanner";
 import { Brain, Sparkles, Loader2 } from "lucide-react";
 import { getISOWeek } from "../../utils/dateHelpers";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 export default function Coach() {
   const [loading, setLoading] = useState(true);
@@ -36,7 +37,7 @@ export default function Coach() {
     const year = now.getFullYear();
 
     const [sessionList, profiles, goalList, todayRecs, allPlans, recapList, alertList, streamList] = await Promise.all([
-      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100),
+      loadAllSessions(100),
       base44.entities.CreatorProfile.filter({ created_by: user.email }),
       base44.entities.GrowthGoal.filter({ created_by: user.email, status: "active" }, "-created_date", 20),
       base44.entities.DailyRecommendation.filter({ created_by: user.email, date: today, dismissed: false }, "-created_date", 1),

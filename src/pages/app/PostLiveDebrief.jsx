@@ -7,6 +7,7 @@ import AutoDebriefCard from "../../components/app/debrief/AutoDebriefCard";
 import SessionMetricsSummary from "../../components/app/debrief/SessionMetricsSummary";
 import SourceBadge from "../../components/app/SourceBadge";
 import { Brain, ChevronDown, Loader2, Sparkles, RefreshCw, ExternalLink, Check, AlertCircle } from "lucide-react";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 export default function PostLiveDebrief() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ export default function PostLiveDebrief() {
     setLoading(true);
     const user = await base44.auth.me();
     const [allSessions, allReviews] = await Promise.all([
-      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 50),
+      loadAllSessions(50),
       base44.entities.ReplayReview.filter({ created_by: user.email }, "-reviewed_at", 100),
     ]);
     setSessions(allSessions);

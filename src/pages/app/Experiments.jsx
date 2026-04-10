@@ -5,6 +5,7 @@ import LoadingState from "../../components/app/LoadingState";
 import ExperimentForm from "../../components/app/experiments/ExperimentForm";
 import ExperimentResults from "../../components/app/experiments/ExperimentResults";
 import { Zap, Trash2, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { loadAllSessions } from "../../utils/sessionLoader";
 
 const STATUS_COLORS = {
   active: "bg-blue-500/10 border-blue-500/30 text-blue-400",
@@ -32,7 +33,7 @@ export default function Experiments() {
     const user = await base44.auth.me();
     const [exps, sess] = await Promise.all([
       base44.entities.Experiment.filter({ created_by: user.email }, "-created_date", 50),
-      base44.entities.LiveSession.filter({ owner_email: user.email }, "-stream_date", 100),
+      loadAllSessions(100),
     ]);
     setExperiments(exps);
     setSessions(sess);

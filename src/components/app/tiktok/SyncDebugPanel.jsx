@@ -15,9 +15,9 @@ const STATUS_COLORS = {
 };
 
 const ERROR_CODE_HINTS = {
-  INVALID_TOKEN: "Extension token is malformed or invalid. Reconnect your TikTok account.",
-  TOKEN_EXPIRED: "Token has expired. Reconnect your TikTok account.",
-  TOKEN_REVOKED: "TikTok account was disconnected. Reconnect to sync again.",
+  INVALID_TOKEN: "Extension token is malformed or invalid. Regenerate your token in Chrome Extension settings.",
+  TOKEN_EXPIRED: "Token has expired. Regenerate a new token.",
+  TOKEN_REVOKED: "Token was revoked. Generate a new one in Chrome Extension settings.",
   MALFORMED_ROW: "One or more session rows had invalid data (bad date, negative numbers, etc.)",
   VALIDATION_ERROR: "Session data validation failed. Check dates and numeric values.",
   AUTH_FAILED: "Authentication failed. Try logging out and back in.",
@@ -219,7 +219,7 @@ export default function SyncDebugPanel() {
                 <span className="text-yellow-400">Manual review:</span> Conflicting data detected. Review in Analytics.
               </li>
               <li>
-                <span className="text-red-400">Invalid token:</span> Reconnect TikTok in Settings.
+                <span className="text-red-400">Invalid token:</span> Regenerate token in Chrome Extension settings.
               </li>
               <li>
                 <span className="text-red-400">Validation error:</span> Session had bad data (date, numbers). Fix in extension.
