@@ -11,7 +11,9 @@ import SummaryStats from "../../components/app/analytics/SummaryStats";
 import PerformanceChart from "../../components/app/analytics/PerformanceChart";
 import AnalyticsTab from "../../components/app/dashboard/AnalyticsTab";
 import SessionsTab from "../../components/app/dashboard/SessionsTab";
-import { Zap, CheckSquare, Sparkles, LayoutDashboard, TrendingUp, List } from "lucide-react";
+import AudienceTab from "../../components/app/dashboard/AudienceTab";
+import GameIntelTab from "../../components/app/dashboard/GameIntelTab";
+import { Zap, CheckSquare, Sparkles, LayoutDashboard, TrendingUp, List, Users, Swords } from "lucide-react";
 
 function getISOWeek(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -24,8 +26,10 @@ const TODAY_STR = new Date().toISOString().split("T")[0];
 
 const TABS = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
-  { key: "sessions", label: "Sessions", icon: List },
   { key: "analytics", label: "Analytics", icon: TrendingUp },
+  { key: "sessions", label: "Sessions", icon: List },
+  { key: "audience", label: "Audience", icon: Users },
+  { key: "gameintel", label: "Game Intel", icon: Swords },
 ];
 
 export default function Dashboard() {
@@ -159,11 +163,17 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Analytics Tab */}
+        {activeTab === "analytics" && <AnalyticsTab />}
+
         {/* Sessions Tab */}
         {activeTab === "sessions" && <SessionsTab />}
 
-        {/* Analytics Tab */}
-        {activeTab === "analytics" && <AnalyticsTab />}
+        {/* Audience Tab */}
+        {activeTab === "audience" && <AudienceTab />}
+
+        {/* Game Intel Tab */}
+        {activeTab === "gameintel" && <GameIntelTab />}
       </div>
 
       <StreamDrawer open={drawer === "stream"} onClose={() => setDrawer(null)} onSaved={loadAll} />
