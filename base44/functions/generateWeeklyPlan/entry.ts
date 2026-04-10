@@ -374,12 +374,12 @@ Return JSON with ALL fields:
 
   // --- Purge old plan if force ---
   if (force) {
-    const old = await base44.entities.WeeklyPlan.filter({ owner_email: user.email, week_number: weekNumber, year });
-    for (const p of old) await base44.entities.WeeklyPlan.delete(p.id);
+    const old = await base44.asServiceRole.entities.WeeklyPlan.filter({ owner_email: user.email, week_number: weekNumber, year });
+    for (const p of old) await base44.asServiceRole.entities.WeeklyPlan.delete(p.id);
   }
 
   // --- Write full structured WeeklyPlan ---
-  const plan = await base44.entities.WeeklyPlan.create({
+  const plan = await base44.asServiceRole.entities.WeeklyPlan.create({
     owner_email:               user.email,
     week_start_date:           weekStart,
     week_number:               weekNumber,
