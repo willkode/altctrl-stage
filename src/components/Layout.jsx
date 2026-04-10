@@ -70,7 +70,7 @@ export default function Layout() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <button onClick={() => base44.auth.redirectToLogin()} className="text-xs font-mono uppercase tracking-widest text-slate-400 hover:text-white transition-colors border border-cyan-900/40 hover:border-cyan-500/40 px-4 py-2 rounded transition-all flex items-center gap-1.5">
+            <button onClick={() => base44.auth.redirectToLogin()} className="text-xs font-mono uppercase tracking-widest text-pink-400 hover:text-pink-300 transition-colors border border-pink-500/40 hover:border-pink-400 px-4 py-2 rounded hover:shadow-[0_0_15px_rgba(255,0,128,0.2)] transition-all flex items-center gap-1.5">
               <LogIn className="w-3.5 h-3.5" /> Log In
             </button>
             <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")} className="text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2 rounded hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.4)] transition-all">
