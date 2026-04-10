@@ -8,7 +8,7 @@ import RecentSessions from "../../components/app/dashboard/RecentSessions";
 import StreamDrawer from "../../components/app/drawers/StreamDrawer";
 import LogSessionDrawer from "../../components/app/drawers/LogSessionDrawer";
 import SummaryStats from "../../components/app/analytics/SummaryStats";
-import PerformanceChart from "../../components/app/analytics/PerformanceChart";
+import StrategySection from "../../components/app/dashboard/StrategySection";
 import AnalyticsTab from "../../components/app/dashboard/AnalyticsTab";
 import SessionsTab from "../../components/app/dashboard/SessionsTab";
 import AudienceTab from "../../components/app/dashboard/AudienceTab";
@@ -150,7 +150,8 @@ export default function Dashboard() {
               <SummaryStats sessions={recentSessions} />
             </div>
 
-
+            {/* Strategy */}
+            <StrategySection />
           </div>
         )}
 
