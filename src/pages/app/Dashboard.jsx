@@ -14,15 +14,9 @@ import SessionsTab from "../../components/app/dashboard/SessionsTab";
 import AudienceTab from "../../components/app/dashboard/AudienceTab";
 import GameIntelTab from "../../components/app/dashboard/GameIntelTab";
 import { Zap, CheckSquare, Sparkles, LayoutDashboard, TrendingUp, List, Users, Swords } from "lucide-react";
+import { getISOWeek, getTodayStr } from "../../utils/dateHelpers";
 
-function getISOWeek(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-const TODAY_STR = new Date().toISOString().split("T")[0];
+const TODAY_STR = getTodayStr();
 
 const TABS = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },

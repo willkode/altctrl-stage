@@ -4,9 +4,7 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Zap, Check } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-3 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-1.5";
+import { inp, lbl } from "../../lib/formStyles";
 
 function CheckItem({ label, checked, onChange, accent = "green" }) {
   const styles = {

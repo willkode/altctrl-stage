@@ -5,7 +5,6 @@ export function useCreatorBootstrap() {
   const [profile, setProfile] = useState(null);
   const [prefs, setPrefs] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     bootstrap();
@@ -60,5 +59,5 @@ export function useCreatorBootstrap() {
     if (profiles[0]) setProfile(profiles[0]);
   }
 
-  return { profile, prefs, loading, error, completeOnboarding, setProfile };
+  return { profile, prefs, loading, completeOnboarding, setProfile };
 }

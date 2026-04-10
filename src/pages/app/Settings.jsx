@@ -9,14 +9,12 @@ import SyncDebugPanel from "../../components/app/tiktok/SyncDebugPanel";
 import ExtensionSettingsPanel from "../../components/app/tiktok/ExtensionSettingsPanel";
 import DesktopSettingsPanel from "../../components/app/tiktok/DesktopSettingsPanel";
 import { useAppToast } from "../../hooks/useAppToast";
+import { inp, lbl } from "../../lib/formStyles";
 
 const PROMO_TONES = ["hype","chill","competitive","funny","serious","community"];
 const STREAM_DAYS = ["mon","tue","wed","thu","fri","sat","sun"];
 const STREAM_TYPES = ["ranked","chill","viewer_games","challenge","collab","special","other"];
 const DURATIONS = [30, 45, 60, 90, 120, 180, 240];
-
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-2.5 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-1.5";
 
 function Section({ title, accent = "cyan", children }) {
   const colors = { cyan: "text-cyan-400 border-cyan-900/20", yellow: "text-yellow-400 border-yellow-900/20", pink: "text-pink-400 border-pink-900/20", red: "text-red-400 border-red-900/20" };
@@ -311,11 +309,7 @@ export default function Settings() {
           </div>
         </Section>
 
-        {/* TikTok Connection - hidden
-        <Section title="// TikTok Connection" accent="pink">
-          <TikTokConnectionCard />
-        </Section>
-        */}
+
 
         {/* External Platforms (TikTok, Twitch, YouTube) */}
         <Section title="// External Platforms" accent="purple">

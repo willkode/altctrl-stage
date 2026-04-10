@@ -4,6 +4,7 @@ import PageContainer from "../../components/app/PageContainer";
 import LoadingState from "../../components/app/LoadingState";
 import { Camera, Check, Zap, LogOut, RefreshCw } from "lucide-react";
 import { useAppToast } from "../../hooks/useAppToast";
+import { inp, lbl, sel } from "../../lib/formStyles";
 
 const NICHES = ["fps","battle_royale","rpg","sports","mobile","variety","horror","retro","other"];
 const STYLES = ["solo_grind","community_focused","educational","entertainment","competitive"];
@@ -17,10 +18,6 @@ const REGIONS = [
   "North America","South America","Europe","Middle East","South Asia",
   "Southeast Asia","East Asia","Oceania","Africa","Other",
 ];
-
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-3 py-2.5 text-sm outline-none transition-all font-mono";
-const lbl = "block text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-1.5";
-const sel = inp + " appearance-none";
 
 function ChipSelect({ options, value, onChange, accent = "cyan" }) {
   const colors = {

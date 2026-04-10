@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
 import { RefreshCw, Trash2, ChevronDown, Sparkles, Loader2, Swords } from "lucide-react";
 import GameContextPanel from "../games/GameContextPanel";
+import { getISOWeek } from "../../../utils/dateHelpers";
+import { inp, lbl, err } from "../../../lib/formStyles";
 
 const STREAM_TYPES = ["ranked", "chill", "viewer_games", "challenge", "collab", "special", "other"];
 const STATUSES = ["planned", "live", "completed", "skipped", "cancelled"];
@@ -368,14 +370,3 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     </AppModal>
   );
 }
-
-function getISOWeek(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-const inp = "w-full bg-[#02040f] border border-cyan-900/40 focus:border-cyan-500/40 text-white placeholder-slate-700 rounded px-4 py-2.5 text-sm outline-none transition-all font-mono";
-const lbl = "block text-xs font-mono uppercase tracking-widest text-slate-500 mb-1.5";
-const err = "text-xs text-red-400 font-mono mt-1";

@@ -24,8 +24,6 @@ export default function Experiments() {
   const [sessions, setSessions] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
-  const [editingSession, setEditingSession] = useState(null);
-  const [sessionInput, setSessionInput] = useState("");
 
   useEffect(() => { loadData(); }, []);
 

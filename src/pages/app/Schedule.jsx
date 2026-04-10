@@ -6,28 +6,11 @@ import StreamSlotCard from "../../components/app/schedule/StreamSlotCard";
 import WeeklyConsistency from "../../components/app/schedule/WeeklyConsistency";
 import StreamDrawer from "../../components/app/drawers/StreamDrawer";
 import { ChevronLeft, ChevronRight, Plus, Sparkles } from "lucide-react";
+import { getISOWeek, getWeekDates as getWeekDatesUtil, getTodayStr } from "../../utils/dateHelpers";
 
-function getISOWeek(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-}
-
-function getWeekDates(weekOffset = 0) {
-  const now = new Date();
-  const day = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - ((day + 6) % 7) + weekOffset * 7);
-  return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d;
-  });
-}
-
+const getWeekDates = getWeekDatesUtil;
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const TODAY_STR = new Date().toISOString().split("T")[0];
+const TODAY_STR = getTodayStr();
 
 export default function Schedule() {
   const [loading, setLoading] = useState(true);

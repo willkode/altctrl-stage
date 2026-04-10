@@ -68,12 +68,6 @@ import GamesLibrary from './pages/GamesLibrary';
 import TikTokAppealHelper from './pages/TikTokAppealHelper';
 import PreOrder from './pages/PreOrder';
 
-const HomeRedirect = () => {
-  // This component will be wrapped in auth context later
-  // If here, user is authenticated, so redirect to dashboard
-  return <Navigate to="/app/dashboard" replace />;
-};
-
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
