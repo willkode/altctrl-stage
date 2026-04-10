@@ -63,6 +63,21 @@ export default function Dashboard() {
   return (
     <PageContainer>
       <div className="space-y-6">
+        {/* Desktop App Download Banner */}
+        <div className="bg-red-500/5 border-2 border-red-500/60 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="text-red-400 text-lg">🖥️</span>
+            <div>
+              <p className="text-sm font-bold text-white">Download the AltCtrl Desktop App</p>
+              <p className="text-xs font-mono text-slate-400">Get real-time stream coaching, auto-sync sessions, and live alerts directly on your PC.</p>
+            </div>
+          </div>
+          <a href="https://drive.google.com/file/d/1a0vmkRfL_oS0ZlSol2ivizuXsP4hpPIO/view?usp=sharing" target="_blank" rel="noopener noreferrer"
+            className="shrink-0 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-red-500 text-white hover:bg-red-400 transition-all">
+            Download Now
+          </a>
+        </div>
+
         {/* Header */}
         <div>
           <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-cyan-400/60 mb-1">Creator Command Center</p>
