@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
-import { Menu, X, Zap } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { Menu, X, Zap, LogIn } from "lucide-react";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -69,12 +70,12 @@ export default function Layout() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/founding-creators" className="text-xs font-mono uppercase tracking-widest text-pink-400 hover:text-pink-300 transition-colors border border-pink-500/40 hover:border-pink-400 px-4 py-2 rounded hover:shadow-[0_0_15px_rgba(255,0,128,0.2)] transition-all">
-              Founding Creators
-            </Link>
-            <Link to="/preorder" className="text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2 rounded hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.4)] transition-all">
-              Pre-Order Now
-            </Link>
+            <button onClick={() => base44.auth.redirectToLogin()} className="text-xs font-mono uppercase tracking-widest text-slate-400 hover:text-white transition-colors border border-cyan-900/40 hover:border-cyan-500/40 px-4 py-2 rounded transition-all flex items-center gap-1.5">
+              <LogIn className="w-3.5 h-3.5" /> Log In
+            </button>
+            <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")} className="text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2 rounded hover:bg-cyan-300 hover:shadow-[0_0_20px_rgba(0,245,255,0.4)] transition-all">
+              Sign Up
+            </button>
           </div>
 
           <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -84,12 +85,20 @@ export default function Layout() {
 
         {mobileOpen && (
           <div className="md:hidden border-t border-cyan-900/40 bg-[#02040f] px-4 py-4 space-y-3">
-            {[...navLinks, { label: "Founding Creators", path: "/founding-creators" }, { label: "Pre-Order", path: "/preorder" }].map(link => (
+            {navLinks.map(link => (
               <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
                 className={`block text-sm font-mono uppercase tracking-widest py-2 ${location.pathname === link.path ? "text-cyan-400" : "text-slate-400"}`}>
                 {link.label}
               </Link>
             ))}
+            <div className="flex gap-3 pt-3 border-t border-cyan-900/30">
+              <button onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin(); }} className="flex-1 text-xs font-mono uppercase tracking-widest text-slate-400 border border-cyan-900/40 px-4 py-2.5 rounded text-center">
+                Log In
+              </button>
+              <button onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin("/app/dashboard"); }} className="flex-1 text-xs font-black uppercase tracking-widest bg-cyan-400 text-[#02040f] px-4 py-2.5 rounded text-center">
+                Sign Up
+              </button>
+            </div>
           </div>
         )}
       </nav>
