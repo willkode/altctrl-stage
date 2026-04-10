@@ -175,7 +175,7 @@ export default function Features() {
           <p className="text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed mb-10">
             AltCtrl is a focused system built specifically for TikTok LIVE gaming creators who want to grow with more structure, better promo, and clearer feedback every week.
           </p>
-          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+          <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}

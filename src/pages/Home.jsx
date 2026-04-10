@@ -93,7 +93,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+            <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
             className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4), inset 0 1px 0 rgba(255,255,255,0.2)" }}>
               GET STARTED <ArrowRight className="w-4 h-4" />
@@ -451,7 +451,7 @@ export default function Home() {
           <GlitchText text="YOUR STREAM DESERVES MORE" className="text-4xl sm:text-5xl font-black uppercase text-white block mb-2" tag="h2" />
           <GlitchText text="THAN GUESSWORK." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
           <p className="text-slate-300 max-w-xl mx-auto mb-4">Join the creators already growing with AltCtrl.</p>
-          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+          <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
           className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all active:scale-95"
           style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
             GET STARTED <ArrowRight className="w-4 h-4" />

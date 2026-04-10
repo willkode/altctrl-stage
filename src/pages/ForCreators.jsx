@@ -150,7 +150,7 @@ export default function ForCreators() {
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// BUILT FOR THE CREATOR BEHIND THE STREAM</div>
           <GlitchText text="GET THE TOOLS, STRUCTURE, AND FEEDBACK" className="text-3xl sm:text-4xl font-black uppercase text-white block mb-2" tag="h2" />
           <GlitchText text="TO GROW WITH MORE INTENTION." className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 block mb-8" tag="h2" />
-          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+          <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}

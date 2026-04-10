@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 
 export default function AppAuthGate() {
   const [status, setStatus] = useState("loading"); // loading | approved | pending | past_due
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Handle post-login redirects (e.g. extension-auth flow)
@@ -31,6 +32,10 @@ export default function AppAuthGate() {
         setStatus("past_due");
       } else {
         setStatus("approved");
+        // Redirect to dashboard on first login if at /app root
+        if (location.pathname === "/app" || location.pathname === "/app/") {
+          navigate("/app/dashboard", { replace: true });
+        }
       }
     }).catch(() => setStatus("pending"));
   }, []);

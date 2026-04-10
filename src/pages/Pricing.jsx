@@ -43,7 +43,7 @@ export default function Pricing() {
                 </div>
               ))}
             </div>
-            <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+            <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
               className="block w-full text-center font-black uppercase tracking-widest py-4 rounded text-sm transition-all hover:shadow-[0_0_30px_rgba(0,245,255,0.4)]"
               style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408" }}>
               GET STARTED

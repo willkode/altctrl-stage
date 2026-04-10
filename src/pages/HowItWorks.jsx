@@ -195,7 +195,7 @@ export default function HowItWorks() {
           <GlitchText text="RUN YOUR STREAMS" className="text-3xl sm:text-4xl font-black uppercase text-white block mb-1" tag="h2" />
           <GlitchText text="LIKE YOU MEAN IT." className="text-3xl sm:text-4xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
           <p className="text-slate-400 max-w-xl mx-auto text-sm mb-8">Join the early creators building with ALT Ctrl.</p>
-          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
+          <button onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}
