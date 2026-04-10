@@ -28,8 +28,13 @@ export default function Billing() {
 
   async function loadSubscription() {
     setLoading(true);
-    const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
-    setSub(res.data);
+    try {
+      const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
+      setSub(res.data);
+    } catch (e) {
+      console.error("Failed to load subscription status:", e);
+      setSub({ plan: "free", status: "none" });
+    }
     setLoading(false);
   }
 
