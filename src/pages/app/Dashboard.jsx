@@ -68,8 +68,8 @@ export default function Dashboard() {
           <div className="flex items-center gap-3">
             <span className="text-red-400 text-lg">🖥️</span>
             <div>
-              <p className="text-sm font-bold text-white">Download the AltCtrl Desktop App</p>
-              <p className="text-xs font-mono text-slate-400">Get real-time stream coaching, auto-sync sessions, and live alerts directly on your PC.</p>
+              <p className="text-sm font-bold text-white">⚠️ Desktop App Required</p>
+              <p className="text-xs font-mono text-slate-400">You must download and install the AltCtrl Desktop App to use live coaching, auto-sync, and stream alerts.</p>
             </div>
           </div>
           <a href="https://drive.google.com/file/d/1a0vmkRfL_oS0ZlSol2ivizuXsP4hpPIO/view?usp=sharing" target="_blank" rel="noopener noreferrer"
