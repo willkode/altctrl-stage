@@ -19,11 +19,7 @@ const navItems = [
   { path: "/app/golive", label: "Checklist", icon: PlayCircle },
   { path: "/app/coach", label: "Coach", icon: Brain },
   { path: "/app/strategy", label: "Strategy", icon: Crosshair },
-  { path: "/app/debrief", label: "Debrief", icon: ClipboardList },
-  { path: "/app/replay", label: "Replay", icon: Film },
-  { path: "/app/audience", label: "Audience", icon: Users },
   { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
-  { path: "/app/games", label: "Game Intel", icon: Swords },
   { path: "/app/billing", label: "Billing", icon: CreditCard },
 ];
 
