@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Link } from "react-router-dom";
 
 export default function AppAuthGate() {
-  const [status, setStatus] = useState("loading"); // loading | approved | pending
+  const [status, setStatus] = useState("loading"); // loading | approved | pending | past_due
+  const location = useLocation();
 
   useEffect(() => {
     // Handle post-login redirects (e.g. extension-auth flow)
@@ -14,9 +14,21 @@ export default function AppAuthGate() {
       window.location.replace(redirect);
       return;
     }
-    base44.auth.me().then(user => {
+    base44.auth.me().then(async (user) => {
       if (user?.role === "admin" || user?.approved === true) {
-        setStatus("approved");
+        // Check subscription status — allow billing page always
+        const isBillingPage = location.pathname === "/app/billing";
+        if (isBillingPage) {
+          setStatus("approved");
+          return;
+        }
+        // Check if subscription is past_due
+        const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
+        if (res.data?.status === "past_due") {
+          setStatus("past_due");
+        } else {
+          setStatus("approved");
+        }
       } else {
         setStatus("pending");
       }
@@ -27,6 +39,38 @@ export default function AppAuthGate() {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-2 border-cyan-900 border-t-cyan-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === "past_due") {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-[#020408] px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="relative z-10 bg-[#060d1f] border border-red-500/30 rounded-xl p-10"
+            style={{ boxShadow: "0 0 40px rgba(255,0,0,0.06)" }}>
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-60 rounded-t-xl" />
+            <div className="inline-flex items-center gap-2 border border-red-500/30 bg-red-500/5 rounded px-3 py-1.5 mb-6">
+              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-xs font-mono uppercase tracking-widest text-red-400">// PAYMENT FAILED</span>
+            </div>
+            <h1 className="text-3xl font-black uppercase text-white mb-3">Subscription Paused</h1>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              Your last payment failed. Please update your payment method to continue using AltCtrl.
+            </p>
+            <div className="space-y-3">
+              <Link to="/app/billing"
+                className="block w-full font-black uppercase tracking-widest py-3.5 rounded text-sm text-center transition-all"
+                style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408" }}>
+                Update Payment Method
+              </Link>
+              <button onClick={() => base44.auth.logout("/")}
+                className="block w-full font-mono uppercase tracking-widest py-3 rounded text-xs text-center border border-cyan-900/40 text-slate-500 hover:text-slate-300 transition-all">
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

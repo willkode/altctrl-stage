@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, Sparkles, Brain, TrendingUp, Clock } from "lucide-react";
+import { ArrowRight, Zap, Sparkles, Brain, TrendingUp } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import GlitchText from "../components/GlitchText";
 import NeonCard from "../components/NeonCard";
-import SeatCounter from "../components/SeatCounter";
 import SpeedLines from "../components/SpeedLines";
 import GeometricParticles from "../components/GeometricParticles";
 import TopGamesGrid from "../components/TopGamesGrid";
@@ -39,30 +38,9 @@ const pillars = [
 { label: "Coach" }];
 
 
-function useCountdown(targetDate) {
-  const [timeLeft, setTimeLeft] = useState({});
-  useEffect(() => {
-    const calc = () => {
-      const diff = new Date(targetDate) - new Date();
-      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
-      return {
-        days: Math.floor(diff / 86400000),
-        hours: Math.floor((diff % 86400000) / 3600000),
-        minutes: Math.floor((diff % 3600000) / 60000),
-        seconds: Math.floor((diff % 60000) / 1000),
-        expired: false,
-      };
-    };
-    setTimeLeft(calc());
-    const id = setInterval(() => setTimeLeft(calc()), 1000);
-    return () => clearInterval(id);
-  }, [targetDate]);
-  return timeLeft;
-}
+
 
 export default function Home() {
-  const countdown = useCountdown("2026-04-10T00:00:00-05:00");
-  const isLaunched = countdown.expired;
 
   return (
     <div className="overflow-hidden">
@@ -79,7 +57,7 @@ export default function Home() {
         <div className="relative z-10 text-center max-w-5xl mx-auto">
           <div className="inline-flex items-center gap-2 border border-pink-500/40 bg-[#020408]/70 rounded px-4 py-2 mb-6 backdrop-blur-sm">
             <span className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px #ff0080" }} />
-            <span className="text-xs font-mono uppercase tracking-widest text-pink-400">{isLaunched ? "// NOW LIVE — $25/MO" : "// PRE-ORDER NOW — $15/MO (SAVE $10/MO FOREVER)"}</span>
+            <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// NOW LIVE — $25/MO</span>
           </div>
 
           <h1 className="font-black uppercase leading-none tracking-tight mb-6">
@@ -101,29 +79,9 @@ export default function Home() {
             Plan your week. Generate promo before every stream. Track what actually works. Get coaching based on your real performance — not generic creator advice.
           </p>
 
-          {/* Pre-order / Launch Banner */}
-          {!isLaunched ? (
-            <div className="max-w-lg mx-auto mb-8 bg-gradient-to-r from-pink-950/40 to-cyan-950/30 border border-pink-500/30 rounded-xl p-5">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Clock className="w-4 h-4 text-pink-400" />
-                <span className="text-xs font-mono uppercase tracking-widest text-pink-400">Launching April 10th</span>
-              </div>
-              <div className="flex justify-center gap-4 mb-4">
-                {[[countdown.days, "Days"], [countdown.hours, "Hrs"], [countdown.minutes, "Min"], [countdown.seconds, "Sec"]].map(([val, label], i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-2xl font-black text-white tabular-nums" style={{ textShadow: "0 0 10px rgba(0,245,255,0.5)" }}>{String(val ?? 0).padStart(2, "0")}</div>
-                    <div className="text-[9px] font-mono uppercase text-slate-500">{label}</div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-slate-300 text-center mb-1">Pre-order now at <span className="font-black text-cyan-400">$15/mo</span> — locked in forever.</p>
-              <p className="text-xs text-slate-500 text-center">Price goes to <span className="line-through">$25/mo</span> after launch.</p>
-            </div>
-          ) : (
-            <div className="max-w-lg mx-auto mb-8 bg-gradient-to-r from-cyan-950/30 to-[#060d1f] border border-cyan-500/30 rounded-xl p-5 text-center">
-              <p className="text-sm text-slate-300">Now live. <span className="font-black text-cyan-400">$25/mo</span> — everything you need to grow.</p>
-            </div>
-          )}
+          <div className="max-w-lg mx-auto mb-8 bg-gradient-to-r from-cyan-950/30 to-[#060d1f] border border-cyan-500/30 rounded-xl p-5 text-center">
+            <p className="text-sm text-slate-300">Now live. <span className="font-black text-cyan-400">$25/mo</span> — everything you need to grow.</p>
+          </div>
 
           <div className="flex items-center justify-center gap-3 mb-10 flex-wrap">
             {["PLAN", "→", "PROMOTE", "→", "GO LIVE", "→", "LEARN"].map((step, i) =>
@@ -135,11 +93,11 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Link to="/preorder"
+            <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
             className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4), inset 0 1px 0 rgba(255,255,255,0.2)" }}>
-              {isLaunched ? "GET STARTED" : "PRE-ORDER NOW — $15/MO"} <ArrowRight className="w-4 h-4" />
-            </Link>
+              GET STARTED <ArrowRight className="w-4 h-4" />
+            </button>
             <Link to="/how-it-works"
             className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95 border"
             style={{ borderColor: "rgba(255,0,128,0.6)", color: "#ff0080", background: "rgba(255,0,128,0.05)", boxShadow: "0 0 15px rgba(255,0,128,0.1)" }}>
@@ -492,17 +450,12 @@ export default function Home() {
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <GlitchText text="YOUR STREAM DESERVES MORE" className="text-4xl sm:text-5xl font-black uppercase text-white block mb-2" tag="h2" />
           <GlitchText text="THAN GUESSWORK." className="text-4xl sm:text-5xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
-          <p className="text-slate-300 max-w-xl mx-auto mb-4">{isLaunched ? "Join the creators already growing with AltCtrl." : "Pre-order before April 10th and lock in $15/mo forever."}</p>
-          {!isLaunched && <p className="text-sm text-slate-500 mb-6">Price increases to $25/mo at launch.</p>}
-          {/* Seat counter */}
-          <div className="mb-10">
-            <SeatCounter compact />
-          </div>
-          <Link to="/preorder"
+          <p className="text-slate-300 max-w-xl mx-auto mb-4">Join the creators already growing with AltCtrl.</p>
+          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
           className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all active:scale-95"
           style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
-            {isLaunched ? "GET STARTED" : "PRE-ORDER NOW — $15/MO"} <ArrowRight className="w-4 h-4" />
-          </Link>
+            GET STARTED <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </section>
     </div>);

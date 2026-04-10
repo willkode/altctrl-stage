@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import GlitchText from "../components/GlitchText";
 import NeonCard from "../components/NeonCard";
 
@@ -150,13 +150,13 @@ export default function ForCreators() {
           <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// BUILT FOR THE CREATOR BEHIND THE STREAM</div>
           <GlitchText text="GET THE TOOLS, STRUCTURE, AND FEEDBACK" className="text-3xl sm:text-4xl font-black uppercase text-white block mb-2" tag="h2" />
           <GlitchText text="TO GROW WITH MORE INTENTION." className="text-3xl sm:text-4xl font-black uppercase text-cyan-400 block mb-8" tag="h2" />
-          <Link to="/waitlist"
+          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}
             onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.4)"}>
-            GET EARLY ACCESS <ArrowRight className="w-4 h-4" />
-          </Link>
+            GET STARTED <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

@@ -136,7 +136,7 @@ export default function Billing() {
                 <h3 className="text-lg font-black uppercase text-white">Pro</h3>
                 <Crown className="w-4 h-4 text-yellow-400" />
               </div>
-              <p className="text-2xl font-black text-white mt-1">$15<span className="text-sm font-normal text-slate-500">/mo</span></p>
+              <p className="text-2xl font-black text-white mt-1">$25<span className="text-sm font-normal text-slate-500">/mo</span></p>
             </div>
           </div>
           <ul className="space-y-2.5 mb-6">

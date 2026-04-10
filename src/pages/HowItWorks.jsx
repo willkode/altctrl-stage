@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Sparkles, Brain, TrendingUp, Monitor } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import GlitchText from "../components/GlitchText";
 
 const pillars = [
@@ -195,13 +195,13 @@ export default function HowItWorks() {
           <GlitchText text="RUN YOUR STREAMS" className="text-3xl sm:text-4xl font-black uppercase text-white block mb-1" tag="h2" />
           <GlitchText text="LIKE YOU MEAN IT." className="text-3xl sm:text-4xl font-black uppercase text-pink-400 block mb-6" tag="h2" />
           <p className="text-slate-400 max-w-xl mx-auto text-sm mb-8">Join the early creators building with ALT Ctrl.</p>
-          <Link to="/waitlist"
+          <button onClick={() => base44.auth.redirectToLogin("/app/billing")}
             className="inline-flex items-center gap-2 font-black uppercase tracking-widest px-10 py-5 rounded text-sm transition-all"
             style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}
             onMouseEnter={e => e.currentTarget.style.boxShadow = "0 0 40px rgba(0,245,255,0.7)"}
             onMouseLeave={e => e.currentTarget.style.boxShadow = "0 0 20px rgba(0,245,255,0.4)"}>
-            GET EARLY ACCESS <ArrowRight className="w-4 h-4" />
-          </Link>
+            GET STARTED <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
       </section>
 

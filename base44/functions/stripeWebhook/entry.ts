@@ -72,6 +72,23 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Handle failed payment — mark subscription as past_due so app blocks access
+    if (event.type === "invoice.payment_failed") {
+      const invoice = event.data.object;
+      const subId = invoice.subscription;
+      if (subId) {
+        const subs = await base44.asServiceRole.entities.Subscription.filter({ stripe_subscription_id: subId });
+        const sub = subs[0];
+        if (sub) {
+          await base44.asServiceRole.entities.Subscription.update(sub.id, {
+            status: "past_due",
+            plan: "free",
+          });
+          console.log("Marked subscription as past_due for:", sub.user_email);
+        }
+      }
+    }
+
     return Response.json({ received: true });
   } catch (error) {
     console.error("Webhook processing error:", error);
