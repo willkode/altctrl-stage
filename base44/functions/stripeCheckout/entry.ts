@@ -28,15 +28,20 @@ Deno.serve(async (req) => {
         });
         customerId = customer.id;
 
-        if (sub) {
-          await base44.asServiceRole.entities.Subscription.update(sub.id, { stripe_customer_id: customerId });
-        } else {
-          sub = await base44.asServiceRole.entities.Subscription.create({
-            user_email: user.email,
-            stripe_customer_id: customerId,
-            plan: "free",
-            status: "none",
-          });
+        // Try to create subscription record, but continue if it fails
+        try {
+          if (sub) {
+            await base44.asServiceRole.entities.Subscription.update(sub.id, { stripe_customer_id: customerId });
+          } else {
+            sub = await base44.asServiceRole.entities.Subscription.create({
+              user_email: user.email,
+              stripe_customer_id: customerId,
+              plan: "free",
+              status: "none",
+            });
+          }
+        } catch (e) {
+          console.warn("Failed to create/update subscription record, continuing with checkout:", e);
         }
       }
 
