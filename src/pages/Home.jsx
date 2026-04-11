@@ -454,7 +454,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className="space-y-6">
               <div>
-                <p className="text-slate-400 text-sm leading-relaxed mb-5">The desktop coach tracks what is happening during your stream in real time, including:</p>
+                <p className="text-slate-400 text-sm leading-relaxed mb-5">Tracks in real time and alerts you when key events happen so that you can engage with your top viewers and keep the chat active.</p>
                 <div className="grid grid-cols-1 gap-2">
                   {DESKTOP_METRICS.map((m, i) => (
                     <div key={i} className="flex items-center gap-3">
