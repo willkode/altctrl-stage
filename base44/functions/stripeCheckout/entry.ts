@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
           price_data: {
             currency: "usd",
             product_data: { name: "ALT CTRL Pro", description: "Full access to AI coaching, strategy, and analytics tools." },
-            unit_amount: 2500, // $25.00
+            unit_amount: 1500, // $15.00
             recurring: { interval: "month" },
           },
           quantity: 1,
