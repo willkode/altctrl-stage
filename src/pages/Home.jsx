@@ -337,20 +337,150 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── PERSONALIZATION ───────────────────────────────────── */}
+      {/* ── COACH MOCKUP ──────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// PERSONALIZATION</div>
-          <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-6">
-            AI that learns<br /><span style={{ color: "#ff0080" }}>your style</span>
-          </h2>
-          <p className="text-slate-400 text-sm leading-relaxed mb-6">No two streamers are the same.</p>
-          <p className="text-slate-400 text-sm leading-relaxed mb-8">
-            ALT Ctrl learns how you stream, how your audience responds, what games you play, what content creates momentum, and where your sessions tend to lose energy.
-          </p>
-          <div className="bg-[#060d1f] border border-pink-500/20 rounded-xl p-7 text-left">
-            <p className="text-slate-300 text-sm mb-2">That means your coaching is not one-size-fits-all.</p>
-            <p className="text-pink-400 font-black uppercase tracking-widest text-sm">It becomes more personalized with every stream.</p>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// AI COACHING IN ACTION</div>
+            <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4">
+              AI that learns<br /><span style={{ color: "#ff0080" }}>your style</span>
+            </h2>
+            <p className="text-slate-400 text-sm max-w-xl mx-auto">No two streamers are the same. Your coaching gets more personalized with every stream.</p>
+          </div>
+
+          {/* Mockup */}
+          <div className="bg-[#02040f] border border-cyan-900/30 rounded-2xl overflow-hidden shadow-2xl" style={{ boxShadow: "0 0 60px rgba(0,245,255,0.08)" }}>
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04] bg-[#060d1f]">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: "0 0 6px #4ade80" }} />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-green-400">Live — 47 min</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-xs font-black text-cyan-400">312</div>
+                  <div className="text-[9px] font-mono text-slate-600">viewers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-black text-yellow-400">↑18%</div>
+                  <div className="text-[9px] font-mono text-slate-600">momentum</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-black text-pink-400">84</div>
+                  <div className="text-[9px] font-mono text-slate-600">score</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-0 divide-x divide-white/[0.04]">
+              {/* Left: Coaching Alerts */}
+              <div className="p-5 space-y-3">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-pink-400 mb-3">// Coaching Alerts</div>
+
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-yellow-400">Engagement Drop</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">Chat has been quiet for 3 min. Try asking viewers a question or call out a username in chat.</p>
+                  <p className="text-[10px] font-mono text-slate-600 mt-2">47:12 into stream</p>
+                </div>
+
+                <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">Momentum Rising</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">Viewers up 22% in the last 5 min. This is your window — push engagement and thank new followers.</p>
+                  <p className="text-[10px] font-mono text-slate-600 mt-2">42:05 into stream</p>
+                </div>
+
+                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-green-400">Reintroduce Stream</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">You're at 30 min — new viewers don't know what you're doing. Give a quick intro and shoutout your goal.</p>
+                  <p className="text-[10px] font-mono text-slate-600 mt-2">30:00 into stream</p>
+                </div>
+              </div>
+
+              {/* Center: Daily Coaching Card + Goals */}
+              <div className="p-5 space-y-4">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-3">// Today's Focus</div>
+                <div className="bg-gradient-to-br from-cyan-950/40 to-[#060d1f] border border-cyan-500/20 rounded-xl p-5">
+                  <div className="text-xs font-black uppercase text-white mb-2">Push Follow Conversion</div>
+                  <p className="text-xs text-slate-400 leading-relaxed mb-3">Your last 3 streams averaged 12 viewers who watched 10+ min but didn't follow. Try a direct follow CTA at the 20 and 40 min marks.</p>
+                  <div className="flex gap-2">
+                    <span className="text-[9px] font-mono uppercase px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">Conversion</span>
+                    <span className="text-[9px] font-mono uppercase px-2 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400">High Priority</span>
+                  </div>
+                </div>
+
+                <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 mb-2">// Active Goals</div>
+                <div className="space-y-2">
+                  {[
+                    { label: "Stream 4x this week", current: 2, target: 4, color: "cyan" },
+                    { label: "Avg 280+ viewers", current: 312, target: 280, color: "green" },
+                    { label: "Gain 500 followers", current: 341, target: 500, color: "pink" },
+                  ].map((g, i) => {
+                    const pct = Math.min(100, Math.round((g.current / g.target) * 100));
+                    const barColor = g.color === "cyan" ? "bg-cyan-400" : g.color === "green" ? "bg-green-400" : "bg-pink-400";
+                    const textColor = g.color === "cyan" ? "text-cyan-400" : g.color === "green" ? "text-green-400" : "text-pink-400";
+                    return (
+                      <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-lg p-3">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-xs text-slate-300">{g.label}</span>
+                          <span className={`text-xs font-black ${textColor}`}>{pct}%</span>
+                        </div>
+                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full`} style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right: Weekly Recap */}
+              <div className="p-5">
+                <div className="text-[10px] font-mono uppercase tracking-widest text-yellow-400 mb-3">// Weekly Recap</div>
+                <div className="bg-[#060d1f] border border-yellow-500/20 rounded-xl p-4 mb-4">
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <div className="text-[9px] font-mono text-slate-600">Streams</div>
+                      <div className="text-lg font-black text-white">3<span className="text-xs text-slate-600">/4</span></div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-mono text-slate-600">Avg Viewers</div>
+                      <div className="text-lg font-black text-cyan-400">267</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-mono text-slate-600">Followers</div>
+                      <div className="text-lg font-black text-pink-400">+341</div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-mono text-slate-600">Top Game</div>
+                      <div className="text-sm font-black text-yellow-400">Warzone</div>
+                    </div>
+                  </div>
+                  <div className="border-t border-white/5 pt-3">
+                    <div className="text-[9px] font-mono text-slate-600 mb-1">AI Summary</div>
+                    <p className="text-xs text-slate-400 leading-relaxed">Strong week. Your Warzone challenge stream outperformed your chill streams by 38%. Viewer retention improved by 12% vs last week.</p>
+                  </div>
+                </div>
+
+                <div className="text-[10px] font-mono uppercase tracking-widest text-slate-600 mb-2">// Best Performing Stream</div>
+                <div className="bg-[#060d1f] border border-white/[0.04] rounded-lg p-3 text-xs">
+                  <div className="font-bold text-white mb-1">Warzone — Challenge Mode</div>
+                  <div className="text-slate-500 font-mono">Tue · 7:00 PM · 90 min</div>
+                  <div className="mt-2 flex gap-3">
+                    <span className="text-cyan-400">412 peak</span>
+                    <span className="text-pink-400">+124 followers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
