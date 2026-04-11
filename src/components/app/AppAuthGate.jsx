@@ -26,7 +26,15 @@ export default function AppAuthGate() {
         setStatus("approved");
         return;
       }
-      // Check subscription status
+      // Admins bypass subscription requirement
+      if (user.role === "admin") {
+        setStatus("approved");
+        if (location.pathname === "/app" || location.pathname === "/app/") {
+          navigate("/app/dashboard", { replace: true });
+        }
+        return;
+      }
+      // Check subscription status for non-admins
         try {
           const res = await base44.functions.invoke("stripeCheckout", { action: "status" });
           const { plan, status: subStatus } = res.data || {};
