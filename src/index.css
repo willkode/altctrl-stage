@@ -69,23 +69,45 @@
   }
 }
 
-/* Accessibility: enforce a minimum readable size for explicitly tiny text only.
-   text-xs (12px) and text-sm (14px) are intentional design choices — leave them alone.
-   Only catch sub-12px hardcoded sizes. */
+/* Enforce minimum font size of 1rem (16px) across all pages.
+   This overrides Tailwind's text-xs (12px), text-sm (14px), and any hardcoded sub-16px sizes. */
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
 
+/* text-xs = 12px → force to 1rem */
+.text-xs {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
+/* text-sm = 14px → force to 1rem */
+.text-sm {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
+/* Catch all hardcoded sub-16px sizes */
 .text-\[8px\],
 .text-\[9px\],
 .text-\[10px\],
 .text-\[11px\],
+.text-\[12px\],
+.text-\[13px\],
+.text-\[14px\],
+.text-\[15px\],
 .text-\[0\.5rem\],
 .text-\[0\.625rem\],
-.text-\[0\.6875rem\] {
-  font-size: 0.75rem !important;
-  line-height: 1.4 !important;
+.text-\[0\.6875rem\],
+.text-\[0\.75rem\],
+.text-\[0\.8rem\],
+.text-\[0\.85rem\],
+.text-\[0\.875rem\],
+.text-\[0\.9rem\],
+.text-\[0\.95rem\] {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
 }
 
 /* Boost slate-600 contrast on dark backgrounds — slate-600 (#475569) is near-invisible on #02040f.
