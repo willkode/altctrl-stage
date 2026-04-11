@@ -295,7 +295,7 @@ export default function Home() {
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 border border-pink-500/40 bg-[#020408]/70 rounded px-4 py-2 mb-8 backdrop-blur-sm">
             <span className="w-2 h-2 bg-pink-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px #ff0080" }} />
-            <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// NOW LIVE — $25/MO</span>
+            <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// NOW LIVE — $15/MO ($10 OFF)</span>
           </div>
 
           <h1 className="font-black uppercase leading-none tracking-tight mb-6">
