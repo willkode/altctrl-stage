@@ -452,25 +452,30 @@ export default function Home() {
 
 
           <div className="grid md:grid-cols-2 gap-8 items-start">
-            <div>
-              <p className="text-slate-400 text-sm leading-relaxed mb-5">The desktop coach tracks what is happening during your stream in real time, including:</p>
-              <div className="grid grid-cols-1 gap-2">
-                {DESKTOP_METRICS.map((m, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
-                    <span className="text-slate-300 text-sm">{m}</span>
-                  </div>
-                ))}
+            <div className="space-y-6">
+              <div>
+                <p className="text-slate-400 text-sm leading-relaxed mb-5">The desktop coach tracks what is happening during your stream in real time, including:</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {DESKTOP_METRICS.map((m, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                      <span className="text-slate-300 text-sm">{m}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-[#060d1f] border border-pink-500/20 rounded-xl p-8">
+                <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// Why this matters</div>
+                <p className="text-slate-300 text-sm leading-relaxed mb-4">
+                  This lets ALT Ctrl detect the moments that matter while you are still live, not after the stream is already over.
+                </p>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Instead of making you guess, it helps you respond.
+                </p>
               </div>
             </div>
-            <div className="bg-[#060d1f] border border-pink-500/20 rounded-xl p-8">
-              <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-4">// Why this matters</div>
-              <p className="text-slate-300 text-sm leading-relaxed mb-4">
-                This lets ALT Ctrl detect the moments that matter while you are still live, not after the stream is already over.
-              </p>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Instead of making you guess, it helps you respond.
-              </p>
+            <div className="rounded-xl overflow-hidden border border-pink-900/30" style={{ boxShadow: "0 0 30px rgba(255,0,128,0.1)" }}>
+              <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/36ca61455_image.png" alt="AltCtrl Desktop App" loading="lazy" className="w-full object-cover" />
             </div>
           </div>
         </div>
