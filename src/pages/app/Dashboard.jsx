@@ -63,19 +63,13 @@ export default function Dashboard() {
   return (
     <PageContainer>
       <div className="space-y-6">
-        {/* Desktop App Download Banner */}
-        <div className="bg-red-500/5 border-2 border-red-500/60 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <span className="text-red-400 text-lg">🖥️</span>
-            <div>
-              <p className="text-sm font-bold text-white">⚠️ Desktop App Required</p>
-              <p className="text-xs font-mono text-slate-400">You must download and install the AltCtrl Desktop App to use live coaching, auto-sync, and stream alerts.</p>
-            </div>
+        {/* Desktop App Maintenance Banner */}
+        <div className="bg-yellow-500/5 border-2 border-yellow-500/40 rounded-xl p-4 flex items-center gap-3">
+          <span className="text-yellow-400 text-lg">⚙️</span>
+          <div>
+            <p className="text-sm font-bold text-white">Desktop App Maintenance</p>
+            <p className="text-xs font-mono text-slate-400">We are updating our Desktop app, please check back in a few hours.</p>
           </div>
-          <a href="https://drive.google.com/file/d/1a0vmkRfL_oS0ZlSol2ivizuXsP4hpPIO/view?usp=sharing" target="_blank" rel="noopener noreferrer"
-            className="shrink-0 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-red-500 text-white hover:bg-red-400 transition-all">
-            Download Now
-          </a>
         </div>
 
         {/* Header */}
