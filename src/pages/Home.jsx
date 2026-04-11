@@ -18,22 +18,29 @@ const PROBLEMS = [
 const HOW_STEPS = [
   {
     num: "01",
-    title: "Plan your stream",
+    title: "Sign up & download the desktop app",
     accent: "cyan",
-    body: "Use the web app to schedule upcoming streams, choose your game, set the stream type, duration, and challenge mode, and generate AI-powered stream titles. You can also build a full weekly plan with AI recommendations based on your goals, schedule, and past performance.",
-    bullets: ["Stream scheduling with game & format", "AI-generated stream titles", "Weekly AI growth plans"],
+    body: "Create your free account on the web platform, then download and install the ALT Ctrl Desktop App for your PC or Mac. The desktop app is what monitors your live stream in real time — it's the engine that powers the coaching.",
+    bullets: ["Free account — no credit card to start", "Desktop app for PC & Mac", "Quick 2-minute setup", "Connects to TikTok, Twitch, or YouTube Live"],
   },
   {
     num: "02",
-    title: "Get coached live",
+    title: "Plan your stream",
     accent: "pink",
-    body: "During your stream, the desktop coach tracks your session in real time and watches for important changes.",
-    bullets: ["Viewer spikes and drops", "Chat slowing down", "Supporter momentum", "Monetization opportunities", "Early retention problems", "Engagement trends"],
+    body: "Use the web app to schedule upcoming streams, choose your game, set the stream type, duration, and challenge mode, and generate AI-powered stream titles. You can also build a full weekly plan with AI recommendations based on your goals, schedule, and past performance.",
+    bullets: ["Stream scheduling with game & format", "AI-generated stream titles", "Weekly AI growth plans", "Pre-stream checklists"],
   },
   {
     num: "03",
-    title: "Improve after every stream",
+    title: "Get coached live",
     accent: "yellow",
+    body: "During your stream, the desktop coach tracks your session in real time and watches for important changes — then sends you smart, personalized alerts so you can react while you're still live.",
+    bullets: ["Viewer spikes and drops", "Chat slowing down", "Supporter momentum", "Monetization opportunities", "Early retention problems", "Engagement trends"],
+  },
+  {
+    num: "04",
+    title: "Improve after every stream",
+    accent: "cyan",
     body: "When your stream ends, your session data is synced and analyzed by our AI systems.",
     bullets: ["Deep performance breakdowns", "Audience behavior insights", "Promo impact analysis", "Game and content comparisons", "Personalized next-stream recommendations"],
   },
@@ -205,8 +212,8 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// HOW IT WORKS</div>
-            <GlitchText text="THREE STEPS." className="text-4xl sm:text-5xl font-black uppercase text-white block mb-2" tag="h2" />
-            <p className="text-slate-500 text-sm">Plan, get coached, improve. Every stream.</p>
+            <GlitchText text="FOUR STEPS." className="text-4xl sm:text-5xl font-black uppercase text-white block mb-2" tag="h2" />
+            <p className="text-slate-500 text-sm">Sign up, plan, get coached, improve. Every stream.</p>
           </div>
           <div className="space-y-6">
             {HOW_STEPS.map((step, i) => {
