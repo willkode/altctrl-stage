@@ -84,7 +84,7 @@ export default function AppAuthGate() {
               <Link to="/app/billing"
                 className="block w-full font-black uppercase tracking-widest py-3.5 rounded text-sm text-center transition-all"
                 style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408" }}>
-                Subscribe — $25/mo
+                Subscribe — $15/mo
               </Link>
               <button onClick={() => base44.auth.logout("/")}
                 className="block w-full font-mono uppercase tracking-widest py-3 rounded text-xs text-center border border-cyan-900/40 text-slate-500 hover:text-slate-300 transition-all">
