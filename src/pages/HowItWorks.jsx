@@ -111,7 +111,7 @@ export default function HowItWorks() {
                 <span className="text-yellow-400 font-black">⚙️</span>
               </div>
               <h3 className="text-lg font-black uppercase text-yellow-400 mb-3">Chrome Extension</h3>
-              <p className="text-sm text-slate-400 mb-3">Automatically capture complete session data.</p>
+              <p className="text-sm text-slate-400 mb-3">Captures your past TikTok LIVE streams to help import all your stream data. <span className="text-yellow-400 font-mono">(Coming soon)</span></p>
               <ul className="space-y-2 text-xs text-slate-500">
                 <li>✓ Auto session logging</li>
                 <li>✓ Viewer metrics capture</li>
