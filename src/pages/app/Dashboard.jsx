@@ -73,6 +73,7 @@ export default function Dashboard() {
             </div>
           </div>
           <a href="https://drive.google.com/file/d/1TpIKfa4TrfRIHQep9gl4oSeO8efqdxHf/view?usp=sharing" target="_blank" rel="noopener noreferrer"
+            onClick={() => base44.analytics.track({ eventName: "pc-download" })}
             className="shrink-0 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-yellow-500 text-black hover:bg-yellow-400 transition-all">
             Download Now
           </a>
