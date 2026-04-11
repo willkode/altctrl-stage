@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -87,6 +88,197 @@ const WHY_BULLETS = [
   "What drives follows, shares, and gifts",
   "What to improve next time",
 ];
+
+const DASH_TABS = ["Overview", "Analytics", "Sessions", "Audience", "Game Intel"];
+
+const TAB_CONTENT = {
+  Overview: (
+    <div className="p-5 space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Avg Viewers", value: "267", accent: "text-cyan-400", sub: "+12% vs last week" },
+          { label: "Peak Viewers", value: "412", accent: "text-pink-400", sub: "Warzone stream" },
+          { label: "Followers Gained", value: "+341", accent: "text-green-400", sub: "This month" },
+          { label: "Streams", value: "14", accent: "text-yellow-400", sub: "Last 30 days" },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4">
+            <div className="text-[9px] font-mono uppercase text-slate-600 mb-1">{s.label}</div>
+            <div className={`text-2xl font-black ${s.accent}`}>{s.value}</div>
+            <div className="text-[10px] text-slate-600 mt-1">{s.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#060d1f] border border-cyan-900/20 rounded-xl p-4">
+        <div className="text-[10px] font-mono uppercase text-cyan-400 mb-3">// Viewer Trend — Last 14 Streams</div>
+        <div className="flex items-end gap-1.5 h-16">
+          {[140,180,220,190,267,300,280,310,267,350,290,380,340,412].map((v, i) => (
+            <div key={i} className="flex-1 rounded-sm" style={{ height: `${(v / 412) * 100}%`, background: i === 13 ? "#00f5ff" : "rgba(0,245,255,0.25)" }} />
+          ))}
+        </div>
+      </div>
+      <div className="bg-[#060d1f] border border-yellow-500/20 rounded-xl p-4">
+        <div className="text-[10px] font-mono uppercase text-yellow-400 mb-2">// Today's Stream</div>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-white">Warzone — Challenge Mode</div>
+            <div className="text-[10px] font-mono text-slate-500">Tonight 7:00 PM · 90 min</div>
+          </div>
+          <div className="flex gap-2">
+            <span className="text-[9px] font-mono uppercase px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">Checklist</span>
+            <span className="text-[9px] font-mono uppercase px-2 py-1 rounded bg-pink-500/10 border border-pink-500/20 text-pink-400">Promo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+  Analytics: (
+    <div className="p-5 space-y-4">
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Best Day", value: "Tuesday", accent: "text-cyan-400" },
+          { label: "Best Time", value: "7–9 PM", accent: "text-pink-400" },
+          { label: "Best Game", value: "Warzone", accent: "text-yellow-400" },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4 text-center">
+            <div className="text-[9px] font-mono uppercase text-slate-600 mb-1">{s.label}</div>
+            <div className={`text-sm font-black ${s.accent}`}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#060d1f] border border-cyan-900/20 rounded-xl p-4">
+        <div className="text-[10px] font-mono uppercase text-cyan-400 mb-3">// Game Performance</div>
+        <div className="space-y-2">
+          {[
+            { game: "Warzone", avg: 312, pct: 100 },
+            { game: "Apex Legends", avg: 267, pct: 86 },
+            { game: "Fortnite", avg: 198, pct: 63 },
+            { game: "Valorant", avg: 154, pct: 49 },
+          ].map((g, i) => (
+            <div key={i}>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-slate-300">{g.game}</span>
+                <span className="text-cyan-400 font-bold">{g.avg} avg</span>
+              </div>
+              <div className="h-1.5 bg-white/5 rounded-full"><div className="h-full bg-cyan-400 rounded-full" style={{ width: `${g.pct}%` }} /></div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-[#060d1f] border border-pink-900/20 rounded-xl p-4">
+        <div className="text-[10px] font-mono uppercase text-pink-400 mb-2">// Promo Impact</div>
+        <div className="flex gap-6">
+          <div><div className="text-[9px] font-mono text-slate-600">With Promo</div><div className="text-lg font-black text-pink-400">+38%</div><div className="text-[9px] text-slate-600">avg viewers</div></div>
+          <div><div className="text-[9px] font-mono text-slate-600">Without Promo</div><div className="text-lg font-black text-slate-400">baseline</div><div className="text-[9px] text-slate-600">avg viewers</div></div>
+        </div>
+      </div>
+    </div>
+  ),
+  Sessions: (
+    <div className="p-5 space-y-3">
+      <div className="text-[10px] font-mono uppercase text-cyan-400 mb-2">// Recent Sessions</div>
+      {[
+        { game: "Warzone", date: "Apr 9", viewers: 412, follows: 124, duration: "90m", accent: "cyan" },
+        { game: "Apex Legends", date: "Apr 7", viewers: 280, follows: 67, duration: "75m", accent: "pink" },
+        { game: "Warzone", date: "Apr 5", viewers: 310, follows: 88, duration: "60m", accent: "cyan" },
+        { game: "Fortnite", date: "Apr 3", viewers: 198, follows: 34, duration: "45m", accent: "yellow" },
+      ].map((s, i) => (
+        <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-bold text-white">{s.game}</div>
+            <div className="text-[10px] font-mono text-slate-500">{s.date} · {s.duration}</div>
+          </div>
+          <div className="flex gap-4 text-center">
+            <div><div className="text-sm font-black text-cyan-400">{s.viewers}</div><div className="text-[9px] font-mono text-slate-600">peak</div></div>
+            <div><div className="text-sm font-black text-pink-400">+{s.follows}</div><div className="text-[9px] font-mono text-slate-600">follows</div></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ),
+  Audience: (
+    <div className="p-5 space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { label: "Follow Rate", value: "8.4%", accent: "text-pink-400" },
+          { label: "Return Viewers", value: "34%", accent: "text-cyan-400" },
+          { label: "Gift Rate", value: "2.1%", accent: "text-yellow-400" },
+          { label: "Share Rate", value: "5.7%", accent: "text-green-400" },
+        ].map((s, i) => (
+          <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4">
+            <div className="text-[9px] font-mono uppercase text-slate-600 mb-1">{s.label}</div>
+            <div className={`text-2xl font-black ${s.accent}`}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+      <div className="bg-[#060d1f] border border-cyan-900/20 rounded-xl p-4">
+        <div className="text-[10px] font-mono uppercase text-cyan-400 mb-3">// Viewer Retention by Minute</div>
+        <div className="flex items-end gap-1 h-12">
+          {[100,94,88,82,79,74,72,70,68,65,62,58,54,50,47,43,40,38,36,35].map((v, i) => (
+            <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: `rgba(0,245,255,${0.15 + (v/100)*0.6})` }} />
+          ))}
+        </div>
+        <div className="flex justify-between text-[9px] font-mono text-slate-600 mt-1"><span>0 min</span><span>10 min</span><span>20 min</span></div>
+      </div>
+    </div>
+  ),
+  "Game Intel": (
+    <div className="p-5 space-y-3">
+      <div className="text-[10px] font-mono uppercase text-yellow-400 mb-2">// Game Library</div>
+      {[
+        { game: "Warzone", genre: "Battle Royale", score: 94, challenge: "High", style: "Competitive" },
+        { game: "Apex Legends", genre: "Battle Royale", score: 88, challenge: "High", style: "Competitive" },
+        { game: "Fortnite", genre: "Battle Royale", score: 82, challenge: "Medium", style: "Variety" },
+        { game: "Valorant", genre: "FPS", score: 79, challenge: "High", style: "Competitive" },
+      ].map((g, i) => (
+        <div key={i} className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <div className="text-sm font-bold text-white">{g.game}</div>
+              <div className="text-[10px] font-mono text-slate-500">{g.genre}</div>
+            </div>
+            <div className="text-lg font-black text-yellow-400">{g.score}</div>
+          </div>
+          <div className="flex gap-2">
+            <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20 text-pink-400">Challenge: {g.challenge}</span>
+            <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">{g.style}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+function DashboardMockup() {
+  const [activeTab, setActiveTab] = useState("Overview");
+  return (
+    <div className="mt-10 rounded-2xl overflow-hidden border border-cyan-900/30" style={{ boxShadow: "0 0 40px rgba(0,245,255,0.08)" }}>
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-5 py-3 bg-[#060d1f] border-b border-white/[0.04]">
+        <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">// AltCtrl Dashboard</span>
+        <div className="flex gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+          <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+          <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+        </div>
+      </div>
+      {/* Tab bar */}
+      <div className="flex border-b border-white/[0.04] bg-[#02040f] overflow-x-auto">
+        {DASH_TABS.map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)}
+            className={`px-5 py-3 text-[10px] font-mono uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
+              activeTab === tab ? "border-cyan-400 text-cyan-400" : "border-transparent text-slate-600 hover:text-slate-400"
+            }`}>
+            {tab}
+          </button>
+        ))}
+      </div>
+      {/* Content */}
+      <div className="bg-[#02040f] min-h-[320px]">
+        {TAB_CONTENT[activeTab]}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -315,9 +507,7 @@ export default function Home() {
               );
             })}
           </div>
-          <div className="mt-10 rounded-xl overflow-hidden border border-cyan-900/30 shadow-2xl" style={{ boxShadow: "0 0 40px rgba(0,245,255,0.08)" }}>
-            <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/4fd0ea8e8_Screenshot2026-04-06124632.png" alt="AltCtrl web dashboard" loading="lazy" className="w-full object-cover" />
-          </div>
+          <DashboardMockup />
         </div>
       </section>
 
