@@ -21,8 +21,8 @@ const HOW_STEPS = [
     num: "01",
     title: "Sign up & download the desktop app",
     accent: "cyan",
-    body: "Create your free account on the web platform, then download and install the ALT Ctrl Desktop App for your PC or Mac. The desktop app is what monitors your live stream in real time — it's the engine that powers the coaching.",
-    bullets: ["Free account — no credit card to start", "Desktop app for PC & Mac", "Quick 2-minute setup", "Connects to TikTok, Twitch, or YouTube Live"],
+    body: "Create your account on the web platform, then download and install the ALT Ctrl Desktop App for your PC or Mac. The desktop app is what monitors your live stream in real time — it's the engine that powers the coaching.",
+    bullets: ["$25/mo — full access", "Desktop app for PC & Mac", "Quick 2-minute setup", "Connects to TikTok, Twitch, or YouTube Live"],
   },
   {
     num: "02",
@@ -324,7 +324,7 @@ export default function Home() {
               onClick={() => base44.auth.redirectToLogin("/app/dashboard")}
               className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95"
               style={{ background: "linear-gradient(135deg, #00f5ff 0%, #0099aa 100%)", color: "#020408", boxShadow: "0 0 20px rgba(0,245,255,0.4)" }}>
-              Start Free <ArrowRight className="w-4 h-4" />
+              Get Started — $25/mo <ArrowRight className="w-4 h-4" />
             </button>
             <Link to="/how-it-works"
               className="inline-flex items-center justify-center gap-2 font-black uppercase tracking-widest px-8 py-4 rounded text-sm transition-all active:scale-95 border"
