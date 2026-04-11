@@ -50,6 +50,7 @@ Deno.serve(async (req) => {
         customer: customerId,
         mode: "subscription",
         allow_promotion_codes: true,
+        payment_method_collection: 'if_required',
         line_items: [{
           price_data: {
             currency: "usd",
