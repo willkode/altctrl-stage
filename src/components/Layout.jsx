@@ -4,10 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { Menu, X, Zap, LogIn } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "Features", path: "/features" },
-  { label: "How It Works", path: "/how-it-works" },
-  { label: "For Creators", path: "/for-creators" },
+  { label: "How It Works", path: "/#how-it-works" },
+  { label: "Desktop App", path: "/#desktop" },
+  { label: "Promo", path: "/#promo" },
+  { label: "Platform", path: "/#platform" },
   { label: "Pricing", path: "/pricing" },
   { label: "About", path: "/about" },
 ];
@@ -57,16 +57,28 @@ export default function Layout() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            {navLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-xs font-mono uppercase tracking-widest transition-colors ${location.pathname === link.path ? "text-cyan-400" : "text-slate-400 hover:text-white"}`}
-              >
-                {location.pathname === link.path && <span className="text-cyan-400 mr-1">//</span>}
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map(link => {
+              const isHash = link.path.startsWith('/#');
+              const isActive = isHash ? false : location.pathname === link.path;
+              return isHash ? (
+                <a
+                  key={link.path}
+                  href={link.path}
+                  className="text-xs font-mono uppercase tracking-widest transition-colors text-slate-400 hover:text-white"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`text-xs font-mono uppercase tracking-widest transition-colors ${isActive ? 'text-cyan-400' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {isActive && <span className="text-cyan-400 mr-1">//</span>}
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -85,12 +97,20 @@ export default function Layout() {
 
         {mobileOpen && (
           <div className="md:hidden border-t border-cyan-900/40 bg-[#02040f] px-4 py-4 space-y-3">
-            {navLinks.map(link => (
-              <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
-                className={`block text-sm font-mono uppercase tracking-widest py-2 ${location.pathname === link.path ? "text-cyan-400" : "text-slate-400"}`}>
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map(link => {
+              const isHash = link.path.startsWith('/#');
+              return isHash ? (
+                <a key={link.path} href={link.path} onClick={() => setMobileOpen(false)}
+                  className="block text-sm font-mono uppercase tracking-widest py-2 text-slate-400">
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
+                  className={`block text-sm font-mono uppercase tracking-widest py-2 ${location.pathname === link.path ? 'text-cyan-400' : 'text-slate-400'}`}>
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="flex gap-3 pt-3 border-t border-cyan-900/30">
               <button onClick={() => { setMobileOpen(false); base44.auth.redirectToLogin(); }} className="flex-1 text-xs font-mono uppercase tracking-widest text-slate-400 border border-cyan-900/40 px-4 py-2.5 rounded text-center">
                 Log In

@@ -400,7 +400,7 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ──────────────────────────────────────── */}
-      <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
+      <section id="how-it-works" className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// HOW IT WORKS</div>
@@ -437,8 +437,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── DESKTOP APP ───────────────────────────────────────── */}
-      <section className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
+      {/* ── DESKTOP APP ───────────────────────────────────────────── */}
+      <section id="desktop" className="py-24 px-4" style={{ backgroundColor: "#020408" }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// DESKTOP APP</div>
@@ -482,7 +482,7 @@ export default function Home() {
       </section>
 
       {/* ── PROMO ────────────────────────────────────────────── */}
-      <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
+      <section id="promo" className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// PROMO KITS</div>
@@ -591,7 +591,7 @@ export default function Home() {
       </section>
 
       {/* ── WEB APP ───────────────────────────────────────────── */}
-      <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
+      <section id="platform" className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4">// WEB PLATFORM</div>
