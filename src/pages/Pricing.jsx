@@ -26,13 +26,18 @@ export default function Pricing() {
 
         <div className="max-w-md mx-auto">
           <div className="relative bg-[#060d1f] border border-cyan-500/40 rounded-lg p-8 hover:shadow-[0_0_30px_rgba(0,245,255,0.15)] transition-all">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
               <span className="bg-cyan-400 text-[#02040f] text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full">PRO</span>
+              <span className="bg-yellow-500 text-[#02040f] text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">$10 OFF</span>
             </div>
             <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-4 mt-2">// FULL ACCESS</div>
             <div className="mb-6">
-              <span className="text-5xl font-black text-white">$25</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-black text-white">$15</span>
+                <span className="text-lg font-black text-slate-600 line-through">$25</span>
+              </div>
               <span className="text-slate-400 text-sm font-mono">/mo</span>
+              <div className="text-xs font-mono text-yellow-400 mt-2">Special ends May 31st, 2026</div>
               <div className="text-xs font-mono text-slate-500 mt-1">Cancel anytime. No contracts.</div>
             </div>
             <div className="space-y-3 mb-8">
