@@ -255,9 +255,7 @@ export default function Home() {
             <div className="rounded-xl overflow-hidden border border-pink-900/30" style={{ boxShadow: "0 0 30px rgba(255,0,128,0.1)" }}>
               <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/b002991e6_Screenshot2026-04-03163007.png" alt="Live coaching alerts" loading="lazy" className="w-full object-cover" />
             </div>
-            <div className="rounded-xl overflow-hidden border border-cyan-900/30" style={{ boxShadow: "0 0 30px rgba(0,245,255,0.1)" }}>
-              <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/3c23be18b_Screenshot2026-04-04155001.png" alt="Live dashboard" loading="lazy" className="w-full object-cover" />
-            </div>
+
             <div className="rounded-xl overflow-hidden border border-purple-900/30" style={{ boxShadow: "0 0 30px rgba(168,85,247,0.1)" }}>
               <img src="https://media.base44.com/images/public/69ca96fae50d535312ca1505/b747aff2f_Screenshot2026-04-05142629.png" alt="Live metrics" loading="lazy" className="w-full object-cover" />
             </div>
