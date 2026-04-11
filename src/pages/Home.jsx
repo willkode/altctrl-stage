@@ -481,6 +481,115 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PROMO ────────────────────────────────────────────── */}
+      <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// PROMO KITS</div>
+            <h2 className="text-4xl sm:text-5xl font-black uppercase text-white mb-4">
+              Promote every stream<br /><span style={{ color: "#ff0080" }}>without the creative block</span>
+            </h2>
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+              Before you go live, ALT Ctrl generates a ready-to-post promo kit tailored to your game, tone, and platform. No copy-pasting from templates. No guessing what to write. Just one click and you have everything you need to drive viewers to your stream before it even starts.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-10 items-start">
+            {/* Left: mockup */}
+            <div className="bg-[#02040f] border border-pink-900/30 rounded-2xl overflow-hidden" style={{ boxShadow: "0 0 40px rgba(255,0,128,0.08)" }}>
+              {/* Top bar */}
+              <div className="flex items-center justify-between px-5 py-3 bg-[#060d1f] border-b border-white/[0.04]">
+                <span className="text-xs font-mono uppercase tracking-widest text-pink-400">// Promo Kit Generator</span>
+                <div className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                </div>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Stream info bar */}
+                <div className="flex items-center justify-between bg-[#060d1f] border border-white/[0.04] rounded-xl px-4 py-3">
+                  <div>
+                    <div className="text-xs font-bold text-white">Warzone — Challenge Mode</div>
+                    <div className="text-xs font-mono text-slate-500">Tonight 7:00 PM · 90 min</div>
+                  </div>
+                  <span className="text-xs font-mono uppercase px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400">Generate Kit</span>
+                </div>
+
+                {/* Hook */}
+                <div className="bg-[#060d1f] border border-pink-500/20 rounded-xl p-4">
+                  <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-2">// Hook</div>
+                  <p className="text-white text-sm font-semibold leading-relaxed">"Going live in 30 min — Warzone no-fill challenge. Can I hit 10 kills solo? Come watch me fail or feast 🔥"</p>
+                </div>
+
+                {/* Caption */}
+                <div className="bg-[#060d1f] border border-cyan-500/20 rounded-xl p-4">
+                  <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-2">// Caption</div>
+                  <p className="text-slate-300 text-sm leading-relaxed">No squad. No mercy. Tonight I'm running solo no-fill on Warzone and setting myself a challenge — 10 kills or I switch games live. Drop in at 7PM and hold me accountable 👀</p>
+                </div>
+
+                {/* Hashtags */}
+                <div className="bg-[#060d1f] border border-yellow-500/20 rounded-xl p-4">
+                  <div className="text-xs font-mono uppercase tracking-widest text-yellow-400 mb-2">// Hashtags</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["#warzone","#warzonelivechallenge","#fps","#gamerlive","#tiktoklive","#challenge","#codwarzone","#battleroyal"].map(h => (
+                      <span key={h} className="text-xs font-mono px-2 py-1 rounded bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">{h}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Title options */}
+                <div className="bg-[#060d1f] border border-white/[0.04] rounded-xl p-4">
+                  <div className="text-xs font-mono uppercase tracking-widest text-slate-500 mb-3">// Stream Title Options</div>
+                  <div className="space-y-2">
+                    {[
+                      "Solo No-Fill Challenge — 10 Kill Goal 🎯",
+                      "Warzone Solo Only — Can I Carry? 🔥",
+                      "No Squad No Problem — Warzone Challenge Mode",
+                    ].map((t, i) => (
+                      <div key={i} className="flex items-center gap-3 text-sm text-slate-300 px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.03]">
+                        <span className="text-xs font-mono text-slate-600">{i + 1}.</span> {t}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: why it matters */}
+            <div className="space-y-6">
+              <div className="bg-[#060d1f] border border-pink-500/20 rounded-xl p-7">
+                <div className="text-xs font-mono uppercase tracking-widest text-pink-400 mb-3">// Why it matters</div>
+                <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                  Streams with promo posted beforehand consistently outperform those that go live cold. But most creators skip it because writing promo content takes time and mental energy they don't have before a stream.
+                </p>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  ALT Ctrl removes that friction. The kit is built from your game, your stream type, your tone settings, and your schedule — so it always sounds like you, not a generic template.
+                </p>
+              </div>
+
+              <div className="bg-[#060d1f] border border-cyan-900/30 rounded-xl p-7 space-y-4">
+                <div className="text-xs font-mono uppercase tracking-widest text-cyan-400 mb-1">// What's in every kit</div>
+                {[
+                  { label: "Hook", desc: "A short punchy line built for TikTok, Twitter, or Discord — designed to stop scrollers.", accent: "pink" },
+                  { label: "Caption", desc: "A full post caption with context, your challenge or goal, and a CTA.", accent: "cyan" },
+                  { label: "Hashtags", desc: "Optimized tag set for discoverability based on your game and stream type.", accent: "yellow" },
+                  { label: "Title Options", desc: "3 stream title variations you can use directly in your live setup.", accent: "pink" },
+                ].map((f, i) => {
+                  const labelColor = f.accent === "cyan" ? "text-cyan-400" : f.accent === "pink" ? "text-pink-400" : "text-yellow-400";
+                  return (
+                    <div key={i} className="flex gap-3">
+                      <span className={`text-xs font-mono uppercase shrink-0 w-20 ${labelColor} mt-0.5`}>{f.label}</span>
+                      <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── WEB APP ───────────────────────────────────────────── */}
       <section className="py-24 px-4" style={{ backgroundColor: "#050b18" }}>
         <div className="max-w-5xl mx-auto">
