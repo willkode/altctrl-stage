@@ -32,15 +32,18 @@ Deno.serve(async (req) => {
 
       const subs = await base44.asServiceRole.entities.Subscription.filter({ user_email: userEmail });
       const sub = subs[0];
+      const subData = {
+        stripe_subscription_id: subscriptionId,
+        stripe_customer_id: session.customer,
+        plan: "pro",
+        status: "active",
+        current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
+        cancel_at_period_end: false,
+      };
       if (sub) {
-        await base44.asServiceRole.entities.Subscription.update(sub.id, {
-          stripe_subscription_id: subscriptionId,
-          stripe_customer_id: session.customer,
-          plan: "pro",
-          status: "active",
-          current_period_end: new Date(stripeSub.current_period_end * 1000).toISOString(),
-          cancel_at_period_end: false,
-        });
+        await base44.asServiceRole.entities.Subscription.update(sub.id, subData);
+      } else {
+        await base44.asServiceRole.entities.Subscription.create({ user_email: userEmail, ...subData });
       }
     }
 
