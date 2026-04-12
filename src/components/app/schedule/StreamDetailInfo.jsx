@@ -5,6 +5,13 @@ const STATUS_ACCENT = {
   planned: "cyan", live: "pink", completed: "green", skipped: "slate", cancelled: "red",
 };
 
+function formatTime12(time) {
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 export default function StreamDetailInfo({ stream }) {
   const date = stream.scheduled_date
     ? new Date(stream.scheduled_date + "T12:00:00").toLocaleDateString("en-US", {
@@ -28,7 +35,7 @@ export default function StreamDetailInfo({ stream }) {
 
       <div className="grid sm:grid-cols-2 gap-3">
         <InfoRow icon={Calendar} label="Date" value={date} />
-        <InfoRow icon={Clock} label="Start Time" value={stream.start_time || "—"} />
+        <InfoRow icon={Clock} label="Start Time" value={stream.start_time ? formatTime12(stream.start_time) : "—"} />
         <InfoRow icon={Gamepad2} label="Game" value={stream.game} />
         <InfoRow icon={Timer} label="Target Duration" value={stream.target_duration_minutes ? `${stream.target_duration_minutes} min` : "—"} />
       </div>
