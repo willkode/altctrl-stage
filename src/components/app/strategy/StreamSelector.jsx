@@ -6,6 +6,12 @@ export default function StreamSelector({ streams, strategies, selected, onSelect
   const [open, setOpen] = useState(false);
   const today = new Date().toISOString().split("T")[0];
 
+  const fmt12 = (t) => {
+    if (!t) return "";
+    const [h, m] = t.split(':').map(Number);
+    return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  };
+
   const fmtDate = (d) => {
     if (d === today) return "Today";
     return new Date(d + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -29,7 +35,7 @@ export default function StreamSelector({ streams, strategies, selected, onSelect
               )}
             </div>
             <span className={`text-[11px] font-mono ${selected.scheduled_date === today ? "text-cyan-400/60" : "text-slate-500"}`}>
-              {fmtDate(selected.scheduled_date)}{selected.start_time ? ` · ${selected.start_time}` : ""}{selected.target_duration_minutes ? ` · ${selected.target_duration_minutes}m` : ""}
+              {fmtDate(selected.scheduled_date)}{selected.start_time ? ` · ${fmt12(selected.start_time)}` : ""}{selected.target_duration_minutes ? ` · ${selected.target_duration_minutes}m` : ""}
             </span>
           </div>
         ) : (
@@ -55,7 +61,7 @@ export default function StreamSelector({ streams, strategies, selected, onSelect
                     {strategies[s.id] && <Check className="w-3 h-3 text-green-400" />}
                   </div>
                   <span className="text-[10px] font-mono text-slate-600">
-                    {fmtDate(s.scheduled_date)}{s.start_time ? ` · ${s.start_time}` : ""}
+                    {fmtDate(s.scheduled_date)}{s.start_time ? ` · ${fmt12(s.start_time)}` : ""}
                   </span>
                 </div>
               </button>

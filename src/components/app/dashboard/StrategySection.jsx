@@ -222,7 +222,7 @@ export default function StrategySection() {
                             <span className="text-sm font-bold text-white">{s.game}</span>
                             {hasSt && <span className="text-[8px] font-mono uppercase text-green-400">✓</span>}
                           </div>
-                          <span className="text-[10px] font-mono text-slate-600">{dateLabel}{s.start_time ? ` · ${s.start_time}` : ""}</span>
+                          <span className="text-[10px] font-mono text-slate-600">{dateLabel}{s.start_time ? ` · ${(() => { const [h,m] = s.start_time.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; })()}` : ""}</span>
                         </div>
                         {!hasSt && <span className="text-[9px] font-mono text-slate-700">No strategy</span>}
                       </button>

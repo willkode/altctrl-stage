@@ -186,5 +186,10 @@ Be tactical, specific, and concise. No generic advice. This is a playbook for th
     generated_at: new Date().toISOString(),
   });
 
+  // Also save to ScheduledStream.saved_strategy so desktop app can pull it directly
+  await base44.asServiceRole.entities.ScheduledStream.update(scheduled_stream_id, {
+    saved_strategy: JSON.stringify(strategy),
+  });
+
   return Response.json({ strategy, already_existed: false });
 });
