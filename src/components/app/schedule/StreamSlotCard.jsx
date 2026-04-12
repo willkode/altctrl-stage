@@ -12,6 +12,14 @@ const STATUS_ACCENT = {
   planned: "cyan", live: "pink", completed: "green", skipped: "slate", cancelled: "red",
 };
 
+function formatTime12(time) {
+  if (!time) return "";
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 export default function StreamSlotCard({ stream, onEdit, onDelete }) {
   const [menu, setMenu] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,7 +66,7 @@ export default function StreamSlotCard({ stream, onEdit, onDelete }) {
       {/* Meta row: time · duration · type — all inline */}
       <div className="flex items-center gap-2 text-xs font-mono text-slate-400 flex-wrap">
         {stream.start_time && (
-          <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-400/60" />{stream.start_time}</span>
+          <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-400/60" />{formatTime12(stream.start_time)}</span>
         )}
         {stream.target_duration_minutes && (
           <span className="text-slate-600">{stream.target_duration_minutes}m</span>

@@ -198,7 +198,7 @@ export default function Schedule() {
                 ))}
               </div>
               {profile?.preferred_stream_time && (
-                <p className="text-xs font-mono text-slate-600">Preferred: <span className="text-cyan-400">{profile.preferred_stream_time}</span></p>
+                <p className="text-xs font-mono text-slate-600">Preferred: <span className="text-cyan-400">{(() => { const t = profile.preferred_stream_time; if (!t || !t.includes(':')) return t; const [h,m] = t.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; })()}</span></p>
               )}
             </div>
           </div>
