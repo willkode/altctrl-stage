@@ -14,24 +14,24 @@ import StreamDrawer from "./app/drawers/StreamDrawer";
 import LogSessionDrawer from "./app/drawers/LogSessionDrawer";
 
 const navItems = [
-  { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/app/schedule", label: "Schedule", icon: Calendar },
-  { path: "/app/promo", label: "Promo", icon: Radio },
-  { path: "/app/golive", label: "Checklist", icon: PlayCircle },
-  { path: "/app/coach", label: "Coach", icon: Brain },
-  { path: "/app/strategy", label: "Strategy", icon: Crosshair },
-  { path: "/app/experiments", label: "Experiments", icon: FlaskConical },
-  { path: "/app/billing", label: "Billing", icon: CreditCard },
-];
+{ path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
+{ path: "/app/schedule", label: "Schedule", icon: Calendar },
+{ path: "/app/promo", label: "Promo", icon: Radio },
+{ path: "/app/golive", label: "Checklist", icon: PlayCircle },
+{ path: "/app/coach", label: "Coach", icon: Brain },
+{ path: "/app/strategy", label: "Strategy", icon: Crosshair },
+{ path: "/app/experiments", label: "Experiments", icon: FlaskConical },
+{ path: "/app/billing", label: "Billing", icon: CreditCard }];
+
 
 // Mobile bottom nav — limited to 5 core items to meet 44px tap target minimum
 const MOBILE_NAV_ITEMS = [
-  { path: "/app/dashboard", label: "Home", icon: LayoutDashboard },
-  { path: "/app/schedule", label: "Schedule", icon: Calendar },
-  { path: "/app/golive", label: "Go Live", icon: PlayCircle },
-  { path: "/app/coach", label: "Coach", icon: Brain },
-  { path: "/app/promo", label: "Promo", icon: Radio },
-];
+{ path: "/app/dashboard", label: "Home", icon: LayoutDashboard },
+{ path: "/app/schedule", label: "Schedule", icon: Calendar },
+{ path: "/app/golive", label: "Go Live", icon: PlayCircle },
+{ path: "/app/coach", label: "Coach", icon: Brain },
+{ path: "/app/promo", label: "Promo", icon: Radio }];
+
 
 const pageTitles = {
   "/app/dashboard": "DASHBOARD",
@@ -47,7 +47,7 @@ const pageTitles = {
   "/app/replay": "REPLAY REVIEW",
   "/app/audience": "AUDIENCE & MONETIZATION",
   "/app/experiments": "EXPERIMENTS",
-  "/app/games": "GAME INTEL",
+  "/app/games": "GAME INTEL"
 };
 
 export default function AppLayout() {
@@ -62,11 +62,11 @@ export default function AppLayout() {
   const [supportOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(user => {
+    base44.auth.me().then((user) => {
       setIsAdmin(user.role === 'admin');
-      base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false, read: false }, '-created_date', 50)
-        .then(alerts => setUnreadCount(alerts.length))
-        .catch(() => {});
+      base44.entities.PerformanceAlert.filter({ created_by: user.email, dismissed: false, read: false }, '-created_date', 50).
+      then((alerts) => setUnreadCount(alerts.length)).
+      catch(() => {});
     }).catch(() => {});
   }, [location.pathname]);
 
@@ -76,19 +76,19 @@ export default function AppLayout() {
     return (
       <div className="min-h-screen bg-[#02040f] flex items-center justify-center">
         <LoadingState message="Initializing system..." />
-      </div>
-    );
+      </div>);
+
   }
 
   if (profile && !profile.onboarding_completed) {
-    return <Onboarding onComplete={async () => { await completeOnboarding(); navigate("/app/dashboard"); }} />;
+    return <Onboarding onComplete={async () => {await completeOnboarding();navigate("/app/dashboard");}} />;
   }
 
   return (
     <div className="min-h-screen bg-[#02040f] text-white flex flex-col">
       {/* Scanline overlay */}
       <div className="fixed inset-0 pointer-events-none z-50" style={{
-        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px)",
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px)"
       }} />
 
       {/* Top Header */}
@@ -111,43 +111,39 @@ export default function AppLayout() {
 
         {/* Header actions */}
         <div className="flex items-center gap-3">
-          <a href="/tiktok-appeal-helper" target="_blank" rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-pink-900/40 hover:border-pink-500/40 text-slate-400 hover:text-pink-400 transition-all text-[10px] font-mono uppercase tracking-widest">
-            <Swords className="w-3.5 h-3.5" /> Agency Exit
-          </a>
+          
+
+
+          
           <button onClick={() => setSupportOpen(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all text-[10px] font-mono uppercase tracking-widest">
-            <HelpCircle className="w-3.5 h-3.5" /> Support
-          </button>
-          <button onClick={() => setSupportOpen(true)}
-            aria-label="Get Support"
-            className="sm:hidden w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          aria-label="Get Support"
+          className="sm:hidden w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <HelpCircle className="w-4 h-4" />
           </button>
-          {isAdmin && (
-            <Link to="/app/admin/dashboard"
-              aria-label="Admin Panel"
-              className="w-9 h-9 flex items-center justify-center rounded border border-red-900/40 hover:border-red-500/40 text-red-500 hover:text-red-400 transition-all"
-              title="Admin Panel">
+          {isAdmin &&
+          <Link to="/app/admin/dashboard"
+          aria-label="Admin Panel"
+          className="w-9 h-9 flex items-center justify-center rounded border border-red-900/40 hover:border-red-500/40 text-red-500 hover:text-red-400 transition-all"
+          title="Admin Panel">
               <ShieldAlert className="w-4 h-4" />
             </Link>
-          )}
+          }
           <Link to="/app/notifications"
-            aria-label="Notifications"
-            className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          aria-label="Notifications"
+          className="relative w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full" style={{ boxShadow: "0 0 4px #ff0080" }} />
-            )}
+            {unreadCount > 0 &&
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-pink-500 rounded-full" style={{ boxShadow: "0 0 4px #ff0080" }} />
+            }
           </Link>
           <Link to="/app/profile"
-            aria-label="Profile"
-            className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          aria-label="Profile"
+          className="w-9 h-9 flex items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <User className="w-4 h-4" />
           </Link>
           <Link to="/app/settings"
-            aria-label="Settings"
-            className="hidden md:flex w-9 h-9 items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
+          aria-label="Settings"
+          className="hidden md:flex w-9 h-9 items-center justify-center rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all">
             <Settings2Icon className="w-4 h-4" />
           </Link>
         </div>
@@ -161,16 +157,16 @@ export default function AppLayout() {
               const active = location.pathname === path;
               return (
                 <Link key={path} to={path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm font-mono uppercase tracking-widest transition-all ${
-                    active
-                      ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30"
-                      : "text-slate-500 hover:text-white hover:bg-white/5 border border-transparent"
-                  }`}>
+                className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm font-mono uppercase tracking-widest transition-all ${
+                active ?
+                "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30" :
+                "text-slate-500 hover:text-white hover:bg-white/5 border border-transparent"}`
+                }>
                   <Icon className={`w-4 h-4 shrink-0 ${active ? "text-cyan-400" : ""}`} />
                   {label}
                   {active && <span className="ml-auto w-1 h-1 rounded-full bg-cyan-400" style={{ boxShadow: "0 0 4px #00f5ff" }} />}
-                </Link>
-              );
+                </Link>);
+
             })}
           </nav>
 
@@ -185,35 +181,35 @@ export default function AppLayout() {
             </div>
             <button
               onClick={() => base44.auth.logout("/")}
-              className="w-full text-xs font-mono uppercase px-3 py-2 rounded border border-red-900/40 text-red-500 hover:border-red-500/40 hover:bg-red-500/5 transition-all"
-            >
+              className="w-full text-xs font-mono uppercase px-3 py-2 rounded border border-red-900/40 text-red-500 hover:border-red-500/40 hover:bg-red-500/5 transition-all">
+              
               Logout
             </button>
           </div>
         </aside>
 
         {/* Mobile Sidebar Overlay */}
-        {sidebarOpen && (
-          <>
+        {sidebarOpen &&
+        <>
             <div className="fixed inset-0 bg-black/60 z-30 md:hidden" onClick={() => setSidebarOpen(false)} />
             <aside className="fixed top-16 left-0 bottom-0 w-64 bg-[#02040f] border-r border-cyan-900/40 z-40 md:hidden flex flex-col">
               <nav className="flex-1 py-4 space-y-1 px-3">
                 {navItems.map(({ path, label, icon: Icon }) => {
-                  const active = location.pathname === path;
-                  return (
-                    <Link key={path} to={path} onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-3 rounded text-sm font-mono uppercase tracking-widest transition-all ${
-                        active ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30" : "text-slate-500 hover:text-white border border-transparent"
-                      }`}>
+                const active = location.pathname === path;
+                return (
+                  <Link key={path} to={path} onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-3 rounded text-sm font-mono uppercase tracking-widest transition-all ${
+                  active ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/30" : "text-slate-500 hover:text-white border border-transparent"}`
+                  }>
                       <Icon className="w-4 h-4 shrink-0" />
                       {label}
-                    </Link>
-                  );
-                })}
+                    </Link>);
+
+              })}
               </nav>
             </aside>
           </>
-        )}
+        }
 
         {/* Main content */}
         <main className="flex-1 md:ml-56 min-h-full pb-20 md:pb-8">
@@ -229,15 +225,15 @@ export default function AppLayout() {
           const active = location.pathname === path;
           return (
             <Link key={path} to={path}
-              aria-label={label}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 min-h-[56px] text-xs font-mono uppercase transition-all relative ${
-                active ? "text-cyan-400" : "text-slate-600 hover:text-slate-400"
-              }`}>
+            aria-label={label}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 py-2 min-h-[56px] text-xs font-mono uppercase transition-all relative ${
+            active ? "text-cyan-400" : "text-slate-600 hover:text-slate-400"}`
+            }>
               <Icon className="w-5 h-5" />
               <span className="text-[9px] tracking-widest">{label}</span>
               {active && <span className="absolute bottom-1 w-1 h-1 rounded-full bg-cyan-400" />}
-            </Link>
-          );
+            </Link>);
+
         })}
       </nav>
 
@@ -246,6 +242,6 @@ export default function AppLayout() {
       <StreamDrawer open={activeDrawer === "stream"} onClose={() => setActiveDrawer(null)} />
       <LogSessionDrawer open={activeDrawer === "session"} onClose={() => setActiveDrawer(null)} />
       <SupportTicketModal open={supportOpen} onClose={() => setSupportOpen(false)} />
-    </div>
-  );
+    </div>);
+
 }
