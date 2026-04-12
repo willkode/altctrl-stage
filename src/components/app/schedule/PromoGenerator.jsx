@@ -3,6 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { Loader2, Sparkles, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
+function formatTime12(time) {
+  if (!time) return "TBD";
+  const [h, m] = time.split(":").map(Number);
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 export default function PromoGenerator({ stream }) {
   const [promo, setPromo] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,27 +34,21 @@ export default function PromoGenerator({ stream }) {
 Game: ${stream.game}
 Stream Type: ${stream.stream_type || "general"}
 Date: ${stream.scheduled_date}
-Start Time: ${stream.start_time || "TBD"}
+Start Time: ${formatTime12(stream.start_time)}
 Challenge Mode: ${stream.challenge_mode_enabled ? "Yes - " + (stream.challenge_brief || "") : "No"}
 Creator Style: ${profile?.promo_tone || "hype"}
 Creator Niche: ${profile?.creator_niche || "gaming"}
 
 Return a JSON object with:
 - "stream_title" (catchy TikTok live stream title, max 30 chars)
-- "caption_short" (short TikTok caption with emojis, 1-2 lines)
-- "caption_long" (longer caption for posts, 3-4 lines with hashtags)
-- "hook_lines" (array of 3 attention-grabbing one-liners to say at stream start)
-- "story_text" (text for an IG/TikTok story announcement, very short and punchy)
-- "cta" (call-to-action line to drive viewers to the stream)`,
+- "caption_long" (longer caption for posts, 3-4 lines with hashtags — include the stream date and start time in 12-hour format)
+
+Only return those two fields.`,
       response_json_schema: {
         type: "object",
         properties: {
           stream_title: { type: "string" },
-          caption_short: { type: "string" },
           caption_long: { type: "string" },
-          hook_lines: { type: "array", items: { type: "string" } },
-          story_text: { type: "string" },
-          cta: { type: "string" },
         },
       },
     });
@@ -90,21 +92,7 @@ Return a JSON object with:
   return (
     <div className="space-y-4">
       <CopyBlock label="Stream Title" value={promo.stream_title} copied={copied} onCopy={copyText} />
-      <CopyBlock label="Short Caption" value={promo.caption_short} copied={copied} onCopy={copyText} />
       <CopyBlock label="Long Caption" value={promo.caption_long} copied={copied} onCopy={copyText} />
-      <CopyBlock label="Story Text" value={promo.story_text} copied={copied} onCopy={copyText} />
-      <CopyBlock label="Call to Action" value={promo.cta} copied={copied} onCopy={copyText} />
-
-      {promo.hook_lines?.length > 0 && (
-        <div>
-          <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-400/60 mb-2">Hook Lines</p>
-          <div className="space-y-1.5">
-            {promo.hook_lines.map((line, i) => (
-              <CopyBlock key={i} label={`Hook ${i + 1}`} value={line} copied={copied} onCopy={copyText} />
-            ))}
-          </div>
-        </div>
-      )}
 
       <button onClick={generate}
         className="text-[10px] font-mono uppercase tracking-widest text-slate-500 hover:text-pink-400 transition-colors">
