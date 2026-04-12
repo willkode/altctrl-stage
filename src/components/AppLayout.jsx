@@ -111,6 +111,10 @@ export default function AppLayout() {
 
         {/* Header actions */}
         <div className="flex items-center gap-3">
+          <a href="/tiktok-appeal-helper" target="_blank" rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-pink-900/40 hover:border-pink-500/40 text-slate-400 hover:text-pink-400 transition-all text-[10px] font-mono uppercase tracking-widest">
+            <Swords className="w-3.5 h-3.5" /> Agency Exit
+          </a>
           <button onClick={() => setSupportOpen(true)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-900/40 hover:border-cyan-500/40 text-slate-400 hover:text-cyan-400 transition-all text-[10px] font-mono uppercase tracking-widest">
             <HelpCircle className="w-3.5 h-3.5" /> Support
