@@ -175,18 +175,10 @@ export default function AppLayout() {
           </nav>
 
 
-          <div className="px-3 pb-6 mt-2 space-y-2">
-            <div className="border border-cyan-900/30 rounded p-3 text-xs font-mono text-slate-500">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Zap className="w-3 h-3 text-cyan-700" />
-                <span className="text-cyan-700 uppercase tracking-widest">Closed Beta</span>
-              </div>
-              <span>Signal active. System nominal.</span>
-            </div>
+          <div className="px-3 pb-6 mt-2">
             <button
               onClick={() => base44.auth.logout("/")}
               className="w-full text-xs font-mono uppercase px-3 py-2 rounded border border-red-900/40 text-red-500 hover:border-red-500/40 hover:bg-red-500/5 transition-all">
-              
               Logout
             </button>
           </div>
