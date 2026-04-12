@@ -115,7 +115,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-widest text-cyan-400 mb-1">TODAY'S STREAM</p>
                     <h3 className="text-lg font-black text-white">{todayStream.title || todayStream.game}</h3>
-                    <p className="text-xs text-slate-500 font-mono mt-1">{todayStream.start_time} · {todayStream.stream_type}</p>
+                    <p className="text-xs text-slate-500 font-mono mt-1">{todayStream.start_time ? (() => { const [h,m] = todayStream.start_time.split(':').map(Number); return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`; })() : ''} · {todayStream.stream_type}</p>
                   </div>
                 </div>
                 <div className="flex gap-2 flex-wrap">
