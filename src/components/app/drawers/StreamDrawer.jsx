@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AppModal from "../AppModal";
 import { base44 } from "@/api/base44Client";
 import { useAppToast } from "../../../hooks/useAppToast";
-import { RefreshCw, Trash2, ChevronDown, Sparkles, Loader2, Swords } from "lucide-react";
+import { RefreshCw, Trash2, Sparkles, Loader2, Swords } from "lucide-react";
 import GameContextPanel from "../games/GameContextPanel";
 import { getISOWeek } from "../../../utils/dateHelpers";
 import { inp, lbl, err } from "../../../lib/formStyles";
@@ -53,7 +53,6 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
       ]).then(([sessions, library, prefs]) => {
         const games = [...new Set(sessions.map(s => s.game).filter(Boolean))];
         setGameSuggestions(games);
-        // Sort library: creator prefs first, then by priority
         const prefIds = new Set(prefs.map(p => p.game_id));
         library.sort((a, b) => {
           const aP = prefIds.has(a.id) ? 0 : 1;
@@ -62,7 +61,6 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
           return (a.sort_priority || 100) - (b.sort_priority || 100);
         });
         setGameLibrary(library);
-        // If editing, find the game
         if (stream?.primary_game_id) {
           setSelectedGame(library.find(g => g.id === stream.primary_game_id) || null);
         }
@@ -117,7 +115,7 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     onClose();
   };
 
-  // Dynamic search across history + library with popularity scores
+  // Dynamic search across history + library
   useEffect(() => {
     if (!form.game.trim()) {
       setFilteredGames([]);
@@ -129,8 +127,7 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     ).map(title => ({ title, score: null }));
     const fromLibrary = gameLibrary
       .filter(g => g.title.toLowerCase().includes(q) && g.title.toLowerCase() !== q)
-      .map(g => ({ title: g.title, score: g.sort_priority ? Math.max(0, Math.min(100, (100 - g.sort_priority))) : 50 }));
-    // Combine, remove duplicates by title, limit to 12
+      .map(g => ({ title: g.title, score: g.sort_priority ? Math.max(0, Math.min(100, 100 - g.sort_priority)) : 50 }));
     const combined = [];
     const seen = new Set();
     [...fromLibrary, ...fromHistory].forEach(item => {
@@ -146,12 +143,16 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
     ? new Date(form.scheduled_date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
     : "";
 
+  const libraryFiltered = form.game.trim()
+    ? gameLibrary.filter(g => g.title.toLowerCase().includes(form.game.toLowerCase()))
+    : gameLibrary.slice(0, 20);
+
   return (
     <AppModal open={open} onClose={() => { setConfirmDelete(false); onClose(); }}
       title={isEdit ? "Edit Stream" : "Schedule Stream"} accent="cyan">
       <div className="space-y-4">
 
-        {/* Date + Day label */}
+        {/* Date + Time */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={lbl}>Date *</label>
@@ -294,12 +295,12 @@ export default function StreamDrawer({ open, onClose, stream = null, onSaved }) 
           </div>
         )}
 
-        {/* Game from library */}
+        {/* Game from library — filters dynamically as you type */}
         {gameLibrary.length > 0 && (
           <div>
             <label className={lbl}>Select from Library <span className="text-slate-700 normal-case tracking-normal">(recommended)</span></label>
             <div className="flex flex-wrap gap-1.5 max-h-[140px] overflow-y-auto">
-              {gameLibrary.slice(0, 20).map(g => (
+              {libraryFiltered.map(g => (
                 <button key={g.id} onClick={() => { set("game", g.title); set("primary_game_id", g.id); setSelectedGame(g); }}
                   className={`text-[10px] font-mono uppercase px-2.5 py-1.5 rounded-lg border transition-all flex items-center gap-1 ${
                     form.primary_game_id === g.id
