@@ -72,11 +72,14 @@ export default function Dashboard() {
               <p className="text-xs font-mono text-slate-400">Please download and install the latest version. If you have a previous version installed, remove it first and then install this new version.</p>
             </div>
           </div>
-          <a href="https://drive.google.com/file/d/13zOYFwBBUGUv7N6vAFHVfFXZRz5ZVtoa/view?usp=sharing" target="_blank" rel="noopener noreferrer"
+          <div className="shrink-0 flex items-center gap-3">
+            <a href="https://drive.google.com/file/d/13zOYFwBBUGUv7N6vAFHVfFXZRz5ZVtoa/view?usp=sharing" target="_blank" rel="noopener noreferrer"
             onClick={() => base44.analytics.track({ eventName: "pc-download" })}
-            className="shrink-0 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-yellow-500 text-black hover:bg-yellow-400 transition-all">
-            Download Now
-          </a>
+            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-lg bg-yellow-500 text-black hover:bg-yellow-400 transition-all">
+              Download Now
+            </a>
+            <span className="text-[10px] font-mono text-slate-500">Updated 4/12/26</span>
+          </div>
         </div>
 
         {/* Header */}
