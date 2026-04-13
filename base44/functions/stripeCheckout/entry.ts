@@ -80,6 +80,57 @@ Deno.serve(async (req) => {
     }
 
     if (action === "status") {
+      // If local record shows active, return it directly
+      if (sub?.plan === "pro" && sub?.status === "active") {
+        return Response.json({
+          plan: sub.plan,
+          status: sub.status,
+          current_period_end: sub.current_period_end || null,
+          cancel_at_period_end: sub.cancel_at_period_end || false,
+        });
+      }
+
+      // Otherwise, verify directly with Stripe (handles missed/delayed webhooks)
+      if (sub?.stripe_customer_id) {
+        try {
+          const stripeSubs = await stripe.subscriptions.list({
+            customer: sub.stripe_customer_id,
+            status: "active",
+            limit: 1,
+          });
+          if (stripeSubs.data.length > 0) {
+            const stripeActiveSub = stripeSubs.data[0];
+            // Update local record so future checks are fast
+            await base44.asServiceRole.entities.Subscription.update(sub.id, {
+              plan: "pro",
+              status: "active",
+              stripe_subscription_id: stripeActiveSub.id,
+              current_period_end: new Date(stripeActiveSub.current_period_end * 1000).toISOString(),
+              cancel_at_period_end: stripeActiveSub.cancel_at_period_end,
+            });
+            return Response.json({
+              plan: "pro",
+              status: "active",
+              current_period_end: new Date(stripeActiveSub.current_period_end * 1000).toISOString(),
+              cancel_at_period_end: stripeActiveSub.cancel_at_period_end,
+            });
+          }
+
+          // Check for past_due
+          const pastDueSubs = await stripe.subscriptions.list({
+            customer: sub.stripe_customer_id,
+            status: "past_due",
+            limit: 1,
+          });
+          if (pastDueSubs.data.length > 0) {
+            await base44.asServiceRole.entities.Subscription.update(sub.id, { status: "past_due", plan: "pro" });
+            return Response.json({ plan: "pro", status: "past_due", current_period_end: null, cancel_at_period_end: false });
+          }
+        } catch (stripeErr) {
+          console.warn("Stripe direct check failed, falling back to local record:", stripeErr);
+        }
+      }
+
       return Response.json({
         plan: sub?.plan || "free",
         status: sub?.status || "none",
