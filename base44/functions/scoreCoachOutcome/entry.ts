@@ -25,13 +25,6 @@ const BATCH_SIZE       = 20;
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-  const user = await base44.auth.me();
-
-  // Allow both admin-triggered and scheduler calls
-  if (user && user.role !== 'admin') {
-    // If triggered by a user directly, require admin
-    // Scheduled calls come without a real user context — allow those through
-  }
 
   const now = new Date();
   const scoreAfter  = new Date(now.getTime() - SCORE_DELAY_MS).toISOString();
