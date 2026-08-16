@@ -16,5 +16,6 @@
       "title": "Approved (Founding Creator)",
       "default": false
     }
-  }
+  },
+  "required": []
 }
