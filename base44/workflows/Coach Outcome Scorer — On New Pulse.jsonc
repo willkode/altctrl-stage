@@ -1,0 +1,37 @@
+{
+  "name": "Coach Outcome Scorer \u2014 On New Pulse",
+  "description": "Auto-scores pending CoachActionLog entries when the desktop app sends a new LivePulse record. Compares pre/post metrics and scores result.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "LivePulse"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "coach_outcome_scorer_on_new_pulse",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "scoreCoachOutcome",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "scoreCoachOutcome"
+  }
+}
